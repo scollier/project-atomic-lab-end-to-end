@@ -37,7 +37,6 @@ http_single.json  mongo_deploy.json
 
 
 === Part 1. Deploy a Single Container +
-{empty} +
 
 *On host 1:*
 
@@ -86,7 +85,6 @@ gear list-units
 
 
 === Part 2. Deploy Multiple Containers on a Single Host
-{empty} +
 
 *On host 1:*
 
@@ -262,9 +260,63 @@ docker ps
 
 
 === Part 4. Multi-host Application Linking
-{empty} +
 
 *On host 1:*
+. Check the environment
++
+----
+gear list-units
+docker ps
+----
+. Explore the _http_single.json_ file
++
+----
+cat http_single.json
+{
+  "Containers": [
+    {
+      "Name": "web-server",
+      "Image": "demo/apache",
+      "PublicPorts": [
+        {
+          "Internal": 80
+        }
+      ],
+      "Links": [
+        {
+          "To": "web-server",
+          "NonLocal": true,
+          "MatchPort": true
+        }
+      ],
+      "Count": 2
+    }
+  ],
+  "IdPrefix": "",
+  "RandomizeIds": false
+}
+----
+. Ensure that the geard and Docker daemons are running on the second host.
++
+----
+systemctl status docker  # on host 1
+systemctl status docker  # on host 2
+systemctl status geard  # on host 1
+systemctl status geard  # on host 2
+----
+. Deploy the application on both hosts, where *x.x.x.x* is the IP address of the second host
++
+----
+gear deploy http_single.json localhost x.x.x.x
+----
+. List the units and containers on both hosts
++
+----
+gear list-units    # on host 1
+gear list-units    # on host 2
+docker ps          # on host 1
+docker ps          # on host 2
+----
 
 
 
@@ -273,7 +325,6 @@ docker ps
 
 
 === Part 5. SSH Enablement for Containers
-{empty} +
 
 *On host 1:*
 
