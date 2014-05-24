@@ -1,0 +1,23 @@
+{
+  "Containers": [
+    {
+      "Name": "web-server",
+      "Image": "demo/apache",
+      "PublicPorts": [
+        {
+          "Internal": 80
+        }
+      ],
+      "Links": [
+        {
+          "To": "web-server",
+          "NonLocal": true,
+          "MatchPort": true
+        }
+      ],
+      "Count": 2
+    }
+  ],
+  "IdPrefix": "",
+  "RandomizeIds": false
+}

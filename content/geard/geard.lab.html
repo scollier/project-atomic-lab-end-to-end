@@ -1007,7 +1007,7 @@ docker ps</code></pre>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-Explore the <em>mongo_deploy.json</em>
+Explore the <em>mongo_deploy.json</em>, notice the name, count and image.  The .json file is also taking care of the linking.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -1029,6 +1029,25 @@ Explore the <em>mongo_deploy.json</em>
 }</code></pre>
 </div></div>
 </li>
+<li>
+<p>
+Deploy the application
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear deploy mongo_deploy.json</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List the units and container
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
 </ol></div>
 </div>
 </div>
@@ -1037,7 +1056,7 @@ Explore the <em>mongo_deploy.json</em>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-05-24 11:13:14 CDT
+Last updated 2014-05-24 12:48:05 CDT
 </div>
 </div>
 </body>

@@ -171,7 +171,7 @@ docker ps
 gear list-units
 docker ps
 ----
-. Explore the _mongo_deploy.json_
+. Explore the _mongo_deploy.json_, notice the name, count and image.  The .json file is also taking care of the linking.
 +
 ----
 cat mongo_deploy.json
@@ -191,9 +191,66 @@ cat mongo_deploy.json
   ]
 }
 ----
-
-
-
+. Deploy the application
++
+----
+gear deploy mongo_deploy.json
+----
+. List the units and container
++
+----
+gear list-units
+docker ps
+----
+. Connect with the MongoDB client
++
+----
+mongo --host localhost --port "PUT PORT HERE"
+----
+. Copy in the configuration file
++
+----
+cat mongo_replica_json 
+cfg = {
+    "_id" : "replica0",
+    "version" : 1,
+    "members" : [
+        {
+            "_id" : 0,
+            "host" : "192.168.1.1:27017"
+        },
+        {
+            "_id" : 1,
+            "host" : "192.168.1.2:27017"
+        },
+        {
+            "_id" : 2,
+            "host" : "192.168.1.3:27017"
+        },
+    ]
+}
+----
+. Initiate the replica set
++
+----
+> rs.initiate(cfg)
+----
+. Refresh the configuration until you see PRIMARY and SECONDARY
++
+----
+> rs.status()
+> rs.status()
+> rs.status()
+----
+. Clean up the environment
++
+----
+gear list-units
+docker ps
+gear delete db-{1,2,3}
+gear list-units
+docker ps
+----
 
 
 

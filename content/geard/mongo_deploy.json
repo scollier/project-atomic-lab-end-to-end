@@ -1,0 +1,15 @@
+{
+  "containers":[
+    {
+      "name":"db",
+      "count":3,
+      "image":"demo/mongo",
+      "publicports":[
+        {"internal":27017,"external":0}
+      ],
+      "links":[
+        {"to":"db","nonlocal":true,"matchport":true}
+      ]
+    }
+  ]
+}
