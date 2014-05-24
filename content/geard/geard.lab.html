@@ -754,6 +754,34 @@ Link
 </p>
 </li>
 </ol></div>
+<div class="paragraph"><p>This lab has 5 parts.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Single host / single container deployment
+</p>
+</li>
+<li>
+<p>
+Single host / multi container deployment
+</p>
+</li>
+<li>
+<p>
+Single host / MongoDB replica set configuration
+</p>
+</li>
+<li>
+<p>
+Multi host container linking
+</p>
+</li>
+<li>
+<p>
+SSH enablement for contianers
+</p>
+</li>
+</ol></div>
 <div class="sect2">
 <h3 id="_geard_lab_prerequisites">geard Lab Prerequisites</h3>
 <div class="olist arabic"><ol class="arabic">
@@ -996,15 +1024,18 @@ docker ps</code></pre>
 <div class="sect2">
 <h3 id="_part_3_deploy_a_mongodb_replica_set_on_a_single_host">Part 3. Deploy a MongoDB replica set on a single host</h3>
 <div class="paragraph"><p><br /></p></div>
-<div class="paragraph"><p><strong>On host 1:</strong>
-. Check the environment</p></div>
-<div class="paragraph"><p>+</p></div>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check the environment
+</p>
 <div class="listingblock">
 <div class="content">
 <pre><code>gear list-units
 docker ps</code></pre>
 </div></div>
-<div class="olist arabic"><ol class="arabic">
+</li>
 <li>
 <p>
 Explore the <em>mongo_deploy.json</em>, notice the name, count and image.  The .json file is also taking care of the linking.
@@ -1048,7 +1079,87 @@ List the units and container
 docker ps</code></pre>
 </div></div>
 </li>
+<li>
+<p>
+Connect with the MongoDB client
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>mongo --host localhost --port "PUT PORT HERE"</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Copy in the configuration file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat mongo_replica_json
+cfg = {
+    "_id" : "replica0",
+    "version" : 1,
+    "members" : [
+        {
+            "_id" : 0,
+            "host" : "192.168.1.1:27017"
+        },
+        {
+            "_id" : 1,
+            "host" : "192.168.1.2:27017"
+        },
+        {
+            "_id" : 2,
+            "host" : "192.168.1.3:27017"
+        },
+    ]
+}</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Initiate the replica set
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>&gt; rs.initiate(cfg)</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Refresh the configuration until you see PRIMARY and SECONDARY
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>&gt; rs.status()
+&gt; rs.status()
+&gt; rs.status()</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Clean up the environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps
+gear delete db-{1,2,3}
+gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
 </ol></div>
+</div>
+<div class="sect2">
+<h3 id="_part_4_multi_host_application_linking">Part 4. Multi-host Application Linking</h3>
+<div class="paragraph"><p><br /></p></div>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
+</div>
+<div class="sect2">
+<h3 id="_part_5_ssh_enablement_for_containers">Part 5. SSH Enablement for Containers</h3>
+<div class="paragraph"><p><br /></p></div>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
+<div class="paragraph"><p>TBD</p></div>
 </div>
 </div>
 </div>
@@ -1056,7 +1167,7 @@ docker ps</code></pre>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-05-24 12:48:05 CDT
+Last updated 2014-05-24 13:01:04 CDT
 </div>
 </div>
 </body>

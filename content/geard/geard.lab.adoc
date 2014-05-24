@@ -5,6 +5,14 @@ geard is a Docker container orchestration tool.  At the currrent release, it ess
 . Multiple container deployment
 . Link
 
+This lab has 5 parts.
+
+. Single host / single container deployment
+. Single host / multi container deployment
+. Single host / MongoDB replica set configuration
+. Multi host container linking
+. SSH enablement for contianers
+
 === geard Lab Prerequisites
 . Two Atomic hosts
 +
@@ -165,6 +173,7 @@ docker ps
 {empty} +
 
 *On host 1:*
+
 . Check the environment
 +
 ----
@@ -252,6 +261,24 @@ gear list-units
 docker ps
 ----
 
+
+=== Part 4. Multi-host Application Linking
+{empty} +
+
+*On host 1:*
+
+
+
+
+
+
+
+=== Part 5. SSH Enablement for Containers
+{empty} +
+
+*On host 1:*
+
+TBD
 
 
 
