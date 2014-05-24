@@ -1,0 +1,7 @@
+= Laptop Setup Overview
+Red Hat Tiger Team
+:navigation:
+:icons:
+
+== Laptop Overview
+image::laptop-vms.png["Laptop Architecture"]

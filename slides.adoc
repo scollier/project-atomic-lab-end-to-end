@@ -1,0 +1,125 @@
+= Tiger Team Boot Camp
+Red Hat OpenStack Tiger Team
+:navigation:
+:icons:
+
+== Intro
+* Who are you? 
+* Strengths?
+* Weaknesses?
+
+== Tiger Team
+* Team Overview
+* Tiger Cub Overview
+
+== Class Material
+* http://tigerteam.gsso.redhat.com
+* Agenda agenda.slides.html
+* PDF bootcamp-labs.pdf
+* HTML bootcamp-labs.html
+
+== Day 1 (Monday 13:00 - 17:00)
+. Introductions (30M)
+.. Slide Deck link:intro.slides.html[Intro]
+. Tiger Team Overview (30M)
+.. https://mojo.redhat.com/docs/DOC-958851[Draft Solution Proposal Template]
+. RHEL OSP Architectural Overview (1H)
+.. https://engineering.redhat.com/pnt/p-354714/RHELOSP4_Tech...0140122r1.odp[RHEL OSP Technical Deck]
+... Accessible via https://engineering.redhat.com/pnt[Products and Technologies Portal]
+... Choose Virtualization -> Red Hat Enterprise Linux OpenStack Platform
+.. Recap CL210
+.. Scaling
+. Laptop Lab Setup validation (1H)
+.. link:bootcamp-labs.html[Lab Overview Slides]
+.. Validate Configure Hypervisor, Initial VM Setup, and Repository Server Setup sections
+. RHEL OSP Installation
+.. Foreman overview link:foreman.slides.html[Foreman Overview Slides]
+... Demo (10m)
+... Foreman Deployment link:bootcamp-labs.html#_installing_openstack_with_foreman[Installing OpenStack with Foreman Lab (1H)]
+
+== Day 2 (Tuesday 08:30 - 17:30)
+
+. Recap from Day 1 with Q/A (30M)
+. RHEL OSP Installation (continued)
+.. Foreman Deployment link:bootcamp-labs.html#_installing_openstack_with_foreman[Installing OpenStack with Foreman Lab (3H)]
+... Complete _Nova Network_ and _Neutron_ Foreman labs
+... link:bootcamp-labs.html#Administration[OpenStack Administration Installation (1H)]
+.. PackStack Deployment link:packstack.slides.html[PackStack Overview]
+... Demo (1H)
+... Lab: link:bootcamp-labs.html#_installing_openstack_with_packstack[Installing OpenStack with PackStack Lab (1H)]
+... Lab: link:bootcamp-labs.html#Administration[OpenStack Administration Installation (1H)]
+. Segmentation (30M)
+.. Overview: link:segmentation.slides.html[Overview]
+.. Lab: bootcamp-labs.html#_segmentation[Lab]
+
+
+== Day 3 (Wednesday 08:30 - 17:30)
+. Recap Day 2 with Q/A (30M)
+. Cinder Block Storage (1H)
+.. link:cinder.slides.html[Overview]
+.. link:bootcamp-labs.html#Cinder_Storage[Lab]
+. Swift Object Storage (2H)
+.. link:swift.slides.html[Swift Overview]
+.. link:bootcamp-labs.html#Swift_Object_Storage[Lab]
+. Glance Image Service (30M)
+.. http://tigerteam.gsso.redhat.com/bootcamp/glance.slides.html[Glance Overview]
+. Red Hat Storage (2H)
+.. link:rhstorage.slides.html[Red Hat Storage Overview]
+.. link:bootcamp-labs.html#Red_Hat_Storage[Lab]
+. Ceph (2H)
+.. link:ceph.slides.html[Ceph Overview]
+.. link:bootcamp-labs.html#Ceph_Storage[Lab]
+
+== Day 4 (Thursday 08:30 - 17:30)
+. Recap Day 3 with Q/A (30M)
+. Networking (2H) [red yellow-background big]*Link to Slides*
+.. Nova Network
+.. Neutron
+... ML2
+... OVS
+... Troubleshooting
+. Orchestration (3H)
+.. http://tigerteam.gsso.redhat.com/bootcamp/cloud-init.slides.html[Cloud-init Overview]
+.. http://tigerteam.gsso.redhat.com/bootcamp/bootcamp-labs.html#_cloud_init[Cloud-init Lab]
+.. http://tigerteam.gsso.redhat.com/bootcamp/heat.slides.html[Heat Overview]
+.. http://tigerteam.gsso.redhat.com/bootcamp/bootcamp-labs.html#_heat[Heat Lab]
+. Ceilometer (Telemetry/Metering) (2H)
+.. http://tigerteam.gsso.redhat.com/bootcamp/ceilometer.slides.html[Ceilometer Overview]
+.. http://tigerteam.gsso.redhat.com/bootcamp/bootcamp-labs.html#_ceilometer[Lab]
+. CloudForms (1H)
+.. https://engineering.redhat.com/pnt/p-346259/CloudForms_Sa...notes_Nov.odp[CloudForms Customer Presentation]
+.. https://engineering.redhat.com/pnt/p-429856/_Managing_Red....0_Master.pdf[Reference Architecture]
+.. http://tigerteam.gsso.redhat.com/bootcamp/bootcamp-labs.html#_cloudforms[Lab]
+. High Availability Overview (1H) [red yellow-background big]*Slides*
+
+
+== Day 5 (Friday 08:30 - 14:00)
+. Recap Day 4 with Q/A (30M)
+. High Availability Overview (continued) [red yellow-background big]*Slides*
+.. Demo (2H)
+.. http://tigerteam.gsso.redhat.com/bootcamp/bootcamp-labs.html#_high_availability[HA Lab (2H)]
+. Asciidoc overview
+. Git overview
+
+
+== Homework Assignments
+. How to Backup OpenStack
+. How to Monitor OpenStack (Nagios or Zabbix examples)
+. Deploying multiple availability zones
+. Setup Tempest Integration Testing
+. How to build a custom RHEL images for Glance
+. Integrating VMWare vSphere with OpenStack
+. Heat Homework?  (Come up with Example Assignments)
+. Ceilometer Homework? (Come up with Example Assignments)
+. CloudForms Homework? (Come up with Lab build out assignment)
+. Create custom Foreman hostgroups that ...
+.. Deploys an neutron controller and networker on one system
+.. Deploys an all-in-one hostgroup
+.. Deploys a Compute Node and Ceph node on one system
+. StayPuft deployment labs???
+. Create a script to use the Satellite API to de-register a system from Satellite
+.. This script can be any language using XML-RPC api calls
+.. This script should be called when an instance is terminated
+. Icehouse Features?
+.. Sahara (formerly Savanna)
+.. Trove

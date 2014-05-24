@@ -1,0 +1,410 @@
+This initial VM will be used to create clones that will be used in the rest of the lab. Once this VM is setup, every VM from this point on will be copy-on-write clones. These are called _linked clones_ in VMware Fusion, but will be referred to as simply _clones_ from this point on. This saves space and allows many VMs to be created very rapidly all based on the same master image/template and each clone takes up very little space. This first clone VM will be used as a the master image/template.
+
+=== Prepare Installation Media
+This step should have been completed as part of the pre-requisites but is repeated here for completeness.
+
+==== Satellite
+Satellite 5.x can be used to PXE boot this intiial VM and provide repos for all VMs. Satellite is a great tool for automatically synchronizing the latest versions of Red Hat software, managing DNS, DHCP, PXE, and kickstart profiles. It also has remote command and configuration abilities. However, it is a bit of work to initially setup and the initial synchronization can take a while. For this lab Satellite should already be setup and synchronized, but the steps are summarized for completeness. If Satellite has already be configured and synchronized, skip to <<Create_New_VM>>.
+
+NOTE: Satellite communiates and synchronizes with RHN CDNs but can also be installed in a disconnected mode. This lab will assume full connectivity to RHN CDNs
+
+. Grab Satellite 5.6 ISO: http://download.devel.redhat.com/released/RHEL-6-Satellite/
+. Obtain certificate for your RHN account or grab an INTERNAL-USE-ONLY one from: 
+https://satcert.gsslab.rdu2.redhat.com/svn/rhn-svn/trunk/pm/satellite-certs/satellite-5.6/red-hat--internal-use-only-.cert
+. Attach ISO to VM and mount it
+. Run *install.pl* on the ISO
+. After installation completes run *satellite-sync* to obtain channels
+.. RHEL 6 Channels
++
+----
+rhel-x86_64-server-6
+rhel-x86_64-server-fastrack-6
+rhel-x86_64-server-ha-6
+rhel-x86_64-server-lb-6
+rhel-x86_64-server-optional-6
+rhel-x86_64-server-sfs-6
+rhel-x86_64-server-supplementary-6
+rhn-tools-rhel-x86_64-server-6
+----
++
+.. OpenStack Channels
++
+----
+rhel-x86_64-server-6-ost-4
+rhel-x86_64-server-rh-common-6
+----
++
+.. OpenShift Channels
++
+----
+rhel-x86_64-server-6-ose-2.0-infrastructure
+rhel-x86_64-server-6-ose-2.0-jbosseap
+rhel-x86_64-server-6-ose-2.0-node
+rhel-x86_64-server-6-ose-2.0-rhc
+----
++
+.. CloudForms Channels
++
+----
+rhel-x86_64-server-6-cf-me-3
+----
++
+.. Red Hat Storage / RHEL 6.4.z
++
+----
+rhel-x86_64-server-6.4.z
+rhel-x86_64-server-6-rhs-2.1
+rhel-x86_64-server-sfs-6.4.z
+rhn-tools-rhel-x86_64-server-6.4.z
+----
++
+.. To syncronize all channels:
++
+----
+satellite-sync \
+    --channel=rhel-x86_64-server-6 \
+    --channel=rhel-x86_64-server-fastrack-6 \
+    --channel=rhel-x86_64-server-ha-6 \
+    --channel=rhel-x86_64-server-lb-6 \
+    --channel=rhel-x86_64-server-optional-6 \
+    --channel=rhel-x86_64-server-sfs-6 \
+    --channel=rhel-x86_64-server-supplementary-6 \
+    --channel=rhn-tools-rhel-x86_64-server-6 \
+    --channel=rhel-x86_64-server-6-ost-4 \
+    --channel=rhel-x86_64-server-rh-common-6 \
+    --channel=rhel-x86_64-server-6-ose-2.0-infrastructure \
+    --channel=rhel-x86_64-server-6-ose-2.0-jbosseap \
+    --channel=rhel-x86_64-server-6-ose-2.0-node \
+    --channel=rhel-x86_64-server-6-ose-2.0-rhc \
+    --channel=rhel-x86_64-server-6-cf-me-3 \
+    --channel=rhel-x86_64-server-6.4.z \
+    --channel=rhel-x86_64-server-6-rhs-2.1 \
+    --channel=rhel-x86_64-server-sfs-6.4.z \
+    --channel=rhn-tools-rhel-x86_64-server-6.4.z 
+----
++
+. Login to UI http://<Satellite ip or hostname>
+. Create an activation key 
+.. From Systems -> Activation Keys -> create new key
+.. Select Child Channels
+.. Select desired child channels. For an OpenStack system choose:
+... _Red Hat OpenStack_ 
+... _Red Hat Common (for RHEL 6 Server x86_64)_
+.. Click _Update Key_
+. Create profile pointing to key Systems -> Kickstart -> Profiles -> create a new kickstart profile
+.. Select Activation key created
+.. Be sure to select kickstart tree for RHEL 6.5
+. From the Satellite CLI Edit _/etc/cobbler/settings_ and turn on +manage_{dns,dhcp}+
+. Install dhcp and bind
+
+[[KVM_CLI]]
+===== KVM CLI
+This section covers the +virt-install+ CLI, see <<KVM_GUI>> if desired instead.
+
+. Create a new VM from +virt-install+ command line
+.. Run the following as root (or sudo).  Ensure you are in a X desktop
++
+----
+sudo virt-install --name=rhel-6.5-template.kvm --memory=1024 --vcpus=1 \
+  --cpu=host --location=/tmp/rhel-server-6.5-x86_64-dvd.iso \ 
+  --os-type=linux --os-variant=rhel6 \
+  --disk size=50,sparse=true,format=qcow2,pool=default \ 
+  --network=network=brpxe,model=virtio \
+  --network=network=brprivate,model=virtio \
+  --network=network=brpublic,model=virtio \
+  --graphics spice --virt-type=kvm
+----
++
+.. Configure eth0 to connect on boot automatically
+.. Configure eth2 to connect on boot automatically
+.. Use 'Basic Server' or 'Minimal Server'
+.. Complete RHEL install 
+
+Proceed to <<Setup_Local_Repos>>
+
+==== VirtualBox
+TBD
+
+==== Vagrant
+TBD
+
+Proceed to <<Setup_Local_Repos>>
+
+[[Setup_Local_Repos]]
+=== Setup Local Repositories
+IMPORTANT: It is highly recommended to setup a local repository server on this master image. This allows every clone that is created to have local repositories and not have to worry about connecting to another dedicated repo server. If you already have a Satellite server or other repository server you can skip to <<Anonymize_VM>>, but setting up local repos on the master image will speed up the labs significantly and free up resources so the Satellite server can be shut down.
+
+* Create directory in /var/www/html/repos to hold all the repositories
++
+----
+mkdir -p /var/www/html/repos
+----
+
+Follow the section that matches your situation to synchronize repositories.
+
+==== Sync from Official Sources
+
+. Register the master VM to all channels needed via rhn_register or subscription manager.
+.. To register to Satellite with the +bootstrap+ script:
++
+----
+wget -O - http://<satellite IP or hostname>/pub/bootstrap/bootstrap-rhelosp.sh | bash
+----
++
+.. To register with a Satellite server or RHN Classic:
++
+----
+rhn-channel --add \
+    --channel=rhel-x86_64-server-6 \
+    --channel=rhel-x86_64-server-ha-6 \
+    --channel=rhel-x86_64-server-lb-6 \
+    --channel=rhel-x86_64-server-sfs-6 \
+    --channel=rhel-x86_64-server-6-ost-4 \
+    --channel=rhel-x86_64-server-rh-common-6 \
+    --channel=rhel-x86_64-server-6-cf-me-3 \
+----
++
+.. To register with Subscription Manager:
++
+... Reigster with your username
++
+----
+subscription-manager register --username=<your username>
+----
++
+... List availble subscriptions:
++
+----
+subscription-manager list --available
+----
++
+... Subscribe to the emplmoyee pool
++
+----
+subscription-manager subscribe --pool=<employee pool id>
+----
++
+... Enable OpenStack channel by editing the repo file in +/etc/yum.repos.d+ and change +enabled = 0+ to +enabled = 1+ for every channel needed
++
+----
+[rhel-6-server-openstack-4.0-rpms]
+name = Red Hat OpenStack 4.0 (RPMs)
+baseurl = https://cdn.redhat.com/content/dist/rhel/server/6/$releasever/$basearch/openstack/4.0/os
+enabled = 0
+gpgcheck = 1
+----
++
+. Sync the repositories locally:
++
+----
+reposync -lmnp /var/www/html/repos/
+----
+
+Proceed to: <<Configure_Repos>>
+
+==== Sync from Engineering Repositories
+If connected to VPN with a fast connection, a snapshot of the currnet repositories can be captured from the intenral Engineering repositories.
+
+NOTE: This seciton is only here for informational purposes, for the bootcamp class skip to <<Configure_Repos>>.
+
+. Use wget against http://download.devel.redhat.com
++
+----
+wget --mirror --continue --no-parent <url>
+----
++
+. e.g. To grab the following channels:
++
+----
+cd /var/www/html/repos/
+wget --mirror --continue --no-parent http://download.devel.redhat.com/released/RHEL-6-RHOS/4.0/RHOS-4.0/x86_64/os/
+wget --mirror --continue --no-parent http://download.devel.redhat.com/released/RHEL-6/6.5/Server/x86_64/os/
+----
+
+Alternlatively point a repo file directly to the repos. This is useful when wanting the latest snapshot versions of repos. For example, some channels have a repo file ready to place in +/etc/yum.repos.d/+ e.g. http://download.devel.redhat.com/released/RHEL-6-RHOS/4.0/RHOS-4.0.repo. Others require creating a repo pointing to the directory e.g.:
+----
+[rhel]
+name=rhel6.5
+baseurl=http://download.devel.redhat.com/released/RHEL-6/6.5/Server/x86_64/os/
+gpgcheck=0
+enabled=1
+----
+
+Proceed to: <<Configure_Repos>>
+
+==== Copy RHEL 6.5 ISO
+As a last resort an ISO can be used to setup a local repository. However, be warned that some software such as Foreman require updated RHEL 6.5 so an ISO repository is not a good idea. These steps are included for informational purposes only. You should really skip to <<Configure_Repos>>.
+
+. Sync contents of RHEL 6.5 ISO to new repos directory.  Easist way is to attach the ISO file you downloaded earlier during initial vm setup to the reposrv virtual CDROM device, then mount it as described below.  Alternatively you could simply scp the ISO file from your host laptop to the reposrv VM. 
++
+----
+mkdir -p /mnt/cd
+mount -o loop /dev/cdrom /mnt/cd/
+rsync -avP /mnt/cd/ /var/www/html/repos/rhel-x86_64-server-6/
+restorecon -Rv /var/www/html/repos/
+----
++ 
+. Repeat similar steps to for the _rhel-x86_64-server-6-ost-4_ and _rhel-x86_64-server-rh-common-6_ repo directories.
+
+NOTE: Instructor may provide you with a copy of these repos to save time if you didn't complete the pre-reqs.
+
+Proceed to: <<Configure_Repos>>
+
+[[Configure_Repos]]
+=== Configure Repositories
+
+. Copy the +images/+ direcotry from either Satellite or a RHEL 6.5 ISO. These are used to PXE boot systems with Foreman
+.. To copy these from a RHEL ISO:
++
+----
+rsync -avP <local_of_ISO>/images/ /var/www/html/repos/rhel-x86_64-server-6/images/
+----
++
+.. To copy these from a Satellite server:
++
+----
+rsync -avP <satellite_ip>:/var/satellite/rhn/kickstart/ks-rhel-x86_64-server-6-6.5/images/ /var/www/html/repos/rhel-x86_64server-6/images/
+----
++
+. Install _createrepo_ rpm to create repositories out of the local files
++
+----
+yum install createrepo-<version>.rpm python-deltarpm-<version>.rpm deltarpm-<version>.rpm
+----
++
+. Setup local repos in _/etc/yum.repos.d/local.repo_
++
+----
+[rhel-6.5]
+name=rhel6.5
+baseurl=file:///var/www/html/repos/rhel-x86_64-server-6/
+gpgcheck=0
+enabled=1
+
+[rhel-osp-4]
+name=rhel-osp-4
+baseurl=file:///var/www/html/repos/rhel-x86_64-server-6-ost-4/
+gpgcheck=0
+enabled=1
+
+[rh-common]
+name=rh-common
+baseurl=file:///var/www/html/repos/rhel-x86_64-server-rh-common-6/
+gpgcheck=0
+enabled=1
+----
++
+. The remaining repositories can be added as needed. These are the main repos required for most OpenStack labs.
++
+. On each repository run: +createrepo <repo>+
++
+----
+cd /var/www/html/repos/
+createrepo rhel-x86_64-server-6-ost-4
+createrepo rhel-x86_64-server-rh-common-6
+----
++
+. For the main RHEL channel, use the +-g+ option to create group metadata using the +comps.xml+ file that should have been dowloaded from +reposync+.
++
+----
+cd /var/www/html/repos/rhel-x86_64-server-6/
+createrepo -g comps.xml .
+----
+
+[[Verify_Repos]]
+=== Verify Repositories
+. Verify repositories are configured by listing repos:
++
+Command:
++
+----
+yum repolist
+----
++
+Output:
++
+----
+Loaded plugins: product-id, rhnplugin, security, subscription-manager
+This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.
+This system is receiving updates from RHN Classic or RHN Satellite.
+rhel-x86_64-server-6   				| 1.5 kB   00:00  
+rhel-x86_64-server-6-ost-4  		 	| 1.3 kB  00:00  
+rhel-x86_64-server-rh-common-6  		| 1.3 kB   00:00  
+rhn-tools-rhel-x86_64-server-6   		| 1.3 kB   00:00  
+repo id  			repo name  			status
+rhel-x86_64-server-6   		Red Hat Enterprise Linux Server (v. 6 for 64-bit x86 12,310
+rhel-x86_64-server-6-ost-4   	Red Hat OpenStack 4.0   603
+rhel-x86_64-server-rh-common-6 	Red Hat Common (for RHEL 6 Server x86_64)  19
+rhn-tools-rhel-x86_64-server-6 	RHN Tools for RHEL (v. 6 for 64-bit x86_64)122
+repolist: 13,054
+----
++
+. Verify group metadata is available
++
+----
+yum grouplist
+----
++
+----
+yum search openstack
+----
+
+[[Anonymize_VM]]
+=== Anonymize VM for Template Use
+To completely anonymize a RHEL system, you can use the +sys-unconfig+ tool (similar to Windows(tm) +sysprep+) but it requires creating a root password and other initial configuration details. A better method is to simply anonymize the network details so all future VMs linked to this VM will simply start up and grab DHCP.
+
+. Edit all three network configuration files (ifcfg-eth0, ifcfg-eth1, and ifcfg-eth2) and remove all unique identifiers. Also set +PEERDNS=no+ on +eth1+ and +eth2+
++
+.. _/etc/sysconfig/network-scripts/ifcfg-eth0_
++
+----
+DEVICE=eth0
+TYPE=Ethernet
+ONBOOT=yes
+PEERDNS=yes
+BOOTPROTO=dhcp
+----
++
+.. _/etc/sysconfig/network-scripts/ifcfg-eth1_
++
+----
+DEVICE=eth1
+TYPE=Ethernet
+ONBOOT=yes
+PEERDNS=no
+BOOTPROTO=none
+----
++
+.. _/etc/sysconfig/network-scripts/ifcfg-eth2_
++
+----
+DEVICE=eth2
+TYPE=Ethernet
+ONBOOT=yes
+PEERDNS=no
+BOOTPROTO=dhcp
+----
++
+. Remove _/etc/udev/rules.d/70-persistent-net.rules_ so all entries for eth0, eth1 and eth2 are removed.
++
+----
+rm -f /etc/udev/rules.d/70-persistent-net.rules
+----
++
+. Create a rule to disable any future creation of this net rule so future cloned VMs will not have any issues:
++
+----
+ln -s /dev/null /etc/udev/rules.d/75-persistent-net-generator.rules
+----
++
+. Edit _/etc/sysconfig/network_ and change hostname to something like *changeme.<your domain>.<your TLD>* e.g. *changeme.vm.lab*
+. If this VM was registered to Satellite, RHN, or Subscription Manager, unregister it so the local repositories will be used instead:
+.. For Satellite, simply remove +/etc/sysconfig/rhn/systemid+
+.. For Subscription Manager run +subscription-manager unregister+
+.. Remove ssh keys
++
+----
+rm -f /etc/ssh/ssh_host_*
+----
++
+. Poweroff VM

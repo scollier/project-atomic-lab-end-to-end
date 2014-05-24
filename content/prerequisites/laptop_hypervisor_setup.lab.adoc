@@ -1,0 +1,172 @@
+NOTE: The following virtual network segments will be used for the labs:
+
+* Single Interface using KVM	Default Network		(eth0)  
+
+=== KVM Setup
+
+NOTE: Virtualization software must be installed on your system in order to complete the setup steps (see pre-reqs doc for details).  For these labs, we will assume a functioning KVM environment. 
+
+
+==== KVM Networking Config
+These steps walk through setting up KVM networking using either the GUI or CLI.  
+
+. Using the GUI (virt-manager) - See below if you want to use command line
+.. Launch virt-manager UI
+... run virt-manager from the command line (enter root password if prompted)
+.. Create PXE Network (for eth0) - Isolated virtual network
+... In virt-manager, right-click on 'localhost (QEMU)' and click details 
+... Click 'Virtual Networks' tab
+... Click '+' and then 'Forward' 
+... Network Name: brpxe	-> click 'Forward'
+... 10.10.0.0/24 
+... Uncheck Enable DHCPv4.  The pxe network should NOT have DHCP as it will be provided by Foreman.  Click 'Forward'
+... Click Forward to skip over IPv6 config
+... Ensure that it is an 'Isolated virtual network' -> Click Forward
+... Click Finish
+.. Create the Private Network (for eth1) - Isolated virtual network
+... Repeat steps as above with the following: 
+.... Network Name: brprivate
+.... Subnet: 192.168.100.0/24
+.... Disable DHCP (Nova-Network will provide this if needed)
+.... Ensure this is an 'isolated virtual network' 
+.. Create the Public/External Network (for eth2) - NAT 
+... Repeat steps as above with the following: 
+.... Network Name: brpublic
+.... Subnet: 172.16.0.0/24
+.... Disable DHCP (we will specify a fixed range within Neutron or Nova-network) 
+.... Ensure this is 'Forwarding to physical network'
+..... Destination: Any physical device
+..... Mode: NAT
+. Using the Command Line as root (Skip this section if you've completed the GUI section above)
+.. Run the following commands to configure the brpxe, brprivate, and brpublic networks
++
+----
+virsh net-list --all
+vi /etc/sysctl.conf (or /etc/sysctl.d/99-sysctl.conf)-> Ensure net.ipv4.ip_forward = 1 
+# You may want to start the default network if inactive (although this is optional)
+virsh net-autostart default
+virsh net-start default
+
+cat << EOF >> /usr/share/libvirt/networks/brpxe.xml 
+<network>
+  <name>brpxe</name>
+  <domain name='brpxe' />
+  <ip address='10.10.0.1' netmask='255.255.255.0'>
+  </ip>
+</network>
+EOF
+
+virsh net-define /usr/share/libvirt/networks/brpxe.xml
+virsh net-autostart brpxe
+virsh net-start brpxe
+
+cat << EOF >> /usr/share/libvirt/networks/brprivate.xml
+<network>
+  <name>brprivate</name>
+  <domain name='brprivate' />
+  <ip address='192.168.100.1' netmask='255.255.255.0'>
+  </ip>
+</network>
+EOF
+
+virsh net-define /usr/share/libvirt/networks/brprivate.xml
+virsh net-autostart brprivate
+virsh net-start brprivate
+
+cat << EOF >> /usr/share/libvirt/networks/brpublic.xml
+<network>
+  <name>brpublic</name>
+  <domain name='brpublic' />
+  <forward mode='nat'/>
+  <ip address='172.16.0.1' netmask='255.255.255.0'>
+  </ip>
+</network>
+EOF
+
+virsh net-define /usr/share/libvirt/networks/brpublic.xml
+	# Note this will create NAT rules in iptables
+virsh net-autostart brpublic 
+virsh net-start brpublic
+----
++
+
+.. 'ifconfig -a' should now show 'virbr' interfaces that you just created.  
+.. 'virsh net-list --all' can also verify your networks
+
+KVM Networking completed, skip to: <<Initial_VM_Setup>>
+
+
+=== VMware Fusion Setup
+To get started make sure to download and install _VMware Fusion Pro 6_
+
+==== VMware Fusion Networking
+The PXE network that will be used to serve DHCP to other VMs by either Satellite, Foreman, cobbler or other means will need to control DHCP. The instructions for creating these private networks and disabling VMware Fusions' DHCP functionality on each network are explained here. This lab will use _Network Adapter 1/eth0_ for provisioning.
+
+. In VMware Fusion add two private networks without DHCP
+.. Select VMware Fusion -> Preferences in the main Mac menu
+.. Select Network tab in the top right of the preferences menu
+.. Select the lock in the lower-left
+.. Click the *+* to add a network
+.. A new network should appear in the list under _Custom_ called _vmnetX_
+.. Change the +Subnet IP+ to _10.10.0.0_ and +Subnet Mask+ _255.255.255.0_
+.. Select _Apply_
+.. Unselect _Provide addresses on this network via DHCP
+.. Select _Apply_ again
+.. Repeat the process to add another private network
+... The Subnet IP for the second private network should be _192.168.100.0_ and +Subnet Mask+ _255.255.255.0_
+.. Repeat this process to add a third network
+... This will be the public network
+... Leave DHCP enabled
+... Change the +Subnet IP+ to _172.16.0.0_
+... Set the +Subnet Mask+ to _255.255.255.0_
+
+==== Disable DHCP on PXE Network from the CLI
+If you prefer using the CLI (or do not have the Professional version) the following methods can be used to manipulate networking.
+
+. To edit the file by hand In a Mac OS X terminal run:
++
+----
+sudo vim /Library/Preferences/VMware\ Fusion/networking
+----
++
+. Identify which network is used for _eth0_ (On mine it is VNET_1)
+. Change: _answer VNET_1_DHCP no_
+
+. To use the cli to modify DHCP:
++
+----
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_2_DHCP no
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_2_HOSTONLY_SUBNET 10.10.0.0
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_2_HOSTONLY_NETMASK 255.255.255.0
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_2_VIRTUAL_ADAPTER yes
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_3_DHCP no
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_3_HOSTONLY_SUBNET 192.168.100.0
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_3_HOSTONLY_NETMASK 255.255.255.0
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_3_VIRTUAL_ADAPTER yes
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_4_DHCP yes
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_4_HOSTONLY_SUBNET 172.16.0.0
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_4_HOSTONLY_NETMASK 255.255.255.0
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cfgcli VNET_4_VIRTUAL_ADAPTER yes
+----
+
+. Reload VMware networking to read in the new setting
++
+----
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli --configure
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli --stop
+sudo /Applications/VMware\ Fusion.app/Contents/Library/vmnet-cli --start
+----
++
+. Once a VM is setup double-check DHCP does not work by requesting an address on eth2 (create a linked clone to test or use the original VM but remmber to remove the udev rules that are created)
+
+Proceed to: <<Initial_VM_Setup>>
+
+=== VMware Workstation Setup
+Steps go here
+
+Proceed to: <<Initial_VM_Setup>>
+
+=== Parallels Setup
+Steps go here
+
+Proceed to: <<Initial_VM_Setup>>

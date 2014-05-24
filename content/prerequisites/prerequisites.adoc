@@ -1,0 +1,21 @@
+=  Project Atomic Pre-requisites
+:icons:
+
+. Laptop Hardware
+.. Provisioned with Fedora 20 or RHEL 7
+.. Minimum 8GB RAM, 16GB preferred
+.. Minimum 100GB hard drive (SSD preferred)
+. Laptop Software
+.. Fedora 20 or RHEL 7
+.. Virtualization software
+... qemu-kvm
+... virt-manager
+... libvirt-daemon-kvm
+... OR you can simply install the "Virtualization" group via "yum groupinstall Virtualization"
+.. Yum Repositories
+... Due to limited network access inside classroom, we recommend you sync the appropriate repo to your laptop prior to bootcamp
+. Project Atomic KVM Image
+.. Need to have the Project Atomic image downloaded ahead of time.
+.. The Project Atomic image has a fairly small hard drive, ~ 8GB.  
+... Add a second hard drive via virt-manager to the image that is at least 25GB in size, can be sparse.
+... Format and mount the extra disk drive as ext4 or xfs and mount to /var/lib/docker

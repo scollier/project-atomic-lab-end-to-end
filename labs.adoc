@@ -1,0 +1,46 @@
+= Project Atomic Labs
+<scollier@redhat.com>
+Updated: 2014-05-19 10:57
+:data-uri:
+:icons:
+:toc:
+:homepage http://projectatomic.io/:
+
+== Labs Overview
+
+This lab consolidates some existing information about project atomic and adds some new material as well. 
+
+== Laptop Hypervisor Setup
+include::laptop_hypervisor_setup.lab.adoc[tabsize=2]
+
+[[Compose_Server_Setup]]
+== Compose Server Setup
+include::configure_pa_compose_server.lab.adoc[tabsize=2]
+ 
+[[Configure_PA_VMs]]
+== Configure Project Atomic VMs
+include::configure_pa_vms.lab.adoc[tabsize=2]
+
+[[Docker_Basics]]
+== Docker Basics
+include::docker_pa_basics.lab.adoc[tabsize=2]
+
+[[Building Images]]
+== Building Docker Images
+include::building_images_pa.lab.adoc[tabsize=2]
+
+[[geard]]
+== Intro to geard
+include::geard_pa.lab.adoc[tabsize=2]
+
+[[Upgrade_Rollback]]
+== Upgrading and Rolling back a Project Atomic Host
+include::collaboration.lab.adoc[tabsize=2]
+
+[[More Information]]
+== More Information
+include::more_information.pa.lab.adoc[tabsize=2]
+
+[[Appendix]]
+== Appendix
+include::appendix.lab.adoc[tabsize=2]

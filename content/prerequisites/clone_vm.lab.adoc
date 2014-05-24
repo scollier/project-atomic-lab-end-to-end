@@ -1,0 +1,105 @@
+
+=== Create a Cloned VM
+
+To setup a new cloned VM follow the instructions below for your platform.
+
+==== In VMware Fusion
+Clone the template VM as linked clone 
+
+. In VMWare Fusion, do this by right-clicking on template VM
+. Choose _Create Linked Clone_
+
+Proceed to <<Setup_Repo_Server>>
+
+==== In KVM
+Clone the template VM as linked clone 
+
+. In KVM, do this on the commmand line as follows
++
+NOTE: The path to the template image may be different on your system if you're not using the default storage pool location
++
+----
+cd /var/lib/libvirt/images
+qemu-img create -f qcow2 -b rhel-6.5-template.kvm.qcow2 reposrv.qcow2
+qemu-img info reposrv.qcow2
+# Instantiate the VM 
+sudo virt-install --name=reposrv --memory=1024 --vcpus=1 \
+  --cpu=host --os-type=linux --os-variant=rhel6 \
+  --disk path=/var/lib/libvirt/images/reposrv.qcow2,device=disk,format=qcow2 \
+  --network=network=brpxe,model=virtio \
+  --network=network=brprivate,model=virtio \
+  --network=network=brpublic,model=virtio \
+  --graphics spice --virt-type=kvm --import
+----
++
+NOTE: To commit changes to the base image:
+  qemu-img commit -f qcow2 reposrv.qcow2
+To remove image, just rm reposrv.qcow2
+
+Proceed to <<Setup_Repo_Server>>
+
+==== In VMware Workstation
+TBD
+Proceed to <<Setup_Repo_Server>>
+
+==== In Parallels
+TBD
+Proceed to <<Setup_Repo_Server>>
+
+==== In VirtualBox
+TBD
+Proceed to <<Setup_Repo_Server>>
+
+
+[[Setup_Repo_Server]]
+=== Setup Repository Server
+Create a cloned VM to be setup as a dedicated repository server. 
+
+Configure the hostname and network information for the repository server if one is not already setup.
+
+. Set the hostname 
++
+----
+hostname reposrv.vm.lab
+----
++
+. Make the hostname change persistent... change the hostname in _/etc/sysconfig/network_ 
++
+----
+NETWORKING=yes
+HOSTNAME=reposrv.vm.lab
+----
++
+. Edit _/etc/sysconfig/network-scripts/ifcfg-eth0_ and configure a static IP
++
+----
+DEVICE=eth0
+TYPE=Ethernet
+ONBOOT=yes
+BOOTPROTO=static
+IPADDR=10.10.0.10
+NETMASK=255.255.255.0
+----
++
+. Add a temporary entry in _/etc/hosts_ to resolve hostname
++
+----
+10.10.0.10	reposrv.vm.lab  reposrv
+----
++
+. Install httpd server and allow access to repos
++
+----
+yum -y install httpd
+----
++
+. Open port 80 and start the service
++
+----
+lokkit --service=http
+service httpd start
+chkconfig httpd on
+----
++
+NOTE: +lokkit+ doesn't work with firewalld if using a non-RHEL 6 VM.  Instead use +firewall-cmd --add-port=443/tcp --add-port=80/tcp+ and +firewall-cmd --permanent --add-port=443/tcp --add-port=80/tcp+
+
