@@ -755,14 +755,22 @@ Link
 </li>
 </ol></div>
 <div class="sect2">
-<h3 id="_geard_prerequisites">geard Prerequisites</h3>
+<h3 id="_geard_lab_prerequisites">geard Lab Prerequisites</h3>
 <div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Two Atomic hosts
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>hostname   # on host 1
+hostname   # on host 2</code></pre>
+</div></div>
+</li>
 <li>
 <p>
 Check to see that geard and Docker are installed and running
 </p>
-</li>
-</ol></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>rpm -qa | grep -i geard
@@ -770,9 +778,23 @@ rpm -qa | grep -i docker
 systemctl status geard
 systemctl status docker</code></pre>
 </div></div>
+</li>
+<li>
+<p>
+Check for the proper .json files in the users home directory
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls *.json
+http_single.json  mongo_deploy.json</code></pre>
+</div></div>
+</li>
+</ol></div>
 </div>
 <div class="sect2">
-<h3 id="_part_1_deploy_a_single_container">Part 1. Deploy a Single Container</h3>
+<h3 id="_part_1_deploy_a_single_container_br">Part 1. Deploy a Single Container<br /></h3>
+<div class="paragraph"><p><br /></p></div>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -852,6 +874,8 @@ gear list-units</code></pre>
 </div>
 <div class="sect2">
 <h3 id="_part_2_deploy_multiple_containers_on_a_single_host">Part 2. Deploy Multiple Containers on a Single Host</h3>
+<div class="paragraph"><p><br /></p></div>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -919,7 +943,7 @@ Deploy the application. This tells geard to deploy all three web servers on the 
 </li>
 <li>
 <p>
-Check the <em>var/lib/containers/</em> directory again to see what content geard added
+Check the <em>/var/lib/containers/</em> directory again to see what content geard added
 </p>
 <div class="listingblock">
 <div class="content">
@@ -927,485 +951,85 @@ Check the <em>var/lib/containers/</em> directory again to see what content geard
 ls /var/lib/containers/units/</code></pre>
 </div></div>
 </li>
-</ol></div>
-<div class="paragraph"><p>.</p></div>
-<div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-Create a network in Admin &#8594; Networks
+Check <em>systemd</em> integration
 </p>
-<div class="olist loweralpha"><ol class="loweralpha">
-<li>
-<p>
-Use the name <em>public</em> or <em>external</em> or something similar
-</p>
-</li>
-<li>
-<p>
-Select <em>admin</em> for project
-</p>
-</li>
-<li>
-<p>
-Make it an External Network
-</p>
-</li>
-<li>
-<p>
-For Allocation Pool: 172.16.0.100,172.16.0.200
-</p>
-</li>
-</ol></div>
-</li>
-<li>
-<p>
-Create a new project by going to Admin &#8594; Projects &#8594; Create Project
-</p>
-</li>
-</ol></div>
-<div class="paragraph"><p>+
-NOTE: If you get an error check the horizon log at <em>/var/log/horizon/horizon.log</em> most likey this is a bug and can be fixed by editing <em>/etc/openstack-dashboard/local_settings</em> and change the line <code>OPENSTACK_KEYSTONE_DEFAULT_ROLE = "Member"</code> to <code>OPENSTACK_KEYSTONE_DEFAULT_ROLE = "_member_"</code> and restart <code>httpd</code>. However, puppet will overwrite this change later but that will not affect the creation of the project right now.</p></div>
-<div class="paragraph"><p>+
-. Create a user in Admin &#8594; Users and add it to the newly created project</p></div>
-<div class="paragraph"><p>+
-NOTE: You may get an error that the user could not be added to the project but if you check it worked.</p></div>
-<div class="paragraph"><p>+
-. Logout as admin
-. Login as the new user</p></div>
-<div class="paragraph"><p>+
-NOTE: <strong>The remainder of these steps will be done as this user</strong></p></div>
-<div class="paragraph"><p>+
-. Create a keypair by going to Projects &#8594; Access &amp; Security &#8594; Keypairs
-. Download the private key and set permissions on it</p></div>
-<div class="paragraph"><p>+</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code>chmod 600 &lt;downloaded_user_key&gt;.pem</code></pre>
+<pre><code>systemctl status ctr-web-server-1</code></pre>
 </div></div>
-<div class="paragraph"><p>+
-. Upload an image by going to Project &#8594; Images &amp; Snapshots
-. Upload the CirrOS imagelocation <a href="http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img">http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img</a> or see the CLI section below to upload a RHEL image
-. Create a network in Project &#8594; Networks
-.. Call this private or similar
-.. Under Subnet tab provide a name such as private
-.. Network Address: make up a new private network such as 192.168.0.0/24
-.. Leave the rest of the values as default
-.. Leave DHCP enabled
-.. Leave Allocation Pools blank
-.. DNS Name Servers: 172.16.0.2
-. Fill out the subnet details
-. Create a router at Project &#8594; Routers
-.. On the right side of the screen on the newly created router select <em>Set Gateway</em>
-.. For <em>External Network</em> select the external network created by admin
-.. Click on the router name
-.. Select <em>Add Interface</em> and select the private subnet
-. Launch an instance at Project &#8594; Instances
-.. For flavor use m1.small for the rhel-guest-image-6 or m1.tiny for cirros
-.. For <em>Instance Boot Source</em> select <em>Boot from Image</em>
-.. Select the desired image
-.. For <em>Access &amp; Security</em> the key you created earlier should be selected
-.. For Networking select the private network</p></div>
-<div class="paragraph"><p>+
-NOTE: This instance shouly only see the private network</p></div>
-<div class="paragraph"><p>+
-. Allocate a floating IP at Project &#8594; Access &amp; Security &#8594; Floating IPs &#8594; Allocate IPs to Project
-. Associate the floating IP with the instance at Project &#8594; Instances &#8594; More
-. Click on the instane name and view the log or console</p></div>
-<div class="paragraph"><p>+
-NOTE: It make take a few minutes for the log or console to show up</p></div>
-<div class="paragraph"><p>+
-. SSH to your instance and enjoy</p></div>
-<div class="paragraph"><p>+</p></div>
+</li>
+<li>
+<p>
+Check to ensure the web servers are registered with geard and Docker
+</p>
 <div class="listingblock">
 <div class="content">
-<pre><code>ssh -i key.pem cloud-user@floating_ip</code></pre>
+<pre><code>gear list-units
+docker ps</code></pre>
 </div></div>
+</li>
+<li>
+<p>
+Now that we have the ports listed as shown in <em>docker ps</em>, let&#8217;s make sure one of the web servers are running.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>curl http://localhost:4000</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Clean up the environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+gear delete web-server{1,2,3}
+gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
+</ol></div>
 </div>
 <div class="sect2">
-<h3 id="_validate_from_the_cli">Validate from the CLI</h3>
-<div class="paragraph"><p>One of the first steps in configuring OpenStack is to upload an image and boot an instance. A small image is available called <em>cirros</em> or a small RHEL 6.5 image can be used.</p></div>
+<h3 id="_part_3_deploy_a_mongodb_replica_set_on_a_single_host">Part 3. Deploy a MongoDB replica set on a single host</h3>
+<div class="paragraph"><p><br /></p></div>
+<div class="paragraph"><p><strong>On host 1:</strong>
+. Check the environment</p></div>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps</code></pre>
+</div></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-First load the keystone variables so the CLI commands can authenticate
+Explore the <em>mongo_deploy.json</em>
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>source /root/keystonerc_admin</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Setup an SSH keypair
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>nova keypair-add testkey &gt; /root/testkey.pem
-chmod 600 /root/testkey.pem</code></pre>
-</div></div>
-</li>
-</ol></div>
-<div class="sect3">
-<h4 id="_images">Images</h4>
-<div class="paragraph"><p>Using the CirrOS image</p></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-If your controller can access the internet directly, then load the cirros image:
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>glance image-create --name "cirros-0.3.1-x86_64" --disk-format qcow2 --container-format bare --location http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img --is-public true</code></pre>
-</div></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">You can also download the image directly on your laptop and scp it to the controller and load it with <code>--file</code> instead.</td>
-</tr></table>
-</div>
-</li>
-<li>
-<p>
-List images
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>glance image-list</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Show the details of the cirros image and confirm the size is not 0:
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>glance image-show cirros-0.3.1-x86_64</code></pre>
+<pre><code>cat mongo_deploy.json
+{
+  "containers":[
+    {
+      "name":"db",
+      "count":3,
+      "image":"demo/mongo",
+      "publicports":[
+        {"internal":27017,"external":0}
+      ],
+      "links":[
+        {"to":"db","nonlocal":true,"matchport":true}
+      ]
+    }
+  ]
+}</code></pre>
 </div></div>
 </li>
 </ol></div>
-<div class="paragraph"><p>Using the RHEL 6.5 image:</p></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-Install the RHEL OpenStack guest image:
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>yum install rhel-guest-image-6</code></pre>
-</div></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>glance image-create --name rhel-6 --disk-format qcow2 --container-format bare --file /usr/share/rhel-guest-image-6/rhel-guest-image-6-6.5-20140121.0-1.qcow2 --is-public true</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-List images
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>glance image-list</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Show the details of the cirros image and confirm the size is not 0:
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>glance image-show rhel-6</code></pre>
-</div></div>
-</li>
-</ol></div>
-</div>
-<div class="sect3">
-<h4 id="_networking">Networking</h4>
-<div class="sect4">
-<h5 id="_nova_network">Nova Network</h5>
-<div class="paragraph"><p>Update the default security group to allow ping and SSH</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>nova secgroup-add-rule default icmp -1 -1 0.0.0.0/24
-nova secgroup-add-rule default tcp 22 22 0.0.0.0/24</code></pre>
-</div></div>
-<div class="paragraph"><p>Launch an Instance</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>nova flavor-list
-nova image-list
-nova boot testserver --flavor 2 --image cirros-0.3.1-x86_64 --key-name testkey --security-groups default</code></pre>
-</div></div>
-<div class="paragraph"><p>Add a floating IP</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code># In Nova Network
-nova-manage floating list
-# Delete any already used management IP addresses!
-nova-manage floating delete 172.16.0.1
-nova-manage floating delete 172.16.0.10
-nova-manage floating delete 172.16.0.11
-nova-manage floating delete 172.16.0.12
-
-nova add-floating-ip testserver 172.16.0.2</code></pre>
-</div></div>
-<div class="paragraph"><p>Proceed to <a href="#Connect_To_Instance">[Connect_To_Instance]</a></p></div>
-</div>
-<div class="sect4">
-<h5 id="_neutron_network">Neutron Network</h5>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-Create security group rules to allow <code>icmp</code> and <code>ssh</code> traffic
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>neutron security-group-rule-create --protocol icmp --direction ingress default
-neutron security-group-rule-create --protocol tcp --port-range-min 22 --port-range-max 22 --direction ingress default</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Create an external network and subnet as admin
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>neutron net-create pubnet1 --router:external=True
-neutron subnet-create --name pubsubnet1 --dns-nameserver 172.16.0.1 --allocation-pool start=172.16.0.100,end=172.16.0.150 --disable-dhcp pubnet1 172.16.0.0/24</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Capture IDs
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>PUBNETID=$(neutron net-list | grep pubnet1 | awk '{print $2}')</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Create Internal private network
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>neutron net-create privnet1
-neutron subnet-create --name privsubnet1 privnet1 10.0.0.0/24</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Capture Subnet UUID
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>PRIVSUBNET1ID=$(neutron subnet-list | grep privsubnet1 | awk '{print $2}')</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Create router for L3 to connect each network
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>neutron router-create router1
-neutron router-interface-add router1 $PRIVSUBNET1ID</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Set the gateway for your external (physical) network
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>neutron router-gateway-set router1 $PUBNETID</code></pre>
-</div></div>
-</li>
-</ol></div>
-<div class="paragraph"><p>Launch an Instance</p></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-List available flavors
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>nova flavor-list</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-List images
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>nova image-list</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-List networks
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>neutron net-list</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Boot an instance
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>nova boot testserver --flavor 2 --image cirros-0.3.1-x86_64 --key-name testkey --security-groups default --nic net-id=&lt;NET ID&gt;</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-List instances
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>nova list</code></pre>
-</div></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">Wait for an <em>ACTIVE</em> status</td>
-</tr></table>
-</div>
-</li>
-<li>
-<p>
-View the console logs
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>nova console-log testserver</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Add a floating IP. First get the instance ID
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>nova list
-instid=$(nova list | awk '/instance01 / {print $2}')</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Grab the port ID
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>portid=$(neutron port-list --device_id ${instid} | awk '/ip_address/ {print $2}')</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Copy the tenant keystone file to the neutron server
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>scp /root/keystonerc_${USERNAME} ${NEUTRON_NODE}:/root/.
-scp /root/${USERNAME}.pem ${NEUTRON_NODE}:/root/.</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Grab the router ID of the tenant from the Networker node. This could be done on the controller but adds an extra check to make sure neutron server is working
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>routerid=$(ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp;  neutron router-list" | awk '/router1/ {print $2}')</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Grab the qrouter that matches the router ID
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>qrouterid=$(ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp; ip netns list | grep $routerid")</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Grab the private IP and ping it from the neutron server over netns
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>privateip=$(ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp; neutron port-list --device_id ${instid}" | awk '/ip_address/ {print $10}' |  awk -F'"' '{print $2}')</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Ping internal IP over netns
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp; ip netns exec $qrouterid ping -c 3 $privateip"</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Assign a floating IP to the port
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>neutron floatingip-create --port-id $portid ${EXT_NET}</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Grab the floating ip
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>floatip=$( neutron floatingip-list | awk "/$privateip / { print \$6 }")</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Run <code>nova list</code> until the floating ip shows up
-</p>
-</li>
-<li>
-<p>
-Ping floating IP over netns
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp; ip netns exec $qrouterid ping -c 3 $floatip"</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Ping the floating IP
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>ping -c 3 $floatip</code></pre>
-</div></div>
-</li>
-</ol></div>
-<div class="paragraph"><p>Proceed to <a href="#Connect_To_Instance">[Connect_To_Instance]</a></p></div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="Connect_To_Instance">Connect to Instance</h4>
-<div class="paragraph"><p>Confirm you can connect to the instance through the floating IP</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>ssh -i /root/testkey.pem cirros@172.16.0.2
-ssh -i /root/testkey.pem cloud-user@172.16.0.2</code></pre>
-</div></div>
-</div>
 </div>
 </div>
 </div>
@@ -1413,7 +1037,7 @@ ssh -i /root/testkey.pem cloud-user@172.16.0.2</code></pre>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-05-24 10:43:18 CDT
+Last updated 2014-05-24 11:13:14 CDT
 </div>
 </div>
 </body>
