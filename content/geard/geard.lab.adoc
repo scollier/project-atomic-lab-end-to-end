@@ -170,7 +170,6 @@ docker ps
 
 
 === Part 3. Deploy a MongoDB replica set on a single host
-{empty} +
 
 *On host 1:*
 
@@ -279,6 +278,7 @@ docker ps
 *On host 1:*
 
 TBD
+
 
 
 
