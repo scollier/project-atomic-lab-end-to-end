@@ -1,7 +1,122 @@
-=== geard
+== geard
+geard is a Docker container orchestration tool.  At the currrent release, it essentially does three things:
+
+. SSH
+. Multiple container deployment
+. Link
+
+=== geard Prerequisites
+
+. Check to see that geard and Docker are installed and running
+
+----
+rpm -qa | grep -i geard
+rpm -qa | grep -i docker
+systemctl status geard
+systemctl status docker
+----
 
 
-Need to put instructions for geard lab here.
+=== Part 1. Deploy a Single Container
+. Check which units geard has registered
++
+----
+gear list-units
+----
+. Check to see which images are available and running within Docker
++
+----
+docker images
+docker ps
+----
+. Install the first unit
++
+----
+gear install demo/apache web-server --start -p 80:80
+----
+. List the units again
++
+----
+gear list-units
+----
+. Show the container is also recognized by Docker
++
+----
+docker ps
+----
+. Make sure the web server is responding to requests
++
+----
+curl http://localhost
+----
+. List the units one more time
++
+----
+gear list-units
+----
+. Clean up the environmentnd
++
+----
+gear delete web-server
+gear list-units
+----
+
+
+=== Part 2. Deploy Multiple Containers on a Single Host
+. Check the geard environment
++
+----
+gear list-units
+docker ps
+----
+. Check out the _http_single_HTB.json_ file 
++
+----
+cat http_single_HTB.json
+{
+  "Containers": [
+    {
+      "Name": "web-server",
+      "Image": "demo/apache",
+      "PublicPorts": [
+        {
+          "Internal": 80
+        }
+      ],
+      "Links": [
+        {
+          "To": "web-server",
+          "NonLocal": true,
+          "MatchPort": true
+        }
+      ],
+      "Count": 3
+    }
+  ],
+  "IdPrefix": "",
+  "RandomizeIds": false
+}
+----
+This file tells geard to deploy an application with _Name_ "web-server", to use _image_ "demo/apache" with an internal port of 80 and a count of 3.
+
+. Check out the _/var/lib/containers/_ directory.  This is where geard stores it's content. Right now there will not be any content in the _units_ directory.  After a successful launch of the application there will be.
++
+----
+ls /var/lib/containers/
+ls /var/lib/containers/units/
+----
+. Deploy the application. This tells geard to deploy all three web servers on the same host.
++
+----
+gear deploy http_single_HTB.json
+----
+. Check the _/var/lib/containers/_ directory again to see what content geard added
++
+----
+ls /var/lib/containers/
+ls /var/lib/containers/units/
+----
+. 
 
 
 
@@ -15,23 +130,21 @@ Need to put instructions for geard lab here.
 
 
 
-
-
-
-. Login to the  Horizon UI as admin. http://controller_ip
 . Create a network in Admin -> Networks 
 .. Use the name _public_ or _external_ or something similar
 .. Select _admin_ for project
 .. Make it an External Network
-. Create a subnet in Project -> Networks -> Select the created network
-.. Create Subnet 
-.. Use the Subnet name of something like public or external
-.. Network Address: 172.16.0.0/24
-.. Gateway IP: 172.16.0.2
-.. Select Subnet Detail
-.. Disable DHCP as this is the public network
 .. For Allocation Pool: 172.16.0.100,172.16.0.200
 . Create a new project by going to Admin -> Projects -> Create Project
+
+
+
+
+
+
+
+
+
 +
 NOTE: If you get an error check the horizon log at _/var/log/horizon/horizon.log_ most likey this is a bug and can be fixed by editing _/etc/openstack-dashboard/local_settings_ and change the line +OPENSTACK_KEYSTONE_DEFAULT_ROLE = "Member"+ to +OPENSTACK_KEYSTONE_DEFAULT_ROLE = "\_member_"+ and restart +httpd+. However, puppet will overwrite this change later but that will not affect the creation of the project right now.
 +

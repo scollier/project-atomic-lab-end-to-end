@@ -1,0 +1,1420 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.8" />
+<title></title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install();
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_geard">geard</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>geard is a Docker container orchestration tool.  At the currrent release, it essentially does three things:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+SSH
+</p>
+</li>
+<li>
+<p>
+Multiple container deployment
+</p>
+</li>
+<li>
+<p>
+Link
+</p>
+</li>
+</ol></div>
+<div class="sect2">
+<h3 id="_geard_prerequisites">geard Prerequisites</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check to see that geard and Docker are installed and running
+</p>
+</li>
+</ol></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>rpm -qa | grep -i geard
+rpm -qa | grep -i docker
+systemctl status geard
+systemctl status docker</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_part_1_deploy_a_single_container">Part 1. Deploy a Single Container</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check which units geard has registered
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check to see which images are available and running within Docker
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Install the first unit
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear install demo/apache web-server --start -p 80:80</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List the units again
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Show the container is also recognized by Docker
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Make sure the web server is responding to requests
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>curl http://localhost</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List the units one more time
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Clean up the environmentnd
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear delete web-server
+gear list-units</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_part_2_deploy_multiple_containers_on_a_single_host">Part 2. Deploy Multiple Containers on a Single Host</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check the geard environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check out the <em>http_single_HTB.json</em> file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat http_single_HTB.json
+{
+  "Containers": [
+    {
+      "Name": "web-server",
+      "Image": "demo/apache",
+      "PublicPorts": [
+        {
+          "Internal": 80
+        }
+      ],
+      "Links": [
+        {
+          "To": "web-server",
+          "NonLocal": true,
+          "MatchPort": true
+        }
+      ],
+      "Count": 3
+    }
+  ],
+  "IdPrefix": "",
+  "RandomizeIds": false
+}</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>This file tells geard to deploy an application with <em>Name</em> "web-server", to use <em>image</em> "demo/apache" with an internal port of 80 and a count of 3.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check out the <em>/var/lib/containers/</em> directory.  This is where geard stores it&#8217;s content. Right now there will not be any content in the <em>units</em> directory.  After a successful launch of the application there will be.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls /var/lib/containers/
+ls /var/lib/containers/units/</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Deploy the application. This tells geard to deploy all three web servers on the same host.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear deploy http_single_HTB.json</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check the <em>var/lib/containers/</em> directory again to see what content geard added
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls /var/lib/containers/
+ls /var/lib/containers/units/</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Create a network in Admin &#8594; Networks
+</p>
+<div class="olist loweralpha"><ol class="loweralpha">
+<li>
+<p>
+Use the name <em>public</em> or <em>external</em> or something similar
+</p>
+</li>
+<li>
+<p>
+Select <em>admin</em> for project
+</p>
+</li>
+<li>
+<p>
+Make it an External Network
+</p>
+</li>
+<li>
+<p>
+For Allocation Pool: 172.16.0.100,172.16.0.200
+</p>
+</li>
+</ol></div>
+</li>
+<li>
+<p>
+Create a new project by going to Admin &#8594; Projects &#8594; Create Project
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>+
+NOTE: If you get an error check the horizon log at <em>/var/log/horizon/horizon.log</em> most likey this is a bug and can be fixed by editing <em>/etc/openstack-dashboard/local_settings</em> and change the line <code>OPENSTACK_KEYSTONE_DEFAULT_ROLE = "Member"</code> to <code>OPENSTACK_KEYSTONE_DEFAULT_ROLE = "_member_"</code> and restart <code>httpd</code>. However, puppet will overwrite this change later but that will not affect the creation of the project right now.</p></div>
+<div class="paragraph"><p>+
+. Create a user in Admin &#8594; Users and add it to the newly created project</p></div>
+<div class="paragraph"><p>+
+NOTE: You may get an error that the user could not be added to the project but if you check it worked.</p></div>
+<div class="paragraph"><p>+
+. Logout as admin
+. Login as the new user</p></div>
+<div class="paragraph"><p>+
+NOTE: <strong>The remainder of these steps will be done as this user</strong></p></div>
+<div class="paragraph"><p>+
+. Create a keypair by going to Projects &#8594; Access &amp; Security &#8594; Keypairs
+. Download the private key and set permissions on it</p></div>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>chmod 600 &lt;downloaded_user_key&gt;.pem</code></pre>
+</div></div>
+<div class="paragraph"><p>+
+. Upload an image by going to Project &#8594; Images &amp; Snapshots
+. Upload the CirrOS imagelocation <a href="http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img">http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img</a> or see the CLI section below to upload a RHEL image
+. Create a network in Project &#8594; Networks
+.. Call this private or similar
+.. Under Subnet tab provide a name such as private
+.. Network Address: make up a new private network such as 192.168.0.0/24
+.. Leave the rest of the values as default
+.. Leave DHCP enabled
+.. Leave Allocation Pools blank
+.. DNS Name Servers: 172.16.0.2
+. Fill out the subnet details
+. Create a router at Project &#8594; Routers
+.. On the right side of the screen on the newly created router select <em>Set Gateway</em>
+.. For <em>External Network</em> select the external network created by admin
+.. Click on the router name
+.. Select <em>Add Interface</em> and select the private subnet
+. Launch an instance at Project &#8594; Instances
+.. For flavor use m1.small for the rhel-guest-image-6 or m1.tiny for cirros
+.. For <em>Instance Boot Source</em> select <em>Boot from Image</em>
+.. Select the desired image
+.. For <em>Access &amp; Security</em> the key you created earlier should be selected
+.. For Networking select the private network</p></div>
+<div class="paragraph"><p>+
+NOTE: This instance shouly only see the private network</p></div>
+<div class="paragraph"><p>+
+. Allocate a floating IP at Project &#8594; Access &amp; Security &#8594; Floating IPs &#8594; Allocate IPs to Project
+. Associate the floating IP with the instance at Project &#8594; Instances &#8594; More
+. Click on the instane name and view the log or console</p></div>
+<div class="paragraph"><p>+
+NOTE: It make take a few minutes for the log or console to show up</p></div>
+<div class="paragraph"><p>+
+. SSH to your instance and enjoy</p></div>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>ssh -i key.pem cloud-user@floating_ip</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_validate_from_the_cli">Validate from the CLI</h3>
+<div class="paragraph"><p>One of the first steps in configuring OpenStack is to upload an image and boot an instance. A small image is available called <em>cirros</em> or a small RHEL 6.5 image can be used.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+First load the keystone variables so the CLI commands can authenticate
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>source /root/keystonerc_admin</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Setup an SSH keypair
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>nova keypair-add testkey &gt; /root/testkey.pem
+chmod 600 /root/testkey.pem</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="sect3">
+<h4 id="_images">Images</h4>
+<div class="paragraph"><p>Using the CirrOS image</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+If your controller can access the internet directly, then load the cirros image:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>glance image-create --name "cirros-0.3.1-x86_64" --disk-format qcow2 --container-format bare --location http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img --is-public true</code></pre>
+</div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">You can also download the image directly on your laptop and scp it to the controller and load it with <code>--file</code> instead.</td>
+</tr></table>
+</div>
+</li>
+<li>
+<p>
+List images
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>glance image-list</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Show the details of the cirros image and confirm the size is not 0:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>glance image-show cirros-0.3.1-x86_64</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>Using the RHEL 6.5 image:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Install the RHEL OpenStack guest image:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>yum install rhel-guest-image-6</code></pre>
+</div></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>glance image-create --name rhel-6 --disk-format qcow2 --container-format bare --file /usr/share/rhel-guest-image-6/rhel-guest-image-6-6.5-20140121.0-1.qcow2 --is-public true</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List images
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>glance image-list</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Show the details of the cirros image and confirm the size is not 0:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>glance image-show rhel-6</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_networking">Networking</h4>
+<div class="sect4">
+<h5 id="_nova_network">Nova Network</h5>
+<div class="paragraph"><p>Update the default security group to allow ping and SSH</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>nova secgroup-add-rule default icmp -1 -1 0.0.0.0/24
+nova secgroup-add-rule default tcp 22 22 0.0.0.0/24</code></pre>
+</div></div>
+<div class="paragraph"><p>Launch an Instance</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>nova flavor-list
+nova image-list
+nova boot testserver --flavor 2 --image cirros-0.3.1-x86_64 --key-name testkey --security-groups default</code></pre>
+</div></div>
+<div class="paragraph"><p>Add a floating IP</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># In Nova Network
+nova-manage floating list
+# Delete any already used management IP addresses!
+nova-manage floating delete 172.16.0.1
+nova-manage floating delete 172.16.0.10
+nova-manage floating delete 172.16.0.11
+nova-manage floating delete 172.16.0.12
+
+nova add-floating-ip testserver 172.16.0.2</code></pre>
+</div></div>
+<div class="paragraph"><p>Proceed to <a href="#Connect_To_Instance">[Connect_To_Instance]</a></p></div>
+</div>
+<div class="sect4">
+<h5 id="_neutron_network">Neutron Network</h5>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Create security group rules to allow <code>icmp</code> and <code>ssh</code> traffic
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>neutron security-group-rule-create --protocol icmp --direction ingress default
+neutron security-group-rule-create --protocol tcp --port-range-min 22 --port-range-max 22 --direction ingress default</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Create an external network and subnet as admin
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>neutron net-create pubnet1 --router:external=True
+neutron subnet-create --name pubsubnet1 --dns-nameserver 172.16.0.1 --allocation-pool start=172.16.0.100,end=172.16.0.150 --disable-dhcp pubnet1 172.16.0.0/24</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Capture IDs
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>PUBNETID=$(neutron net-list | grep pubnet1 | awk '{print $2}')</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Create Internal private network
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>neutron net-create privnet1
+neutron subnet-create --name privsubnet1 privnet1 10.0.0.0/24</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Capture Subnet UUID
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>PRIVSUBNET1ID=$(neutron subnet-list | grep privsubnet1 | awk '{print $2}')</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Create router for L3 to connect each network
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>neutron router-create router1
+neutron router-interface-add router1 $PRIVSUBNET1ID</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Set the gateway for your external (physical) network
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>neutron router-gateway-set router1 $PUBNETID</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>Launch an Instance</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+List available flavors
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>nova flavor-list</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List images
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>nova image-list</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List networks
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>neutron net-list</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Boot an instance
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>nova boot testserver --flavor 2 --image cirros-0.3.1-x86_64 --key-name testkey --security-groups default --nic net-id=&lt;NET ID&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List instances
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>nova list</code></pre>
+</div></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">Wait for an <em>ACTIVE</em> status</td>
+</tr></table>
+</div>
+</li>
+<li>
+<p>
+View the console logs
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>nova console-log testserver</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Add a floating IP. First get the instance ID
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>nova list
+instid=$(nova list | awk '/instance01 / {print $2}')</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Grab the port ID
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>portid=$(neutron port-list --device_id ${instid} | awk '/ip_address/ {print $2}')</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Copy the tenant keystone file to the neutron server
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>scp /root/keystonerc_${USERNAME} ${NEUTRON_NODE}:/root/.
+scp /root/${USERNAME}.pem ${NEUTRON_NODE}:/root/.</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Grab the router ID of the tenant from the Networker node. This could be done on the controller but adds an extra check to make sure neutron server is working
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>routerid=$(ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp;  neutron router-list" | awk '/router1/ {print $2}')</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Grab the qrouter that matches the router ID
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>qrouterid=$(ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp; ip netns list | grep $routerid")</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Grab the private IP and ping it from the neutron server over netns
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>privateip=$(ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp; neutron port-list --device_id ${instid}" | awk '/ip_address/ {print $10}' |  awk -F'"' '{print $2}')</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Ping internal IP over netns
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp; ip netns exec $qrouterid ping -c 3 $privateip"</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Assign a floating IP to the port
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>neutron floatingip-create --port-id $portid ${EXT_NET}</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Grab the floating ip
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>floatip=$( neutron floatingip-list | awk "/$privateip / { print \$6 }")</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Run <code>nova list</code> until the floating ip shows up
+</p>
+</li>
+<li>
+<p>
+Ping floating IP over netns
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ssh ${NEUTRON_NODE} "source /root/keystonerc_${USERNAME} &amp;&amp; ip netns exec $qrouterid ping -c 3 $floatip"</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Ping the floating IP
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ping -c 3 $floatip</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>Proceed to <a href="#Connect_To_Instance">[Connect_To_Instance]</a></p></div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="Connect_To_Instance">Connect to Instance</h4>
+<div class="paragraph"><p>Confirm you can connect to the instance through the floating IP</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>ssh -i /root/testkey.pem cirros@172.16.0.2
+ssh -i /root/testkey.pem cloud-user@172.16.0.2</code></pre>
+</div></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2014-05-24 10:43:18 CDT
+</div>
+</div>
+</body>
+</html>
