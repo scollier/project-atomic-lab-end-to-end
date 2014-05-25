@@ -318,12 +318,6 @@ docker ps          # on host 1
 docker ps          # on host 2
 ----
 
-
-
-
-
-
-
 === Part 5. SSH Enablement for Containers
 
 *On host 1:*
