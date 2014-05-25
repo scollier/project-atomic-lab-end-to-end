@@ -1223,6 +1223,57 @@ docker ps          # on host 1
 docker ps          # on host 2</code></pre>
 </div></div>
 </li>
+<li>
+<p>
+On host 1, get the pid for the web server container
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker inspect --format '{{ .State.Pid }}' &lt;container uid&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Use <em>nsenter</em> to enter the namespace of the PID and take a look at the IPtables rules. You will see that there is a rule forwarding all traffic to <em>192.168.1.x</em> to the external port on the localhost and the external port on the remote host.  Basically geard is telling the container that every application is local.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>nsenter -m -u -n -i -p -t &lt;PID FROM &lt;container uid&gt;&gt; bash
+iptables -nvL -t nat</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Ensure that you can get the index.html from each host
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>curl http://localhost:&lt;external port localhost&gt;
+curl http://localhost:&lt;external port remote host&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+On host 2, ensure that you can pull that web page as well and compare to the output that you got inside the container on host 1
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps
+curl http://localhost:&lt;external port localhost&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Clean up the environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units   # on host 1
+gear list-units   # on host 2
+gear delete web-server-1    # on host 1
+gear delete web-server-2    # on host 2</code></pre>
+</div></div>
+</li>
 </ol></div>
 </div>
 <div class="sect2">
@@ -1236,7 +1287,7 @@ docker ps          # on host 2</code></pre>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-05-24 20:52:03 CDT
+Last updated 2014-05-24 21:00:47 CDT
 </div>
 </div>
 </body>

@@ -317,6 +317,41 @@ gear list-units    # on host 2
 docker ps          # on host 1
 docker ps          # on host 2
 ----
+. On host 1, get the pid for the web server container
++
+----
+docker inspect --format '{{ .State.Pid }}' <container uid>
+----
+. Use _nsenter_ to enter the namespace of the PID and take a look at the IPtables rules. You will see that there is a rule forwarding all traffic to _192.168.1.x_ to the external port on the localhost and the external port on the remote host.  Basically geard is telling the container that every application is local.
++
+----
+nsenter -m -u -n -i -p -t <PID FROM <container uid>> bash
+iptables -nvL -t nat
+----
+. Ensure that you can get the index.html from each host 
++
+----
+curl http://localhost:<external port localhost>
+curl http://localhost:<external port remote host>
+----
+. On host 2, ensure that you can pull that web page as well and compare to the output that you got inside the container on host 1
++
+----
+docker ps
+curl http://localhost:<external port localhost>
+----
+. Clean up the environment
++
+----
+gear list-units   # on host 1
+gear list-units   # on host 2
+gear delete web-server-1    # on host 1
+gear delete web-server-2    # on host 2
+----
+
+
+
+
 
 === Part 5. SSH Enablement for Containers
 
