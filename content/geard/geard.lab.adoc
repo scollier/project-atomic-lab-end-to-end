@@ -262,6 +262,7 @@ docker ps
 === Part 4. Multi-host Application Linking
 
 *On host 1:*
+
 . Check the environment
 +
 ----
