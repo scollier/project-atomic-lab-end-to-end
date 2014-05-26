@@ -1,0 +1,9 @@
+=== Obtaining the images
+
+=== Validate Storage
+=== Validate Networking
+=== Validate SELinux
+
+
+
+Configure your two atomic hosts
