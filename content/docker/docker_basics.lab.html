@@ -736,7 +736,7 @@ asciidoc.install();
 <div class="sect1">
 <h2 id="_docker">Docker</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>This lab has 4 parts</p></div>
+<div class="paragraph"><p>This lab has 3 sections</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -745,74 +745,27 @@ Overview
 </li>
 <li>
 <p>
-Lab Environment
+Lab 1: Docker Environment
 </p>
 </li>
 <li>
 <p>
-Getting to Know Docker
-</p>
-</li>
-<li>
-<p>
-Containers can Talk!
+Lab 2: Containers can Talk
 </p>
 </li>
 </ol></div>
 <div class="sect2">
-<h3 id="_part_1_overview_of_docker_on_red_hat_enterprise_linux_lab">Part 1: Overview of Docker on Red Hat Enterprise Linux lab</h3>
+<h3 id="_overview_of_docker_on_red_hat_enterprise_linux_lab">Overview of Docker on Red Hat Enterprise Linux lab</h3>
 <div class="paragraph"><p>The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them to be portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.</p></div>
 <div class="paragraph"><p>Red Hat has been investing in containers for a number of years in Red Hat Enterprise Linux and has been working on Docker in the upstream community since mid-2013. Red Hat&#8217;s commitment to Docker and container technology is demonstrated not just in this background work, but also in the efforts to establish Docker containers as a standard part of the Red Hat Enterprise Linux environment. Red Hat has production experience leveraging container technologies like cgroups and namespaces since Red Hat Enterrise Linux 6. Establishing, consuming and sharing these capabilities as a part of Red Hat Enterprise Linux is a major step in making them consumable by enterprise customers.</p></div>
-</div>
-<div class="sect2">
-<h3 id="_assumptions">Assumptions</h3>
+<div class="sect3">
+<h4 id="_assumptions">Assumptions</h4>
 <div class="paragraph"><p>This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.</p></div>
 <div class="paragraph"><p>This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises.</p></div>
 <div class="paragraph"><p>A working knowledge of Linux-based tools and services such as telnet, Apache, etc&#8230; are assumed.  If you do not have an understanding of any of these technologies, please let the instructors know.</p></div>
 </div>
-<div class="sect2">
-<h3 id="_what_you_can_expect_to_learn_from_this_training_class">What you can expect to learn from this training class</h3>
-<div class="paragraph"><p>Topics covered:</p></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-Starting / stopping containers
-</p>
-</li>
-<li>
-<p>
-Container / host exploration
-</p>
-</li>
-<li>
-<p>
-External Logging
-</p>
-</li>
-<li>
-<p>
-Saving Content
-</p>
-</li>
-<li>
-<p>
-Starting containers on boot
-</p>
-</li>
-<li>
-<p>
-Linking containers
-</p>
-</li>
-<li>
-<p>
-Dockerfiles
-</p>
-</li>
-</ol></div>
-</div>
-<div class="sect2">
-<h3 id="_part_2_lab_environment">Part 2: Lab Environment</h3>
+<div class="sect3">
+<h4 id="_lab_environment">Lab Environment</h4>
 <div class="paragraph"><p>Red Hat Enterprise Linux provides shared services for Docker. A couple of these shared services are systemd and selinux.  This lab will help to familiarize you with the common actions performed on Docker containers and images. The first part of the lab starts out on the host machine, the machine that runs all the containers.  Then we&#8217;ll move on to container inspection.</p></div>
 <div class="paragraph"><p>Accessing the Environment:
 You will have a virtual machine running on this host.  You&#8217;ll need to SSH into that virtual machine to complete the labs.  You can open <em>virt-manager</em> to get the IP Address, then SSH into it from the workstation.</p></div>
@@ -828,8 +781,47 @@ SSH Access
 </li>
 </ol></div>
 </div>
+<div class="sect3">
+<h4 id="_what_you_can_expect_to_learn_from_this_lab">What you can expect to learn from this lab</h4>
+<div class="paragraph"><p>Topics covered:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Explore Docker
+</p>
+</li>
+<li>
+<p>
+Saving Content
+</p>
+</li>
+<li>
+<p>
+Host exploration
+</p>
+</li>
+<li>
+<p>
+External Logging
+</p>
+</li>
+<li>
+<p>
+Starting containers on boot
+</p>
+</li>
+<li>
+<p>
+Linking containers
+</p>
+</li>
+</ol></div>
+</div>
+</div>
 <div class="sect2">
-<h3 id="_part_3_getting_to_know_docker">Part 3: Getting to Know Docker</h3>
+<h3 id="_lab_1_docker_overview">Lab 1: Docker Overview</h3>
+<div class="sect3">
+<h4 id="_explore_docker">Explore Docker</h4>
 <div class="paragraph"><p>All actions in this lab will performed by the user <em>root</em>.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -933,11 +925,8 @@ What is the SELinux security label of the processes?
 </li>
 </ol></div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_1_2_saving_content">1.2 Saving Content</h2>
-<div class="sectionbody">
+<div class="sect3">
+<h4 id="_saving_content">Saving Content</h4>
 <div class="paragraph"><p>Now that we have an idea of what&#8217;s going on inside the container, let&#8217;s take a look at the process required to save a file.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1004,10 +993,8 @@ exit</code></pre>
 </li>
 </ol></div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_1_3_run_an_image_and_look_around">1.3 Run an Image and Look Around</h2>
-<div class="sectionbody">
+<div class="sect3">
+<h4 id="_host_exploration">Host exploration</h4>
 <div class="paragraph"><p>Now that we have explored what&#8217;s on the inside of a container, let&#8217;s see what is going on outside of the container.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1109,10 +1096,8 @@ docker ps -a</code></pre>
 </li>
 </ol></div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_1_4_where_are_my_logs">1.4 Where are my logs?</h2>
-<div class="sectionbody">
+<div class="sect3">
+<h4 id="_where_are_my_logs">Where are my logs?</h4>
 <div class="paragraph"><p>The containers do not run syslog.  In order to get logs from the container, there are a couple of methods.  The first is to run the container with <em>/dev/log</em> socket bind mounted inside the container.  The other is to write to external volumes.  That&#8217;s in a later lab.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1156,10 +1141,8 @@ Check the logs on the host to ensure the bind mount was successful.
 </li>
 </ol></div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_1_5_control_that_service">1.5 Control that Service!</h2>
-<div class="sectionbody">
+<div class="sect3">
+<h4 id="_control_that_service">Control that Service!</h4>
 <div class="paragraph"><p>We can control services with systemd.  Systemd allows us to start, stop, and control which services are enabled on boot, among many other things.  In this section we will use systemd to enable the <em>nginx</em> service to start on boot.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1238,6 +1221,8 @@ systemctl disable nginx.service</code></pre>
 </div></div>
 </li>
 </ol></div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1729,7 +1714,8 @@ Now, how did this work?  The way this works is that the Dockerfile <em>CMD</em> 
     if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
         edit_in_place /var/www/html/wiki/LocalSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
         sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
-    fi</code></pre>
+    fi
+fi</code></pre>
 </div></div>
 </li>
 </ol></div>
@@ -1765,7 +1751,7 @@ Source: <a href="https://github.com/scollier/Summit2014DockerLab/blob/master/sum
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-05-25 13:07:57 CDT
+Last updated 2014-05-26 11:00:33 CDT
 </div>
 </div>
 </body>
