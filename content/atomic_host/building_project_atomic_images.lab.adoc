@@ -1,5 +1,23 @@
 === Obtaining the images
 
+. Create the directory structure.
++
+----
+cd ~
+mkdir -p atomic/{1,2}
+----
+. Download and decompress the images to the appropriate directories
++
+----
+wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz
+----
+. Unzip the image
++
+----
+
+----
+
+
 === Validate Storage
 === Validate Networking
 === Validate SELinux

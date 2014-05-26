@@ -744,7 +744,7 @@ asciidoc.install(2);
 <div class="sect1">
 <h2 id="_introduction">Introduction</h2>
 <div class="sectionbody">
-<div class="paragraph"><p>Project Atomic and Docker are very fast moving spaces at the moment.  There is a already lot of existing documentation out there.  This lab attempts to make use of some of that documentation and provide a comprehensive example of an end to end deployment using Project Atomic components.  Considering how fast moving this space is, if you use this guide and find some steps, or anything out of date, please submite a PR and let&#8217;s get it fixed.</p></div>
+<div class="paragraph"><p>Project Atomic and Docker are very fast moving spaces at the moment.  There is a already lot of existing documentation out there.  This lab attempts to make use of some of that documentation and provide a comprehensive example of an end to end deployment using Project Atomic components.  Considering how fast moving this space is, if you use this guide and find some steps, or anything out of date, please submite a PR and let&#8217;s get it fixed. I will try to include links to external documentation that I borrowed from when possible.</p></div>
 </div>
 </div>
 <div class="sect1">
@@ -752,6 +752,36 @@ asciidoc.install(2);
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_obtaining_the_images">Obtaining the images</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Create the directory structure.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+mkdir -p atomic/{1,2}</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Download and decompress the images to the appropriate directories
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Unzip the image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code></code></pre>
+</div></div>
+</li>
+</ol></div>
 </div>
 <div class="sect2">
 <h3 id="_validate_storage">Validate Storage</h3>
