@@ -1,4 +1,4 @@
-== geard
+=== geard
 geard is a Docker container orchestration tool.  At the currrent release, it essentially does three things:
 
 . SSH
@@ -349,9 +349,6 @@ gear list-units   # on host 2
 gear delete web-server-1    # on host 1
 gear delete web-server-2    # on host 2
 ----
-
-
-
 
 
 === Part 5. SSH Enablement for Containers
