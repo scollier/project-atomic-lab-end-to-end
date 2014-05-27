@@ -1,9 +1,10 @@
 ### README
+
 This repository holds various labs used for the Project Atomic lab.
 
-Please refer to the asciidoc user's guide: http://asciidoctor.org/docs/asciidoc-writers-guide/
+Pull the repo and build the documents by running the *make* command in the base of the repo directory.
 
-This cheat sheet is also very helpful: http://powerman.name/doc/asciidoc
+	make
 
 ### ASCIIDOC Quick Start Guide on Linux
 
@@ -22,3 +23,7 @@ NOTE: The following are now done with the "make" command and various targets but
 * To create a PDF:  a2x -fpdf -dbook --fop --no-xmllint -v <asciidoc file>
 
 * To create an EPUB: a2x -fepub -dbook --no-xmllint -v <asciidoc file>
+
+Please refer to the asciidoc user's guide: http://asciidoctor.org/docs/asciidoc-writers-guide/
+
+This cheat sheet is also very helpful: http://powerman.name/doc/asciidoc
