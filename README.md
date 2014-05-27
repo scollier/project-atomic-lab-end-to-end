@@ -2,9 +2,9 @@
 
 This repository holds various labs used for the Project Atomic lab.
 
-Pull the repo and build the documents by running the *make* command in the base of the repo directory.
+Pull the repo and build the documents by running the *make* command in the base of the repo directory.  This will generate the .html, .epub and .pdf files.
 
-	make
+	$ make
 
 ### ASCIIDOC Quick Start Guide on Linux
 
