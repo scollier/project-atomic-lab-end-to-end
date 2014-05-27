@@ -1,6 +1,16 @@
+=== Options for Deployment
+
+There are a few different ways to obtain Atomic images.
+
+. In .qcow2 format
+. Deploy from rpm
+
+
 === Obtaining the images
 
-. Create the directory structure.
+For the purposes of this lab, we will be deploying Red Hat Enterprise Linux Atomic Controllers via the .qcow2 pre-built images.
+
+. On the host running the VM's, create the directory structure.
 +
 ----
 cd ~
@@ -9,19 +19,73 @@ mkdir -p atomic/{1,2}
 . Download and decompress the images to the appropriate directories
 +
 ----
-wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz
+cd ~
+for i in 1 2; do 
+	pushd atomic/$i/; 
+	wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz; 
+	xz -d latest-qcow2.xz; 
+	popd; 
+done
 ----
-. Unzip the image
+. Install the image and create an additional drive
 +
 ----
-
+cd ~
+for i in 1 2; do 
+	pushd atomic/$i/; 
+	sudo virt-install \
+	--memory 2048 \
+	--name Atomic_Host_$i \
+	--disk latest-qcow2 \
+	--import \
+	--noautoconsole \
+	--disk /home/scollier/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10; 
+	popd; 
+done
 ----
+. Set a password for the _root_ user on each Atomic host.
+. Get IP Address of both hosts and open up a terminal console to each machine.  
+. Partition the extra drive, on both hosts.
+[NOTE]
+[yellow-background]#Ensure you are on the correct host!  It would not be good if you are on the wrong host.  You should be on the Atomic VM's when you perform the following operation.#
+----
+cat << EOF > Atomic_Host_sdb.layout
+# partition table of /dev/sdb
+unit: sectors
+
+/dev/sdb1 : start=     2048, size= 20969472, Id=83
+/dev/sdb2 : start=        0, size=        0, Id= 0
+/dev/sdb3 : start=        0, size=        0, Id= 0
+/dev/sdb4 : start=        0, size=        0, Id= 0
+EOF
+
+sfdisk /dev/sdb < Atomic_Host_sdb.layout
+----
+
 
 
 === Validate Storage
+Atomic images in the .qcow2 format do not have a lot of storage for Docker images.  You will need to add an extra disk for _/var/lib/docker_.
+
 === Validate Networking
+. Set the hostname for each of your Red Hat Enterprise Linux Atomic Controller's.  
++
+----
+hostnamectl     # on host 1
+hostnamectl     # on host 2
+
+----
+
 === Validate SELinux
+. Ensure that selinux is set to enforcing mode on each controller.
++
+----
+getenforce
+----
 
-
-
-Configure your two atomic hosts
+=== Ensure Docker and geard are Functional
++
+----
+systemctl status docker
+systemctl status geard
+----

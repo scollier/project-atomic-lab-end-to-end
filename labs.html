@@ -751,7 +751,24 @@ asciidoc.install(2);
 <h2 id="Configure_PA_VMs">Configure Project Atomic VMs</h2>
 <div class="sectionbody">
 <div class="sect2">
+<h3 id="_options_for_deployment">Options for Deployment</h3>
+<div class="paragraph"><p>There are a few different ways to obtain Atomic images.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+In .qcow2 format
+</p>
+</li>
+<li>
+<p>
+Deploy from rpm
+</p>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
 <h3 id="_obtaining_the_images">Obtaining the images</h3>
+<div class="paragraph"><p>For the purposes of this lab, we will be deploying Red Hat Enterprise Linux Atomic Controllers via the .qcow2 pre-built images.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -769,29 +786,111 @@ Download and decompress the images to the appropriate directories
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz</code></pre>
+<pre><code>cd ~
+for i in 1 2; do
+  pushd atomic/$i/;
+  wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz;
+  xz -d latest-qcow2.xz;
+  popd;
+done</code></pre>
 </div></div>
 </li>
 <li>
 <p>
-Unzip the image
+Install the image and create an additional drive
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code></code></pre>
+<pre><code>cd ~
+for i in 1 2; do
+  pushd atomic/$i/;
+  sudo virt-install \
+  --memory 2048 \
+  --name Atomic_Host_$i \
+  --disk latest-qcow2 \
+  --import \
+  --noautoconsole \
+  --disk /home/scollier/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10;
+  popd;
+done</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Get IP Address of both hosts and open up a terminal console to each machine.
+</p>
+</li>
+<li>
+<p>
+Partition the extra drive, on both hosts.
+</p>
+</li>
+</ol></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+" />
+</td>
+<td class="content"><span class="yellow-background">Ensure you are on the correct host!  It would not be good if you are on the wrong host.  You should be on the Atomic VM&#8217;s when you perform the following operation.</span></td>
+</tr></table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat &lt;&lt; EOF &gt; Atomic_Host_sdb.layout
+# partition table of /dev/sdb
+unit: sectors
+
+/dev/sdb1 : start=     2048, size= 20969472, Id=83
+/dev/sdb2 : start=        0, size=        0, Id= 0
+/dev/sdb3 : start=        0, size=        0, Id= 0
+/dev/sdb4 : start=        0, size=        0, Id= 0
+EOF
+
+sfdisk /dev/sdb &lt; Atomic_Host_sdb.layout</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_validate_storage">Validate Storage</h3>
+<div class="paragraph"><p>Atomic images in the .qcow2 format do not have a lot of storage for Docker images.  You will need to add an extra disk for <em>/var/lib/docker</em>.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_validate_networking">Validate Networking</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Set the hostname for each of your Red Hat Enterprise Linux Atomic Controller&#8217;s.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>hostnamectl     # on host 1
+hostnamectl     # on host 2</code></pre>
 </div></div>
 </li>
 </ol></div>
 </div>
 <div class="sect2">
-<h3 id="_validate_storage">Validate Storage</h3>
-</div>
-<div class="sect2">
-<h3 id="_validate_networking">Validate Networking</h3>
-</div>
-<div class="sect2">
 <h3 id="_validate_selinux">Validate SELinux</h3>
-<div class="paragraph"><p>Configure your two atomic hosts</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Ensure that selinux is set to enforcing mode on each controller.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>getenforce</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_ensure_docker_and_geard_are_functional">Ensure Docker and geard are Functional</h3>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl status docker
+systemctl status geard</code></pre>
+</div></div>
 </div>
 </div>
 </div>
