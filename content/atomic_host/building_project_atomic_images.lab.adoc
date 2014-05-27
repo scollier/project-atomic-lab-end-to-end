@@ -16,7 +16,7 @@ For the purposes of this lab, we will be deploying Red Hat Enterprise Linux Atom
 cd ~
 mkdir -p atomic/{1,2}
 ----
-. Download and decompress the images to the appropriate directories
+. Download and decompress the images to the appropriate directories.  You only need to do the following step if the images haven't been downloaded for you already.
 +
 ----
 cd ~
@@ -61,6 +61,34 @@ EOF
 
 sfdisk /dev/sdb < Atomic_Host_sdb.layout
 ----
+. Format _/dev/sdb1_
++
+----
+mkfs.xfs /dev/sdb1
+----
+. Ensure that only _/dev/sdb1_ is mounted to _/var/lib/docker_
++
+----
+systemctl stop docker
+mount
+df -hal
+umount /var/lib/docker
+mount
+----
+. Get the UUID from _/dev/sdb1_ and add it to the _/etc/fstab_
++
+----
+cp /etc/fstab{,.orig}
+cat /etc/fstab
+echo "$(blkid /dev/sdb1 | awk '{ print $2 }') /var/lib/docker xfs defaults 1 1" >> /etc/fstab
+cat /etc/fstab
+mount -a
+mount
+df -hal
+systemctl start docker
+ls /var/lib/docker
+----
+
 
 
 

@@ -772,7 +772,7 @@ Deploy from rpm
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-Create the directory structure.
+On the host running the VM&#8217;s, create the directory structure.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -782,7 +782,7 @@ mkdir -p atomic/{1,2}</code></pre>
 </li>
 <li>
 <p>
-Download and decompress the images to the appropriate directories
+Download and decompress the images to the appropriate directories.  You only need to do the following step if the images haven&#8217;t been downloaded for you already.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -814,6 +814,11 @@ for i in 1 2; do
   popd;
 done</code></pre>
 </div></div>
+</li>
+<li>
+<p>
+Set a password for the <em>root</em> user on each Atomic host.
+</p>
 </li>
 <li>
 <p>
@@ -849,6 +854,47 @@ EOF
 
 sfdisk /dev/sdb &lt; Atomic_Host_sdb.layout</code></pre>
 </div></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Format <em>/dev/sdb1</em>
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>mkfs.xfs /dev/sdb1</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Ensure that only <em>/dev/sdb1</em> is mounted to <em>/var/lib/docker</em>
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl stop docker
+mount
+df -hal
+umount /var/lib/docker
+mount</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Get the UUID from <em>/dev/sdb1</em> and add it to the <em>/etc/fstab</em>
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cp /etc/fstab{,.orig}
+cat /etc/fstab
+echo "$(blkid /dev/sdb1 | awk '{ print $2 }') /var/lib/docker xfs defaults 1 1" &gt;&gt; /etc/fstab
+cat /etc/fstab
+mount -a
+mount
+df -hal
+systemctl start docker
+ls /var/lib/docker</code></pre>
+</div></div>
+</li>
+</ol></div>
 </div>
 <div class="sect2">
 <h3 id="_validate_storage">Validate Storage</h3>
