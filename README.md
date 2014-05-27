@@ -5,9 +5,8 @@ Please refer to the asciidoc user's guide: http://asciidoctor.org/docs/asciidoc-
 
 This cheat sheet is also very helpful: http://powerman.name/doc/asciidoc
 
-### ASCIIDOC Quick Start Guide
+### ASCIIDOC Quick Start Guide on Linux
 
-### Linux: 
 1. yum install git asciidoc docbook-xsl fop
 2. Edit /etc/asciidoc/asciidoc.conf and change the following
     * iconsdir=./images/icons
