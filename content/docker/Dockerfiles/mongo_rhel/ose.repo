@@ -1,0 +1,5 @@
+[ose]
+name=ose
+baseurl=http://10.16.138.242/ose/
+gpgcheck=0
+enabled=1

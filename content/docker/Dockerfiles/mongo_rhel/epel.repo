@@ -1,0 +1,5 @@
+[epel]
+name=epel
+baseurl=http://10.16.138.242/epel/
+gpgcheck=0
+enabled=1

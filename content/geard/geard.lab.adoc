@@ -36,7 +36,7 @@ http_single.json  mongo_deploy.json
 ----
 
 
-=== Part 1. Deploy a Single Container +
+=== Deploy a Single Container +
 
 *On host 1:*
 
@@ -84,7 +84,7 @@ gear list-units
 ----
 
 
-=== Part 2. Deploy Multiple Containers on a Single Host
+=== Deploy Multiple Containers on a Single Host
 
 *On host 1:*
 
@@ -167,7 +167,7 @@ docker ps
 ----
 
 
-=== Part 3. Deploy a MongoDB replica set on a single host
+=== Deploy a MongoDB replica set on a single host
 
 *On host 1:*
 
@@ -259,7 +259,7 @@ docker ps
 ----
 
 
-=== Part 4. Multi-host Application Linking
+=== Multi-host Application Linking
 
 *On host 1:*
 
@@ -351,7 +351,7 @@ gear delete web-server-2    # on host 2
 ----
 
 
-=== Part 5. SSH Enablement for Containers
+=== SSH Enablement for Containers
 
 *On host 1:*
 

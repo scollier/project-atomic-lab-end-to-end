@@ -1,0 +1,69 @@
+=== Configure the Compose Server
+The Atomic compose server builds the trees of content that the Red Hat Enterprise Linux Atomic Hosts consume.
+
+=== Deploy a Red Hat Enterprise Linux 7 Virtual Machine
+. Create the directory structure, from _roots_ home directory
++
+----
+cd ~
+mkdir atomic/build_server
+----
+. Download the image
++
+----
+cd atomic/build_server
+wget http://download.devel.redhat.com/brewroot/packages/rhel-server-kvm/7.0/7/images/rhel-server-kvm-7.0-7.x86_64.qcow2
+----
+. Change the password on the image
++
+----
+virt-sysprep -a rhel-server-kvm-7.0-7.x86_64.qcow2 --root-password password:redhat
+----
+. Install the Red Hat Enterprise Linux image
++
+----
+cd atomic/build_server
+virt-install \
+	--memory 4096 \
+	--name Compose_Server \
+	--disk ~/atomic/build_server/rhel-server-kvm-7.0-7.x86_64.qcow2 \
+	--import \
+	--noautoconsole
+----
+. Configure SSH, do this from within the virtual console
++
+----
+sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+grep -i passwordauth /etc/ssh/sshd_config
+systemctl restart sshd
+----
+. Get the IP address from the image and SSH in, instead of using the virt-console
+. Now you should be SSH'd into the VM.  Add the collider repo for RHEL internal content  
++
+----
+cat << EOF > /etc/yum.repos.d/collider.repo
+[collider-rhel-7]
+name=Collider RHEL 7 Packages
+baseurl=http://download.lab.bos.redhat.com/brewroot/repos/collider-rhel-7-build/latest/x86_64/
+enabled=1
+gpgcheck=0
+EOF
+----
+. Install _rpm-ostree_ tools
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
