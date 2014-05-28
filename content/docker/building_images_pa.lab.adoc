@@ -1,2 +1,68 @@
-=== Building Docker Images
-Need to put instructions for Building docker images
+==== Overview
+In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.  You can also go upstream for more examples here:
+
+https://github.com/fedora-cloud/Fedora-Dockerfiles
+
+This section describes building the images, but doesn't go into detail on the usage.  That will be in the following chapters.
+
+. Configure the build directory structure on Atomic host 1
++
+----
+cd ~
+mkdir -p dockerfiles/{mediawiki,mariadb,mongodb,apache}
+----
+. Configure the build directory structure on Atomic host 2
++
+----
+cd ~
+mkdir -p dockerfiles/apache
+----
+==== Apache Image
+Build this image on Atomic Host 1 and 2
++
+----
+docker images
+docker build -t demo/apache .
+----
+
+
+==== Mediawiki Image
+Build this image on Atomic Host 1
++
+----
+FIXME WGET INSTRUCTIONS
+----
+. Build the image
++
+----
+docker images
+docker build -t demo/apache .
+----
+
+
+==== MariaDB Image
+Build this image on Atomic Host 1
++
+----
+FIXME WGET INSTRUCTIONS
+----
+. Build the image
++
+----
+docker images
+docker build -t demo/mariadb .
+----
+
+
+==== MongoDB Image
+Build this image on Atomic Host 1
++
+----
+FIXME WGET INSTRUCTIONS
+----
+. Build the image
++
+----
+docker images
+docker build -t demo/mongodb .
+----

@@ -13,11 +13,9 @@ include::content/introduction/introduction.lab.adoc[tabsize=2]
 include::laptop_hypervisor_setup.lab.adoc[tabsize=2]
 ////
 
-////
 [[Compose_Server_Setup]]
-== Compose Server Setup
-include::configure_pa_compose_server.lab.adoc[tabsize=2]
-////
+== Red Hat Enterprise Linux Atomic Host Compose Server
+include::content/atomic_host/configure_compose_server.lab.adoc[tabsize=2]
  
 [[Configure_PA_VMs]]
 == Configure Project Atomic VMs

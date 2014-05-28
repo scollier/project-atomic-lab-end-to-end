@@ -748,6 +748,100 @@ asciidoc.install(2);
 </div>
 </div>
 <div class="sect1">
+<h2 id="Compose_Server_Setup">Red Hat Enterprise Linux Atomic Host Compose Server</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_configure_the_compose_server">Configure the Compose Server</h3>
+<div class="paragraph"><p>The Atomic compose server builds the trees of content that the Red Hat Enterprise Linux Atomic Hosts consume.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_deploy_a_red_hat_enterprise_linux_7_virtual_machine">Deploy a Red Hat Enterprise Linux 7 Virtual Machine</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Create the directory structure, from <em>roots</em> home directory
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+mkdir atomic/build_server</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Download the image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd atomic/build_server
+wget http://download.devel.redhat.com/brewroot/packages/rhel-server-kvm/7.0/7/images/rhel-server-kvm-7.0-7.x86_64.qcow2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Change the password on the image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>virt-sysprep -a rhel-server-kvm-7.0-7.x86_64.qcow2 --root-password password:redhat</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Install the Red Hat Enterprise Linux image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd atomic/build_server
+virt-install \
+  --memory 4096 \
+  --name Compose_Server \
+  --disk ~/atomic/build_server/rhel-server-kvm-7.0-7.x86_64.qcow2 \
+  --import \
+  --noautoconsole</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Configure SSH, do this from within the virtual console
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+grep -i passwordauth /etc/ssh/sshd_config
+systemctl restart sshd</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Get the IP address from the image and SSH in, instead of using the virt-console
+</p>
+</li>
+<li>
+<p>
+Now you should be SSH&#8217;d into the VM.  Add the collider repo for RHEL internal content
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat &lt;&lt; EOF &gt; /etc/yum.repos.d/collider.repo
+[collider-rhel-7]
+name=Collider RHEL 7 Packages
+baseurl=http://download.lab.bos.redhat.com/brewroot/repos/collider-rhel-7-build/latest/x86_64/
+enabled=1
+gpgcheck=0
+EOF</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Install <em>rpm-ostree</em> tools
+</p>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="Configure_PA_VMs">Configure Project Atomic VMs</h2>
 <div class="sectionbody">
 <div class="sect2">
@@ -765,10 +859,10 @@ Deploy from rpm
 </p>
 </li>
 </ol></div>
+<div class="paragraph"><p>For the purposes of this lab, we will be deploying Red Hat Enterprise Linux Atomic Controllers via the .qcow2 pre-built images.</p></div>
 </div>
 <div class="sect2">
 <h3 id="_obtaining_the_images">Obtaining the images</h3>
-<div class="paragraph"><p>For the purposes of this lab, we will be deploying Red Hat Enterprise Linux Atomic Controllers via the .qcow2 pre-built images.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -810,7 +904,7 @@ for i in 1 2; do
   --disk latest-qcow2 \
   --import \
   --noautoconsole \
-  --disk /home/scollier/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10;
+  --disk /root/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10;
   popd;
 done</code></pre>
 </div></div>
@@ -825,12 +919,11 @@ Set a password for the <em>root</em> user on each Atomic host.
 Get IP Address of both hosts and open up a terminal console to each machine.
 </p>
 </li>
-<li>
-<p>
-Partition the extra drive, on both hosts.
-</p>
-</li>
 </ol></div>
+</div>
+<div class="sect2">
+<h3 id="_configure_disk_partitions">Configure Disk Partitions</h3>
+<div class="paragraph"><p>The Red Hat Enterprise Linux Atomic Controllers come with a fairly small disk image.  We need to confiure the second disk that was added with <em>virt-install</em> and mount that under <em>/var/lib/docker</em>.</p></div>
 <div class="admonitionblock">
 <table><tr>
 <td class="icon">
@@ -897,11 +990,7 @@ ls /var/lib/docker</code></pre>
 </ol></div>
 </div>
 <div class="sect2">
-<h3 id="_validate_storage">Validate Storage</h3>
-<div class="paragraph"><p>Atomic images in the .qcow2 format do not have a lot of storage for Docker images.  You will need to add an extra disk for <em>/var/lib/docker</em>.</p></div>
-</div>
-<div class="sect2">
-<h3 id="_validate_networking">Validate Networking</h3>
+<h3 id="_validate_hostname_and_networking">Validate Hostname and Networking</h3>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -909,9 +998,14 @@ Set the hostname for each of your Red Hat Enterprise Linux Atomic Controller&#82
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>hostnamectl     # on host 1
-hostnamectl     # on host 2</code></pre>
+<pre><code>hostnamectl set-hostname atomic1.local     # on host 1
+hostnamectl set-hostname atomic2.local     # on host 2</code></pre>
 </div></div>
+</li>
+<li>
+<p>
+Ensure you can ping the other controller
+</p>
 </li>
 </ol></div>
 </div>
@@ -938,14 +1032,135 @@ Ensure that selinux is set to enforcing mode on each controller.
 systemctl status geard</code></pre>
 </div></div>
 </div>
+<div class="sect2">
+<h3 id="_upgrade_both_controllers">Upgrade both controllers.</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Disable GPG support
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>echo "gpg-verify=false" &gt;&gt; /ostree/repo/config</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Run the following on both of the Atomic controllers.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>rpm-ostree upgrade
+reboot</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="Building_Images">Building Docker Images</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_building_docker_images">Building Docker Images</h3>
-<div class="paragraph"><p>Need to put instructions for Building docker images</p></div>
+<div class="sect3">
+<h4 id="_overview">Overview</h4>
+<div class="paragraph"><p>In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.  You can also go upstream for more examples here:</p></div>
+<div class="paragraph"><p><a href="https://github.com/fedora-cloud/Fedora-Dockerfiles">https://github.com/fedora-cloud/Fedora-Dockerfiles</a></p></div>
+<div class="paragraph"><p>This section describes building the images, but doesn&#8217;t go into detail on the usage.  That will be in the following chapters.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Configure the build directory structure on Atomic host 1
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+mkdir -p dockerfiles/{mediawiki,mariadb,mongodb,apache}</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Configure the build directory structure on Atomic host 2
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+mkdir -p dockerfiles/apache</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_apache_image">Apache Image</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1 and 2</p></div>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+docker build -t demo/apache .</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_mediawiki_image">Mediawiki Image</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>FIXME WGET INSTRUCTIONS</code></pre>
+</div></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Build the image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+docker build -t demo/apache .</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_mariadb_image">MariaDB Image</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>FIXME WGET INSTRUCTIONS</code></pre>
+</div></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Build the image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+docker build -t demo/mariadb .</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_mongodb_image">MongoDB Image</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>FIXME WGET INSTRUCTIONS</code></pre>
+</div></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Build the image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+docker build -t demo/mongodb .</code></pre>
+</div></div>
+</li>
+</ol></div>
 </div>
 </div>
 </div>
@@ -953,8 +1168,10 @@ systemctl status geard</code></pre>
 <h2 id="Docker_Basics">Docker Basics</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_docker">Docker</h3>
-<div class="paragraph"><p>This lab has 3 sections</p></div>
+<h3 id="_overview_2">Overview</h3>
+<div class="paragraph"><p>The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them to be portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.</p></div>
+<div class="paragraph"><p>Red Hat has been investing in containers for a number of years in Red Hat Enterprise Linux and has been working on Docker in the upstream community since mid-2013. Red Hat&#8217;s commitment to Docker and container technology is demonstrated not just in this background work, but also in the efforts to establish Docker containers as a standard part of the Red Hat Enterprise Linux environment. Red Hat has production experience leveraging container technologies like cgroups and namespaces since Red Hat Enterrise Linux 6. Establishing, consuming and sharing these capabilities as a part of Red Hat Enterprise Linux is a major step in making them consumable by enterprise customers.</p></div>
+<div class="paragraph"><p>This lab has 3 sections:</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -972,23 +1189,9 @@ Lab 2: Containers can Talk
 </p>
 </li>
 </ol></div>
-</div>
-<div class="sect2">
-<h3 id="_overview_of_docker_on_red_hat_enterprise_linux_lab">Overview of Docker on Red Hat Enterprise Linux lab</h3>
-<div class="paragraph"><p>The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them to be portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.</p></div>
-<div class="paragraph"><p>Red Hat has been investing in containers for a number of years in Red Hat Enterprise Linux and has been working on Docker in the upstream community since mid-2013. Red Hat&#8217;s commitment to Docker and container technology is demonstrated not just in this background work, but also in the efforts to establish Docker containers as a standard part of the Red Hat Enterprise Linux environment. Red Hat has production experience leveraging container technologies like cgroups and namespaces since Red Hat Enterrise Linux 6. Establishing, consuming and sharing these capabilities as a part of Red Hat Enterprise Linux is a major step in making them consumable by enterprise customers.</p></div>
-</div>
-<div class="sect2">
-<h3 id="_assumptions">Assumptions</h3>
-<div class="paragraph"><p>This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.</p></div>
-<div class="paragraph"><p>This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises.</p></div>
-<div class="paragraph"><p>A working knowledge of Linux-based tools and services such as telnet, Apache, etc&#8230; are assumed.  If you do not have an understanding of any of these technologies, please let the instructors know.</p></div>
-</div>
-<div class="sect2">
-<h3 id="_lab_environment">Lab Environment</h3>
-<div class="paragraph"><p>Red Hat Enterprise Linux provides shared services for Docker. A couple of these shared services are systemd and selinux.  This lab will help to familiarize you with the common actions performed on Docker containers and images. The first part of the lab starts out on the host machine, the machine that runs all the containers.  Then we&#8217;ll move on to container inspection.</p></div>
-<div class="paragraph"><p>Accessing the Environment:
-You will have a virtual machine running on this host.  You&#8217;ll need to SSH into that virtual machine to complete the labs.  You can open <em>virt-manager</em> to get the IP Address, then SSH into it from the workstation.</p></div>
+<div class="sect3">
+<h4 id="_lab_environment">Lab Environment</h4>
+<div class="paragraph"><p>Perform all activities on the Red Hat Enterprise Linux Atomic Host 1 unless instructed otherwise.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -996,13 +1199,13 @@ SSH Access
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>ssh root@10.16.143.125</code></pre>
+<pre><code>ssh root@IPAddress_of_RHELAH1</code></pre>
 </div></div>
 </li>
 </ol></div>
 </div>
-<div class="sect2">
-<h3 id="_what_you_can_expect_to_learn_from_this_lab">What you can expect to learn from this lab</h3>
+<div class="sect3">
+<h4 id="_what_you_can_expect_to_learn_from_this_lab">What you can expect to learn from this lab</h4>
 <div class="paragraph"><p>Topics covered:</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1037,11 +1240,11 @@ Linking containers
 </li>
 </ol></div>
 </div>
-<div class="sect2">
-<h3 id="_lab_1_docker_overview">Lab 1: Docker Overview</h3>
 </div>
 <div class="sect2">
-<h3 id="_explore_docker">Explore Docker</h3>
+<h3 id="_docker_overview">Docker Overview</h3>
+<div class="sect3">
+<h4 id="_explore_docker">Explore Docker</h4>
 <div class="paragraph"><p>All actions in this lab will performed by the user <em>root</em>.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1145,8 +1348,8 @@ What is the SELinux security label of the processes?
 </li>
 </ol></div>
 </div>
-<div class="sect2">
-<h3 id="_saving_content">Saving Content</h3>
+<div class="sect3">
+<h4 id="_saving_content">Saving Content</h4>
 <div class="paragraph"><p>Now that we have an idea of what&#8217;s going on inside the container, let&#8217;s take a look at the process required to save a file.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1213,8 +1416,8 @@ exit</code></pre>
 </li>
 </ol></div>
 </div>
-<div class="sect2">
-<h3 id="_host_exploration">Host exploration</h3>
+<div class="sect3">
+<h4 id="_host_exploration">Host exploration</h4>
 <div class="paragraph"><p>Now that we have explored what&#8217;s on the inside of a container, let&#8217;s see what is going on outside of the container.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1316,8 +1519,8 @@ docker ps -a</code></pre>
 </li>
 </ol></div>
 </div>
-<div class="sect2">
-<h3 id="_where_are_my_logs">Where are my logs?</h3>
+<div class="sect3">
+<h4 id="_where_are_my_logs">Where are my logs?</h4>
 <div class="paragraph"><p>The containers do not run syslog.  In order to get logs from the container, there are a couple of methods.  The first is to run the container with <em>/dev/log</em> socket bind mounted inside the container.  The other is to write to external volumes.  That&#8217;s in a later lab.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1361,8 +1564,8 @@ Check the logs on the host to ensure the bind mount was successful.
 </li>
 </ol></div>
 </div>
-<div class="sect2">
-<h3 id="_control_that_service">Control that Service!</h3>
+<div class="sect3">
+<h4 id="_control_that_service">Control that Service!</h4>
 <div class="paragraph"><p>We can control services with systemd.  Systemd allows us to start, stop, and control which services are enabled on boot, among many other things.  In this section we will use systemd to enable the <em>nginx</em> service to start on boot.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1442,6 +1645,7 @@ systemctl disable nginx.service</code></pre>
 </li>
 </ol></div>
 </div>
+</div>
 <div class="sect2">
 <h3 id="_containers_can_talk">Containers can Talk</h3>
 <div class="paragraph"><p>Now that we have the fundamentals down, let&#8217;s do something a bit more interesting with these containers.  This lab will cover launching a <em>MariaDB</em> and <em>Mediawiki</em> container. The two will be tied together via the Docker <em>link</em> functionality.  This lab will build upon things we learned in lab 1 and expand on that.  We&#8217;ll be looking at external volumes, links, and additional options to the Docker <em>run</em> command.</p></div>
@@ -1459,11 +1663,10 @@ systemctl disable nginx.service</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_2_1_mariadb">2.1 MariaDB</h3>
+<h3 id="_mariadb">MariaDB</h3>
 <div class="paragraph"><p>This section shows how to set up an external volume and use hostnames when launching the MariaDB container.</p></div>
-</div>
-<div class="sect2">
-<h3 id="_2_1_1_review_the_mariadb_environment">2.1.1 Review the MariaDB Environment</h3>
+<div class="sect3">
+<h4 id="_review_the_mariadb_environment">Review the MariaDB Environment</h4>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -1593,8 +1796,8 @@ __run_supervisor</code></pre>
 </li>
 </ol></div>
 </div>
-<div class="sect2">
-<h3 id="_2_1_1_launch_the_mariadb_container">2.1.1 Launch the MariaDB Container</h3>
+<div class="sect3">
+<h4 id="_launch_the_mariadb_container">Launch the MariaDB Container</h4>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -1666,12 +1869,12 @@ docker logs mariadb</code></pre>
 </ol></div>
 <div class="paragraph"><p>The container should be running at this time.</p></div>
 </div>
-<div class="sect2">
-<h3 id="_2_2_mediawiki">2.2 Mediawiki</h3>
-<div class="paragraph"><p>This section shows how to launch the <em>Mediawiki</em> container and link it back to the <em>MariaDB</em> container.</p></div>
 </div>
 <div class="sect2">
-<h3 id="_2_2_1_review_the_mediawiki_environment">2.2.1 Review the Mediawiki Environment</h3>
+<h3 id="_mediawiki">Mediawiki</h3>
+<div class="paragraph"><p>This section shows how to launch the <em>Mediawiki</em> container and link it back to the <em>MariaDB</em> container.</p></div>
+<div class="sect3">
+<h4 id="_review_the_mediawiki_environment">Review the Mediawiki Environment</h4>
 <div class="paragraph"><p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/summit_link_demo</em></p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1797,8 +2000,8 @@ exec /run-apache.sh</code></pre>
 </li>
 </ol></div>
 </div>
-<div class="sect2">
-<h3 id="_2_2_2_launch_the_mediawiki_container">2.2.2 Launch the Mediawiki Container</h3>
+<div class="sect3">
+<h4 id="_launch_the_mediawiki_container">Launch the Mediawiki Container</h4>
 <div class="paragraph"><p>This section show&#8217;s how to use hostnames and link to an existing container.  Issue the <em>docker run</em> command and link to the <em>mariadb</em> container.</p></div>
 <div class="paragraph"><p>Run the container.  The command below is taking the enviroment variable <em>HOST_IP</em> and will inject that into the <em>run-mw.sh</em> script when the container is launched. The <em>HOST_IP</em> is the IP address of the virtual machine that is hosting the container.  Replace IP_OF_VIRTUAL_MACHINE with the IP address of the virtual machine running the container.</p></div>
 <div class="admonitionblock">
@@ -1928,21 +2131,22 @@ fi</code></pre>
 </ol></div>
 <div class="paragraph"><p>It&#8217;s doing a check for an existing LocalSettings.php file.  We added that file during the Docker build process.  That file was copied to /var/www/html/wiki.  So, the script runs, sees that the file exists and points the <em>$wbDBserver</em> variable to the MariaDB container.  So, no matter if these containers get shut down and have new IP addresses, the Mediawiki container will always be able to find the MariaDB container because of the <em>link</em>.  In addition, it&#8217;s using the <em>-e</em> option to pass environment variables, in this case, $HOST_IP to the <em>run-mw.sh</em> script to complete the configuration.</p></div>
 </div>
-<div class="sect2">
-<h3 id="_continue_your_learning">Continue your Learning</h3>
 </div>
 <div class="sect2">
-<h3 id="_3_1_how_to_install">3.1 How to Install</h3>
+<h3 id="_continue_your_learning">Continue your Learning</h3>
+<div class="sect3">
+<h4 id="_how_to_install">How to Install</h4>
 <div class="paragraph"><p>On a Fedora host</p></div>
 <div class="literalblock">
 <div class="content">
 <pre><code>yum install fedora-dockerfiles docker-io</code></pre>
 </div></div>
 </div>
-<div class="sect2">
-<h3 id="_3_2_more_information">3.2 More Information</h3>
+<div class="sect3">
+<h4 id="_more_information">More Information</h4>
 <div class="paragraph"><p>Project Atomic site:</p></div>
 <div class="paragraph"><p><a href="http://projectatomic.io">http://projectatomic.io</a></p></div>
+</div>
 </div>
 </div>
 </div>
@@ -2515,7 +2719,7 @@ gear delete web-server-2    # on host 2</code></pre>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-05-26 12:26:33 CDT
+Last updated 2014-05-27 19:54:20 CDT
 </div>
 </div>
 </body>

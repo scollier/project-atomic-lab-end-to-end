@@ -1,2 +1,0 @@
-=== Content to be Provided: Download the Project Atomic Image
-Configure your two atomic hosts

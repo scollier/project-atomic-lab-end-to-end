@@ -1,39 +1,25 @@
-=== Docker
-
-This lab has 3 sections
-
-. Overview
-. Lab 1: Docker Environment
-. Lab 2: Containers can Talk
-
-=== Overview of Docker on Red Hat Enterprise Linux lab
+=== Overview 
 
 The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them to be portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.
 
 Red Hat has been investing in containers for a number of years in Red Hat Enterprise Linux and has been working on Docker in the upstream community since mid-2013. Red Hat's commitment to Docker and container technology is demonstrated not just in this background work, but also in the efforts to establish Docker containers as a standard part of the Red Hat Enterprise Linux environment. Red Hat has production experience leveraging container technologies like cgroups and namespaces since Red Hat Enterrise Linux 6. Establishing, consuming and sharing these capabilities as a part of Red Hat Enterprise Linux is a major step in making them consumable by enterprise customers.
 
-=== Assumptions
+This lab has 3 sections:
 
-This lab manual assumes that you are attending an instructor-led training class and that you will be using this lab manual in conjunction with the lecture.
+. Overview
+. Lab 1: Docker Environment
+. Lab 2: Containers can Talk
 
-This manual also assumes that you have been granted access to a single Red Hat Enterprise Linux server with which to perform the exercises.
-
-A working knowledge of Linux-based tools and services such as telnet, Apache, etc... are assumed.  If you do not have an understanding of any of these technologies, please let the instructors know.
-
-=== Lab Environment
-
-Red Hat Enterprise Linux provides shared services for Docker. A couple of these shared services are systemd and selinux.  This lab will help to familiarize you with the common actions performed on Docker containers and images. The first part of the lab starts out on the host machine, the machine that runs all the containers.  Then we'll move on to container inspection.
-
-Accessing the Environment:
-You will have a virtual machine running on this host.  You'll need to SSH into that virtual machine to complete the labs.  You can open _virt-manager_ to get the IP Address, then SSH into it from the workstation.
+==== Lab Environment
+Perform all activities on the Red Hat Enterprise Linux Atomic Host 1 unless instructed otherwise.
 
 . SSH Access
 +
 ----
-ssh root@10.16.143.125
+ssh root@IPAddress_of_RHELAH1
 ----
 
-=== What you can expect to learn from this lab
+==== What you can expect to learn from this lab
 
 Topics covered:
 
@@ -45,9 +31,9 @@ Topics covered:
 . Linking containers
 
 
-=== Lab 1: Docker Overview
+=== Docker Overview
  
-=== Explore Docker
+==== Explore Docker
 All actions in this lab will performed by the user _root_.
 
 . Check to ensure that SELinux is running on the host.
@@ -113,7 +99,7 @@ ps aux
 ps -Z
 ----
 
-=== Saving Content
+==== Saving Content
 
 Now that we have an idea of what's going on inside the container, let's take a look at the process required to save a file.
 
@@ -155,7 +141,7 @@ docker run -i -t file2/container bash
 ls ~/
 exit
 ----
-=== Host exploration
+==== Host exploration
 
 Now that we have explored what's on the inside of a container, let's see what is going on outside of the container.
 
@@ -220,7 +206,7 @@ docker ps -a
     
   
 
-=== Where are my logs?
+==== Where are my logs?
 
 The containers do not run syslog.  In order to get logs from the container, there are a couple of methods.  The first is to run the container with _/dev/log_ socket bind mounted inside the container.  The other is to write to external volumes.  That's in a later lab.  
 
@@ -249,7 +235,7 @@ exit
 ----
 journalctl | grep -i "This is a log from Summit"
 ----
-=== Control that Service!
+==== Control that Service!
 
 We can control services with systemd.  Systemd allows us to start, stop, and control which services are enabled on boot, among many other things.  In this section we will use systemd to enable the _nginx_ service to start on boot.
 
@@ -316,11 +302,11 @@ Straight from the Docker.io site:
 [NOTE]
 All images have been built before labtime.  If you would like to review what was used, all Dockerfiles are in _/root/summit_link_demo_.
 
-=== 2.1 MariaDB
+=== MariaDB
 
 This section shows how to set up an external volume and use hostnames when launching the MariaDB container.
 
-=== 2.1.1 Review the MariaDB Environment
+==== Review the MariaDB Environment
 . Review the scripts and other content that are required to build and launch the _MariaDB_ container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.
 +
 ----
@@ -439,7 +425,7 @@ __mysql_config
 __run_supervisor
 ----
     
-=== 2.1.1 Launch the MariaDB Container
+==== Launch the MariaDB Container
 
 . Either tail the audit log from your current terminal by placing the tail command in the background:
 +
@@ -485,11 +471,11 @@ The container should be running at this time.
 
 
 
-=== 2.2 Mediawiki
+=== Mediawiki
 
 This section shows how to launch the _Mediawiki_ container and link it back to the _MariaDB_ container.
 
-=== 2.2.1 Review the Mediawiki Environment
+==== Review the Mediawiki Environment
 
 Review the scripts and other content that are required to build and launch the _Mediawiki_ container and link it to the _MariaDB_ container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in _/root/summit_link_demo_
 
@@ -604,7 +590,7 @@ exec /run-apache.sh
 ----
 
 
-=== 2.2.2 Launch the Mediawiki Container
+==== Launch the Mediawiki Container
 
 This section show's how to use hostnames and link to an existing container.  Issue the _docker run_ command and link to the _mariadb_ container.
 
@@ -688,14 +674,14 @@ It's doing a check for an existing LocalSettings.php file.  We added that file d
 
 === Continue your Learning
 
-=== 3.1 How to Install
+==== How to Install
 
 On a Fedora host
 
     yum install fedora-dockerfiles docker-io
     
 
-=== 3.2 More Information
+==== More Information
 
 Project Atomic site:
 

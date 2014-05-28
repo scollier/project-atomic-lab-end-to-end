@@ -2,7 +2,7 @@ DOCS=content/docker/docker_basics.lab.adoc \
 	content/geard/geard.lab.adoc \
 	content/atomic_host/upgrade_rollback_pa.lab.adoc \
 	content/docker/building_images_pa.lab.adoc \
-	content/atomic_host/configure_pa_compose_server.lab.adoc \
+	content/atomic_host/configure_compose_server.lab.adoc \
 	content/atomic_host/building_project_atomic_images.lab.adoc
 
 # SLIDES=agenda.slides.adoc \
