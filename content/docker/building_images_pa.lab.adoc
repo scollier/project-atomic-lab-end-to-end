@@ -3,59 +3,67 @@ In this section we will build images that will be used through the remainder of 
 
 This section describes building the images, but doesn't go into detail on the usage.  That will be in the following chapters.
 
-. Configure the build directory structure on Atomic host 1
+. Download the Dockerfiles and Scripts to a host that has the _tar_ binary.  The Atomic Hosts do not have this tool by default.  So download it somewhere, extract the files and _scp_ them over.
 +
 ----
 cd ~
-mkdir -p dockerfiles/{mediawiki,mariadb,mongodb,apache}
+curl -o dockerfiles.tar.bz2 -L https://github.com/scollier/project-atomic-lab-end-to-end/blob/master/content/docker/dockerfiles.tar.bz2?raw=true
+tar xjvf dockerfiles.tar.bz2
 ----
-. Configure the build directory structure on Atomic host 2
+. Copy the Atomic Host 1 directory from the tar file to Atomic Host 1. Replace _x.x.x.x_ with the IP address of Atomic Host 1.
 +
 ----
 cd ~
-mkdir -p dockerfiles/apache
+scp -r Dockerfiles/atomic_host_1 root@x.x.x.x:
 ----
-==== Apache Image
-Build this image on Atomic Host 1 and 2
+. Copy the Atomic Host 2 directory from the tar file to Atomic Host 2. Replace _x.x.x.x_ with the IP address of Atomic Host 2.
++
+----
+cd ~
+scp -r Dockerfiles/atomic_host_2 root@x.x.x.x:
+----
+==== Apache Image Atomic Host 1
+Build this image on Atomic Host 1
 ----
 docker images
+cd ~/atomic_host_1/apache
 docker build -t demo/apache .
 ----
 
+==== Apache Image Atomic Host 2
+Build this image on Atomic Host 1
+----
+docker images
+cd ~/atomic_host_2/apache
+docker build -t demo/apache .
+----
 
 ==== Mediawiki Image
 Build this image on Atomic Host 1
-----
-FIXME WGET INSTRUCTIONS
-----
 . Build the image
 ----
 docker images
-docker build -t demo/apache .
+cd ~/atomic_host_1/mediawiki
+docker build -t demo/mediawiki .
 ----
 
 
 ==== MariaDB Image
 Build this image on Atomic Host 1
-----
-FIXME WGET INSTRUCTIONS
-----
 . Build the image
-+
 ----
 docker images
+cd ~/atomic_host_1/mariadb
 docker build -t demo/mariadb .
 ----
 
 
 ==== MongoDB Image
 Build this image on Atomic Host 1
-----
-FIXME WGET INSTRUCTIONS
-----
 . Build the image
 ----
 docker images
+cd ~/atomic_host_1/mongodb
 docker build -t demo/mongodb .
 ----
 

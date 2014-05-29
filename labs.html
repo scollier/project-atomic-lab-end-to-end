@@ -1220,92 +1220,87 @@ reboot</code></pre>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-Configure the build directory structure on Atomic host 1
+Download the Dockerfiles and Scripts to a host that has the <em>tar</em> binary.  The Atomic Hosts do not have this tool by default.  So download it somewhere, extract the files and <em>scp</em> them over.
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><code>cd ~
-mkdir -p dockerfiles/{mediawiki,mariadb,mongodb,apache}</code></pre>
+curl -o dockerfiles.tar.bz2 -L https://github.com/scollier/project-atomic-lab-end-to-end/blob/master/content/docker/dockerfiles.tar.bz2?raw=true
+tar xjvf dockerfiles.tar.bz2</code></pre>
 </div></div>
 </li>
 <li>
 <p>
-Configure the build directory structure on Atomic host 2
+Copy the Atomic Host 1 directory from the tar file to Atomic Host 1. Replace <em>x.x.x.x</em> with the IP address of Atomic Host 1.
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><code>cd ~
-mkdir -p dockerfiles/apache</code></pre>
+scp -r Dockerfiles/atomic_host_1 root@x.x.x.x:</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Copy the Atomic Host 2 directory from the tar file to Atomic Host 2. Replace <em>x.x.x.x</em> with the IP address of Atomic Host 2.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+scp -r Dockerfiles/atomic_host_2 root@x.x.x.x:</code></pre>
 </div></div>
 </li>
 </ol></div>
 </div>
 <div class="sect3">
-<h4 id="_apache_image">Apache Image</h4>
-<div class="paragraph"><p>Build this image on Atomic Host 1 and 2</p></div>
+<h4 id="_apache_image_atomic_host_1">Apache Image Atomic Host 1</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
+cd ~/atomic_host_1/apache
+docker build -t demo/apache .</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_apache_image_atomic_host_2">Apache Image Atomic Host 2</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+cd ~/atomic_host_2/apache
 docker build -t demo/apache .</code></pre>
 </div></div>
 </div>
 <div class="sect3">
 <h4 id="_mediawiki_image">Mediawiki Image</h4>
-<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>FIXME WGET INSTRUCTIONS</code></pre>
-</div></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-Build the image
-</p>
-</li>
-</ol></div>
+<div class="paragraph"><p>Build this image on Atomic Host 1
+. Build the image</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-docker build -t demo/apache .</code></pre>
+cd ~/atomic_host_1/mediawiki
+docker build -t demo/mediawiki .</code></pre>
 </div></div>
 </div>
 <div class="sect3">
 <h4 id="_mariadb_image">MariaDB Image</h4>
-<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>FIXME WGET INSTRUCTIONS</code></pre>
-</div></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-Build the image
-</p>
+<div class="paragraph"><p>Build this image on Atomic Host 1
+. Build the image</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
+cd ~/atomic_host_1/mariadb
 docker build -t demo/mariadb .</code></pre>
 </div></div>
-</li>
-</ol></div>
 </div>
 <div class="sect3">
 <h4 id="_mongodb_image">MongoDB Image</h4>
-<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
-<div class="listingblock">
-<div class="content">
-<pre><code>FIXME WGET INSTRUCTIONS</code></pre>
-</div></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-Build the image
-</p>
-</li>
-</ol></div>
+<div class="paragraph"><p>Build this image on Atomic Host 1
+. Build the image</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
+cd ~/atomic_host_1/mongodb
 docker build -t demo/mongodb .</code></pre>
 </div></div>
 </div>
@@ -1414,7 +1409,7 @@ Take a look at the documetation and general help as well as command specific hel
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>rpm -qd docker-io
+<pre><code>rpm -qd docker
 man docker
 man docker-run
 docker --help
@@ -1423,7 +1418,7 @@ docker run --help</code></pre>
 </li>
 <li>
 <p>
-A Docker <em>image</em> is basically a layer.  A layer never changes.  To take a look a the images that are on this system.
+A Docker <em>image</em> is basically a layer.  A layer never changes.  To take a look a the images that are on this system.  There should be <em>nginx</em>,<em>mariadb</em>,mongodb,mediawiki,apache.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -1438,18 +1433,26 @@ Docker provides the <em>run</em> option to run a image.  Check out the <em>run</
 <div class="listingblock">
 <div class="content">
 <pre><code>docker run --help
-docker run rhel7 echo hello</code></pre>
+docker run fedora echo hello</code></pre>
 </div></div>
 </li>
 <li>
 <p>
-You won&#8217;t see any return value.  Where did it go?  Check the logs.  The following commands will list the last container that ran so you can get the UUID and check the logs.  This should return the output of "echo hello".  Finally, run with the <em>-t</em> option to allocate a psuedo-tty.  Note that <em>-l</em> below is lowercase <em>L</em>.
+Check the logs.  The following commands will list the last container that ran so you can get the UUID and check the logs.  This should return the output of "echo hello".  Finally, run with the <em>-t</em> option to allocate a psuedo-tty.  Note that <em>-l</em> below is lowercase <em>L</em>.
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker ps -l
-docker logs &lt;Container UUID&gt;
-docker run -t rhel7 echo hello</code></pre>
+docker logs &lt;Container UUID&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Tag the base image with a new name.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker tag docker-registry.usersys.redhat.com/brew/rhel7 rhel7</code></pre>
 </div></div>
 </li>
 <li>
@@ -1468,16 +1471,23 @@ Check out the IP address of the container and also look at the route.  You can s
 <div class="listingblock">
 <div class="content">
 <pre><code>ip a
-ip r s</code></pre>
+hostname</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>This is a slimmed down base image.  There are not many tools on here by default.</code></pre>
 </div></div>
 </li>
 <li>
 <p>
-Grab the hostname of the container.  By default the hostname is set to the UUID of the container.  We will look at how to change that later.
+Switch to the Fedora image and take a look around. Grab the hostname of the container.  By default the hostname is set to the UUID of the container.  We will look at how to change that later.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>hostname</code></pre>
+<pre><code>docker run -i -t fedora bash
+ip a
+ip r
+hostname</code></pre>
 </div></div>
 </li>
 <li>
@@ -1529,7 +1539,7 @@ Run the container again and check to see if the file exists.  The file should be
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>docker run -i -t rhel7 bash
+<pre><code>docker run -i -t fedora bash
 ls ~/</code></pre>
 </div></div>
 </li>
@@ -1539,7 +1549,7 @@ Let&#8217;s try this again and this time we&#8217;ll commit the container.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>echo "Hello World" &gt;&gt; /file2</code></pre>
+<pre><code>echo "Hello World" &gt;&gt; ~/file2</code></pre>
 </div></div>
 </li>
 <li>
@@ -1593,20 +1603,11 @@ List the images that are currently running on the system.
 </li>
 <li>
 <p>
-Now, check out the networking on the host. You should see the docker0 bridge and a <em>veth</em> interface attached.  The <em>veth</em> interface is one end of a virtual device that connects the container to the host machine.
+Now, check out the networking on the host. You should see the <em>docker0</em> bridge and a <em>veth</em> interface attached.  The <em>veth</em> interface is one end of a virtual device that connects the container to the host machine. You should see that the IP address of the bridge is used as the default gateway of the container that you saw earlier.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>brctl show</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Check out the bridge and you should see that the IP address of the bridge is used as the default gateway of the container that you saw earlier.
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>ip a s docker0</code></pre>
+<pre><code>ip a</code></pre>
 </div></div>
 </li>
 <li>
@@ -1630,17 +1631,17 @@ What is Docker putting on the file system?  Check <em>/var/lib/docker</em> to se
 </li>
 <li>
 <p>
-The root filesystem for the container is in the devicemapper directory.  Grab the <em>Container ID</em> and complete the path below.  Replace \&lt;Container UUID&gt; with the output from <em>docker ps -l</em> and use tab completion to complete the \&lt;Container UUID&gt;.
+The root filesystem for the container is in the devicemapper directory.  Grab the <em>Container ID</em> and complete the path below.  Replace &lt;Container UUID&gt; with the output from <em>docker ps -l</em> and use tab completion to complete the &lt;Container UUID&gt;.
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker ps -l
-cd /var/lib/docker/devicemapper/mnt/&lt;Container ID&gt;&lt;tab&gt;&lt;tab&gt;/rootfs</code></pre>
+ls /var/lib/docker/devicemapper/mnt/&lt;Container ID&gt;&lt;tab&gt;&lt;tab&gt;/rootfs</code></pre>
 </div></div>
 </li>
 <li>
 <p>
-How do I get the IP address of a running container? Grab the \&lt;Container UUID&gt; of a running container.
+How do I get the IP address of a running container? Grab the &lt;Container UUID&gt; of a running container.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -1650,7 +1651,7 @@ docker inspect &lt;Container UUID&gt;</code></pre>
 </li>
 <li>
 <p>
-That is quite a lot of output, let&#8217;s add a filter.  Replace \&lt;Container ID&gt; with the output of <em>docker ps</em>.
+That is quite a lot of output, let&#8217;s add a filter.  Replace &lt;Container ID&gt; with the output of <em>docker ps</em>.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -1660,7 +1661,7 @@ docker inspect --format '{{ .NetworkSettings.IPAddress }}' &lt;Container UUID&gt
 </li>
 <li>
 <p>
-Stop the container and check out its status. The container will not be running anymore, so it is not visible with <em>docker ps</em>.  To see the \&lt;Container ID&gt; of a stopped container, use the <em>-a</em> option.  The <em>-a</em> option shows all containers, started or stopped.
+Stop the container and check out its status. The container will not be running anymore, so it is not visible with <em>docker ps</em>.  To see the &lt;Container ID&gt; of a stopped container, use the <em>-a</em> option.  The <em>-a</em> option shows all containers, started or stopped.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -1677,12 +1678,11 @@ docker ps -a</code></pre>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-Launch the container with an interactive shell.
+Launch the container with an interactive shell. The file <em>/dev/log</em> is a socket.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>file /dev/log
-docker run -v /dev/log:/dev/log -i -t rhel7 bash</code></pre>
+<pre><code>docker run -v /dev/log:/dev/log -i -t rhel7 bash</code></pre>
 </div></div>
 </li>
 <li>
@@ -1701,7 +1701,7 @@ Go back to the original terminal. Generate a message with <em>logger</em> and ex
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>logger "This is a log from Summit"
+<pre><code>logger "This is a log Entry"
 exit</code></pre>
 </div></div>
 </li>
@@ -1711,7 +1711,7 @@ Check the logs on the host to ensure the bind mount was successful.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>journalctl | grep -i "This is a log from Summit"</code></pre>
+<pre><code>journalctl | grep -i "This is a log Entry"</code></pre>
 </div></div>
 </li>
 </ol></div>
@@ -1731,7 +1731,7 @@ Have a look at the docker images.
 </li>
 <li>
 <p>
-You will notice a repository called <em>summit/nginx</em>, that is what will be used in this section.
+You will notice a repository called <em>demo/nginx</em>, that is what will be used in this section.
 </p>
 </li>
 <li>
@@ -1740,16 +1740,18 @@ Here is the systemd unit file that needs to be created in order for this to work
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>[Unit]
+<pre><code>cat &gt; /etc/systemd/system/nginx.service &lt;&lt; EOF
+[Unit]
 Description=nginx server
 After=docker.service
 
 [Service]
 Type=simple
-ExecStart=/bin/bash -c '/usr/bin/docker start nginx || /usr/bin/docker run --name nginx -p 80:80 summit/nginx'
+ExecStart=/bin/bash -c '/usr/bin/docker start nginx || /usr/bin/docker run --name nginx -p 80:80 demo/nginx'
 
 [Install]
-WantedBy=multi-user.target</code></pre>
+WantedBy=multi-user.target
+EOF</code></pre>
 </div></div>
 </li>
 <li>
@@ -1804,15 +1806,6 @@ systemctl disable nginx.service</code></pre>
 <div class="paragraph"><p><strong>A bit about links</strong></p></div>
 <div class="paragraph"><p>Straight from the Docker.io site:</p></div>
 <div class="paragraph"><p>"Links: service discovery for docker. Links allow containers to discover and securely communicate with each other by using the flag -link name:alias  When two containers are linked together Docker creates a parent child relationship between the containers. The parent container will be able to access information via environment variables of the child such as name, exposed ports, IP and other selected environment variables."</p></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<img alt="Note" src="data:image/png;base64,
-" />
-</td>
-<td class="content">All images have been built before labtime.  If you would like to review what was used, all Dockerfiles are in <em>/root/summit_link_demo</em>.</td>
-</tr></table>
-</div>
 </div>
 <div class="sect2">
 <h3 id="_mariadb">MariaDB</h3>
@@ -1826,7 +1819,7 @@ Review the scripts and other content that are required to build and launch the <
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>cd /root/summit_link_demo/mariadb; ls</code></pre>
+<pre><code>cd /root/atomic_host_1/mariadb/; ls</code></pre>
 </div></div>
 </li>
 <li>
@@ -1861,11 +1854,9 @@ Review the supervisord.conf file
 </li>
 </ol></div>
 <div class="paragraph"><p>Straight from the supervisord.org site:</p></div>
-<div class="paragraph"><p>"Supervisor: A Process Control System</p></div>
-<div class="paragraph"><p>Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems."</p></div>
+<div class="paragraph"><p>"Supervisor: A Process Control System. Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems."</p></div>
 <div class="paragraph"><p>There are a couple of reasons to use <em>supervisord</em> inside a container.  The first is that Docker really only wants to be in charge of one service.  So if you are running multiple services in a POC container such as MariaDB and Apache at the same time, you need a way to manage those. Present <em>supervisord</em> as the service that runs on launch and let it control the other services in the background. Also, supervisord can run services in foreground mode.  Docker likes that.</p></div>
 <div class="paragraph"><p>The <em>supervisord.conf</em> file instructs the <em>supervisord</em> daemon as to which processes it is responsible for.  This <em>supervisord.conf</em> file has been pared down considerably.</p></div>
-<div class="paragraph"><p>+</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code># cat supervisord.conf
@@ -1975,7 +1966,7 @@ Launch the container.  The /mariadb/db directory already exists and has database
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb summit/mariadb</code></pre>
+<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb demo/mariadb</code></pre>
 </div></div>
 </li>
 <li>
@@ -2013,13 +2004,13 @@ Launch the container again.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb summit/mariadb
+<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb demo/mariadb
 docker ps -l
 docker logs mariadb</code></pre>
 </div></div>
 </li>
 </ol></div>
-<div class="paragraph"><p>The container should be running at this time.</p></div>
+<div class="paragraph"><p>The container should be running at this time. Kill the background <em>tail -f</em> process if you want.</p></div>
 </div>
 </div>
 <div class="sect2">
@@ -2027,51 +2018,49 @@ docker logs mariadb</code></pre>
 <div class="paragraph"><p>This section shows how to launch the <em>Mediawiki</em> container and link it back to the <em>MariaDB</em> container.</p></div>
 <div class="sect3">
 <h4 id="_review_the_mediawiki_environment">Review the Mediawiki Environment</h4>
-<div class="paragraph"><p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/summit_link_demo</em></p></div>
+<div class="paragraph"><p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/atomic_host_1/mediawiki</em></p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
 Review the Dockerfile
 </p>
 <div class="listingblock">
-<div class="content"><!-- Generator: GNU source-highlight 3.1.6
-by Lorenzo Bettini
-http://www.lorenzobettini.it
-http://www.gnu.org/software/src-highlite -->
-<pre><tt>cat Dockerfile
-FROM scollier/apache
-MAINTAINER Stephen Tweedie <span style="color: #990000">&lt;</span>sct@redhat<span style="color: #990000">.</span>com<span style="color: #990000">&gt;</span>
+<div class="content">
+<pre><code>cat Dockerfile
+FROM fedora:20
+MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
 
-<span style="font-style: italic"><span style="color: #9A1900"># Basic RPM install...</span></span>
-RUN yum -y update<span style="color: #990000">;</span> yum clean all
+# Basic RPM install...
+RUN yum -y update; yum clean all
 
-<span style="font-style: italic"><span style="color: #9A1900"># Install:</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  Mediawiki, obviously</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  php, because mediawiki doesn't by itself install php into apache</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#  php-mysqlnd: this image will be configured to run against the</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#               Fedora-Dockerfiles mariadb image so we need the mysqld</span></span>
-<span style="font-style: italic"><span style="color: #9A1900">#               client support for php</span></span>
-RUN yum -y install mediawiki php php-mysqlnd<span style="color: #990000">;</span> yum clean all
+# Install:
+#  Mediawiki, obviously
+#  php, because mediawiki doesn't by itself install php into apache
+#  php-mysqlnd: this image will be configured to run against the
+#               Fedora-Dockerfiles mariadb image so we need the mysqld
+#               client support for php
+RUN yum -y install mediawiki php php-mysqlnd; yum clean all
 
-<span style="font-style: italic"><span style="color: #9A1900"># Now wiki data.  We'll expose the wiki at $host/wiki, so the html root will be</span></span>
-<span style="font-style: italic"><span style="color: #9A1900"># at /var/www/html/wiki; to allow this to be used as a data volume we keep the</span></span>
-<span style="font-style: italic"><span style="color: #9A1900"># initialisation in a separate script.</span></span>
+# Now wiki data.  We'll expose the wiki at $host/wiki, so the html root will be
+# at /var/www/html/wiki; to allow this to be used as a data volume we keep the
+# initialisation in a separate script.
 
-ADD <span style="color: #990000">.</span>/config<span style="color: #990000">.</span>sh /config<span style="color: #990000">.</span>sh
-ADD <span style="color: #990000">.</span>/run-apache<span style="color: #990000">.</span>sh /run-apache<span style="color: #990000">.</span>sh
-ADD <span style="color: #990000">.</span>/LocalSettings<span style="color: #990000">.</span>php /var/www/html/wiki<span style="color: #990000">/</span>
-RUN chmod <span style="color: #990000">+</span>x /run-apache<span style="color: #990000">.</span>sh
-RUN chmod <span style="color: #990000">+</span>x /config<span style="color: #990000">.</span>sh
-RUN /config<span style="color: #990000">.</span>sh
+ADD ./config.sh /config.sh
+ADD ./run-apache.sh /run-apache.sh
+ADD ./LocalSettings.php /var/www/html/wiki/
+RUN chmod +x /run-apache.sh
+RUN chmod +x /config.sh
+RUN /config.sh
 
-<span style="font-style: italic"><span style="color: #9A1900"># localhost:/wiki/mw-config should now be available to configure mediawiki.</span></span>
+# localhost:/wiki/mw-config should now be available to configure mediawiki.
 
-<span style="font-style: italic"><span style="color: #9A1900"># Add script to update the IP address of a linked mariadb container if</span></span>
-<span style="font-style: italic"><span style="color: #9A1900"># needed:</span></span>
+# Add script to update the IP address of a linked mariadb container if
+# needed:
 
-ADD run-mw<span style="color: #990000">.</span>sh /run-mw<span style="color: #990000">.</span>sh
-RUN chmod <span style="color: #990000">+</span>x /run-mw<span style="color: #990000">.</span>sh
-CMD <span style="color: #990000">[</span><span style="color: #FF0000">"/run-mw.sh"</span><span style="color: #990000">]</span></tt></pre></div></div>
+ADD run-mw.sh /run-mw.sh
+RUN chmod +x /run-mw.sh
+CMD ["/run-mw.sh"]</code></pre>
+</div></div>
 </li>
 <li>
 <p>
@@ -2156,16 +2145,7 @@ exec /run-apache.sh</code></pre>
 <h4 id="_launch_the_mediawiki_container">Launch the Mediawiki Container</h4>
 <div class="paragraph"><p>This section show&#8217;s how to use hostnames and link to an existing container.  Issue the <em>docker run</em> command and link to the <em>mariadb</em> container.</p></div>
 <div class="paragraph"><p>Run the container.  The command below is taking the enviroment variable <em>HOST_IP</em> and will inject that into the <em>run-mw.sh</em> script when the container is launched. The <em>HOST_IP</em> is the IP address of the virtual machine that is hosting the container.  Replace IP_OF_VIRTUAL_MACHINE with the IP address of the virtual machine running the container.</p></div>
-<div class="admonitionblock">
-<table><tr>
-<td class="icon">
-<img alt="Note" src="data:image/png;base64,
-" />
-</td>
-<td class="content">In the following command, after the <em>-e</em>, leave the <em>HOST_IP</em> entry.  It&#8217;s used to hold the variable of the IP address of the virtual machine.</td>
-</tr></table>
-</div>
-<div class="paragraph"><p>+</p></div>
+<div class="paragraph"><p>[NOTE] In the following command, after the <em>-e</em>, leave the <em>HOST_IP</em> entry.  It&#8217;s used to hold the variable of the IP address of the Atomic Host 1 virtual machine.</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>ip a
