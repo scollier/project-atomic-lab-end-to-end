@@ -9,7 +9,7 @@ NOTE: Perform this on the hypervisor
 +
 ----
 cd ~
-mkdir atomic/build_server
+mkdir -p atomic/build_server
 ----
 . Download the image
 +
