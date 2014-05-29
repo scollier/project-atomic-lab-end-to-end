@@ -2,6 +2,9 @@
 The Atomic compose server builds the trees of content that the Red Hat Enterprise Linux Atomic Hosts consume.
 
 === Deploy a Red Hat Enterprise Linux 7 Virtual Machine
+
+NOTE: Perform this on the hypervisor
+
 . Create the directory structure, from _roots_ home directory
 +
 ----
@@ -39,7 +42,9 @@ systemctl restart sshd
 ----
 . Get the IP address from the image and SSH in, instead of using the virt-console
 . Now you should be SSH'd into the VM.  Add the collider repo for RHEL internal content  
-+
+
+NOTE: Perform on the build server
+
 ----
 cat << EOF > /etc/yum.repos.d/collider.repo
 [collider-rhel-7]
@@ -50,7 +55,113 @@ gpgcheck=0
 EOF
 ----
 . Install _rpm-ostree_ tools
++
+----
+yum -y install httpd yum-utils ostree binutils nss-altfiles firewalld
+----
+. Edit the _/etc/nsswitch.conf_ file
++
+----
+sed -i 's/passwd:     files sss/passwd:     files sss altfiles/' /etc/nsswitch.conf
+sed -i 's/shadow:     files sss/passwd:     files sss altfiles/' /etc/nsswitch.conf
+----
+. Disable SELinux on the compose server
++
+----
+sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config && cat /etc/selinux/config
+----
+. Create the repo and set up Apache
++
+----
+mkdir /srv/rpm-ostree &&
+cd /srv/rpm-ostree &&
+mkdir -p repo &&
+ostree --repo=repo init --mode=archive-z2 &&
 
+cat > /etc/httpd/conf.d/rpm-ostree.conf <<EOF
+DocumentRoot /srv/rpm-ostree
+<Directory "/srv/rpm-ostree">
+Options Indexes FollowSymLinks
+AllowOverride None
+Require all granted
+</Directory>
+EOF
+----
+. Create a systemd service file
++
+----
+cat > /etc/systemd/system/rpm-ostree-autobuilder.service <<EOF
+[Unit]
+Description=RPM-OSTree autobuilder
+
+[Service]
+WorkingDirectory=/srv/rpm-ostree
+ExecStart=/usr/bin/rpm-ostree-autobuilder
+
+[Install]
+WantedBy=multi-user.target
+EOF
+----
+. Enable services and configure firewall
++
+----
+systemctl start firewalld &&
+systemctl enable firewalld &&
+systemctl daemon-reload &&
+systemctl enable httpd &&
+systemctl start httpd &&
+systemctl reload httpd &&
+systemctl enable rpm-ostree-autobuilder &&
+systemctl start rpm-ostree-autobuilder &&
+firewall-cmd --add-service=http &&
+firewall-cmd --add-service=http --permanent
+----
+. Reboot the host
++
+----
+systemctl reboot
+----
+. Create the _products.json_ file
++
+----
+cat > /srv/rpm-ostree/products.json << EOF
+{
+    "comment": "Red Hat Enterprise Linux Atomic Host 7.0",
+
+    "osname": "rhel-atomic-host",
+    "ref": "rhel-atomic-host/7.0-buildmaster/x86_64/base",
+    
+    "repos": ["collider-rhel-7-build", "collider-rhel-7-candidate"],
+
+    "selinux": true,
+
+    "bootstrap_packages": ["filesystem", "glibc", "nss-altfiles", "shadow-utils",
+			   "redhat-release-atomic-controller"],
+
+    "packages": ["kernel", "rpm-ostree", "lvm2", "syslinux-extlinux",
+		 "btrfs-progs", "e2fsprogs", "xfsprogs",
+		 "docker",
+		 "selinux-policy-targeted",
+		 "audit",
+		 "min-cloud-agent",
+		 "subscription-manager",
+		 "openssh-server", "openssh-clients",
+		 "passwd",
+		 "NetworkManager", "vim-minimal", "nano",
+		 "sudo"],
+
+    "units": ["docker.service", "docker.socket"]
+}
+EOF
+----
+
+FIXME NEED PACKAGE FROM COLLIDER BEFORE COMPLETING THIS SECTION
+
+
+
+
+==== Links
+http://www.projectatomic.io/blog/2014/04/build-your-own-atomic-host-on-fedora-20/
 
 
 

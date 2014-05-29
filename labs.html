@@ -756,6 +756,15 @@ asciidoc.install(2);
 </div>
 <div class="sect2">
 <h3 id="_deploy_a_red_hat_enterprise_linux_7_virtual_machine">Deploy a Red Hat Enterprise Linux 7 Virtual Machine</h3>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+" />
+</td>
+<td class="content">Perform this on the hypervisor</td>
+</tr></table>
+</div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -821,6 +830,17 @@ Get the IP address from the image and SSH in, instead of using the virt-console
 <p>
 Now you should be SSH&#8217;d into the VM.  Add the collider repo for RHEL internal content
 </p>
+</li>
+</ol></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+" />
+</td>
+<td class="content">Perform on the build server</td>
+</tr></table>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre><code>cat &lt;&lt; EOF &gt; /etc/yum.repos.d/collider.repo
@@ -831,13 +851,145 @@ enabled=1
 gpgcheck=0
 EOF</code></pre>
 </div></div>
-</li>
+<div class="olist arabic"><ol class="arabic">
 <li>
 <p>
 Install <em>rpm-ostree</em> tools
 </p>
+<div class="listingblock">
+<div class="content">
+<pre><code>yum -y install httpd yum-utils ostree binutils nss-altfiles firewalld</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Edit the <em>/etc/nsswitch.conf</em> file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>sed -i 's/passwd:     files sss/passwd:     files sss altfiles/' /etc/nsswitch.conf
+sed -i 's/shadow:     files sss/passwd:     files sss altfiles/' /etc/nsswitch.conf</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Disable SELinux on the compose server
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config &amp;&amp; cat /etc/selinux/config</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Create the repo and set up Apache
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>mkdir /srv/rpm-ostree &amp;&amp;
+cd /srv/rpm-ostree &amp;&amp;
+mkdir -p repo &amp;&amp;
+ostree --repo=repo init --mode=archive-z2 &amp;&amp;
+
+cat &gt; /etc/httpd/conf.d/rpm-ostree.conf &lt;&lt;EOF
+DocumentRoot /srv/rpm-ostree
+&lt;Directory "/srv/rpm-ostree"&gt;
+Options Indexes FollowSymLinks
+AllowOverride None
+Require all granted
+&lt;/Directory&gt;
+EOF</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Create a systemd service file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat &gt; /etc/systemd/system/rpm-ostree-autobuilder.service &lt;&lt;EOF
+[Unit]
+Description=RPM-OSTree autobuilder
+
+[Service]
+WorkingDirectory=/srv/rpm-ostree
+ExecStart=/usr/bin/rpm-ostree-autobuilder
+
+[Install]
+WantedBy=multi-user.target
+EOF</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Enable services and configure firewall
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl start firewalld &amp;&amp;
+systemctl enable firewalld &amp;&amp;
+systemctl daemon-reload &amp;&amp;
+systemctl enable httpd &amp;&amp;
+systemctl start httpd &amp;&amp;
+systemctl reload httpd &amp;&amp;
+systemctl enable rpm-ostree-autobuilder &amp;&amp;
+systemctl start rpm-ostree-autobuilder &amp;&amp;
+firewall-cmd --add-service=http &amp;&amp;
+firewall-cmd --add-service=http --permanent</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Reboot the host
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl reboot</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Create the <em>products.json</em> file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat &gt; /srv/rpm-ostree/products.json &lt;&lt; EOF
+{
+    "comment": "Red Hat Enterprise Linux Atomic Host 7.0",
+
+    "osname": "rhel-atomic-host",
+    "ref": "rhel-atomic-host/7.0-buildmaster/x86_64/base",
+
+    "repos": ["collider-rhel-7-build", "collider-rhel-7-candidate"],
+
+    "selinux": true,
+
+    "bootstrap_packages": ["filesystem", "glibc", "nss-altfiles", "shadow-utils",
+         "redhat-release-atomic-controller"],
+
+    "packages": ["kernel", "rpm-ostree", "lvm2", "syslinux-extlinux",
+     "btrfs-progs", "e2fsprogs", "xfsprogs",
+     "docker",
+     "selinux-policy-targeted",
+     "audit",
+     "min-cloud-agent",
+     "subscription-manager",
+     "openssh-server", "openssh-clients",
+     "passwd",
+     "NetworkManager", "vim-minimal", "nano",
+     "sudo"],
+
+    "units": ["docker.service", "docker.socket"]
+}
+EOF</code></pre>
+</div></div>
 </li>
 </ol></div>
+<div class="paragraph"><p>FIXME NEED PACKAGE FROM COLLIDER BEFORE COMPLETING THIS SECTION</p></div>
+<div class="sect3">
+<h4 id="_links">Links</h4>
+<div class="paragraph"><p><a href="http://www.projectatomic.io/blog/2014/04/build-your-own-atomic-host-on-fedora-20/">http://www.projectatomic.io/blog/2014/04/build-your-own-atomic-host-on-fedora-20/</a></p></div>
+</div>
 </div>
 </div>
 </div>
@@ -1063,8 +1215,7 @@ reboot</code></pre>
 <div class="sectionbody">
 <div class="sect3">
 <h4 id="_overview">Overview</h4>
-<div class="paragraph"><p>In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.  You can also go upstream for more examples here:</p></div>
-<div class="paragraph"><p><a href="https://github.com/fedora-cloud/Fedora-Dockerfiles">https://github.com/fedora-cloud/Fedora-Dockerfiles</a></p></div>
+<div class="paragraph"><p>In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.</p></div>
 <div class="paragraph"><p>This section describes building the images, but doesn&#8217;t go into detail on the usage.  That will be in the following chapters.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -1092,7 +1243,6 @@ mkdir -p dockerfiles/apache</code></pre>
 <div class="sect3">
 <h4 id="_apache_image">Apache Image</h4>
 <div class="paragraph"><p>Build this image on Atomic Host 1 and 2</p></div>
-<div class="paragraph"><p>+</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
@@ -1102,7 +1252,6 @@ docker build -t demo/apache .</code></pre>
 <div class="sect3">
 <h4 id="_mediawiki_image">Mediawiki Image</h4>
 <div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
-<div class="paragraph"><p>+</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>FIXME WGET INSTRUCTIONS</code></pre>
@@ -1112,18 +1261,17 @@ docker build -t demo/apache .</code></pre>
 <p>
 Build the image
 </p>
+</li>
+</ol></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
 docker build -t demo/apache .</code></pre>
 </div></div>
-</li>
-</ol></div>
 </div>
 <div class="sect3">
 <h4 id="_mariadb_image">MariaDB Image</h4>
 <div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
-<div class="paragraph"><p>+</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>FIXME WGET INSTRUCTIONS</code></pre>
@@ -1144,7 +1292,6 @@ docker build -t demo/mariadb .</code></pre>
 <div class="sect3">
 <h4 id="_mongodb_image">MongoDB Image</h4>
 <div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
-<div class="paragraph"><p>+</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>FIXME WGET INSTRUCTIONS</code></pre>
@@ -1154,13 +1301,18 @@ docker build -t demo/mariadb .</code></pre>
 <p>
 Build the image
 </p>
+</li>
+</ol></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
 docker build -t demo/mongodb .</code></pre>
 </div></div>
-</li>
-</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_links_2">Links</h4>
+<div class="paragraph"><p>More example Dockerfiles are on the Fedora Cloud SIG github page:</p></div>
+<div class="paragraph"><p><a href="https://github.com/fedora-cloud/Fedora-Dockerfiles">https://github.com/fedora-cloud/Fedora-Dockerfiles</a></p></div>
 </div>
 </div>
 </div>

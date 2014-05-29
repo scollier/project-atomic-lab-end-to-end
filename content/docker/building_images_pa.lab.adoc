@@ -1,7 +1,5 @@
 ==== Overview
-In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.  You can also go upstream for more examples here:
-
-https://github.com/fedora-cloud/Fedora-Dockerfiles
+In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.  
 
 This section describes building the images, but doesn't go into detail on the usage.  That will be in the following chapters.
 
@@ -19,7 +17,6 @@ mkdir -p dockerfiles/apache
 ----
 ==== Apache Image
 Build this image on Atomic Host 1 and 2
-+
 ----
 docker images
 docker build -t demo/apache .
@@ -28,12 +25,10 @@ docker build -t demo/apache .
 
 ==== Mediawiki Image
 Build this image on Atomic Host 1
-+
 ----
 FIXME WGET INSTRUCTIONS
 ----
 . Build the image
-+
 ----
 docker images
 docker build -t demo/apache .
@@ -42,7 +37,6 @@ docker build -t demo/apache .
 
 ==== MariaDB Image
 Build this image on Atomic Host 1
-+
 ----
 FIXME WGET INSTRUCTIONS
 ----
@@ -56,13 +50,18 @@ docker build -t demo/mariadb .
 
 ==== MongoDB Image
 Build this image on Atomic Host 1
-+
 ----
 FIXME WGET INSTRUCTIONS
 ----
 . Build the image
-+
 ----
 docker images
 docker build -t demo/mongodb .
 ----
+
+==== Links
+More example Dockerfiles are on the Fedora Cloud SIG github page:
+
+https://github.com/fedora-cloud/Fedora-Dockerfiles
+
+
