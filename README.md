@@ -12,7 +12,7 @@ Pull the repo and build the documents by running the *make* command in the base 
     To:
     * iconsdir=/etc/asciidoc/images/icons
 
-NOTE: The following are now done with the "make" command and various targets but left here for reference.
+NOTE : The following are now done with the "make" command and various targets but left here for reference.
 
 * To create a single HTML document: asciidoc <text file>
 
