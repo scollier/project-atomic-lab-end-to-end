@@ -1058,7 +1058,7 @@ Create the directory structure, from <em>roots</em> home directory
 <div class="listingblock">
 <div class="content">
 <pre><code>cd ~
-mkdir atomic/build_server</code></pre>
+mkdir -p atomic/build_server</code></pre>
 </div></div>
 </li>
 <li>
@@ -1351,7 +1351,7 @@ On the host running the VM&#8217;s, create the directory structure.
 <div class="listingblock">
 <div class="content">
 <pre><code>cd ~
-mkdir -p atomic/{1,2}</code></pre>
+mkdir -p /var/lib/libvirt/images/atomic/{1,2}</code></pre>
 </div></div>
 </li>
 <li>
@@ -1362,7 +1362,7 @@ Download and decompress the images to the appropriate directories.  You only nee
 <div class="content">
 <pre><code>cd ~
 for i in 1 2; do
-  pushd atomic/$i/;
+  pushd /var/lib/libvirt/images/atomic/$i/;
   wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz;
   xz -d latest-qcow2.xz;
   popd;
@@ -1377,15 +1377,13 @@ Install the image and create an additional drive
 <div class="content">
 <pre><code>cd ~
 for i in 1 2; do
-  pushd atomic/$i/;
   sudo virt-install \
   --memory 2048 \
   --name Atomic_Host_$i \
-  --disk latest-qcow2 \
+  --disk /var/lib/libvirt/images/atomic/$i/latest-qcow2 \
   --import \
   --noautoconsole \
-  --disk /root/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10;
-  popd;
+  --disk /var/lib/libvirt/images/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10;
 done</code></pre>
 </div></div>
 </li>
@@ -1456,6 +1454,11 @@ PAr9L8j/96+U/w3yCoCXW14B8HLLvwDd67nwZIEPdgAAAABJRU5ErkJggg==" />
 <td class="content"><span class="yellow-background">Ensure you are on the correct host!  It would not be good if you are on the wrong host.  You should be on the Atomic VM&#8217;s when you perform the following operation.</span></td>
 </tr></table>
 </div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Create the Atomic_Host_sdb.layout file that will be used to partition <em>sdb</em>.  You can just copy the following contents into your shell on the Atomic Host VM&#8217;s.
+</p>
 <div class="listingblock">
 <div class="content">
 <pre><code>cat &lt;&lt; EOF &gt; Atomic_Host_sdb.layout
@@ -1470,7 +1473,7 @@ EOF
 
 sfdisk /dev/sdb &lt; Atomic_Host_sdb.layout</code></pre>
 </div></div>
-<div class="olist arabic"><ol class="arabic">
+</li>
 <li>
 <p>
 Format <em>/dev/sdb1</em>

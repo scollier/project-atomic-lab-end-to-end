@@ -31,7 +31,6 @@ done
 ----
 cd ~
 for i in 1 2; do 
-	pushd atomic/$i/; 
 	sudo virt-install \
 	--memory 2048 \
 	--name Atomic_Host_$i \
@@ -39,7 +38,6 @@ for i in 1 2; do
 	--import \
 	--noautoconsole \
 	--disk /var/lib/libvirt/images/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10; 
-	popd; 
 done
 ----
 . Set a password for the _root_ user on each Atomic host.
@@ -49,6 +47,9 @@ done
 The Red Hat Enterprise Linux Atomic Controllers come with a fairly small disk image.  We need to confiure the second disk that was added with _virt-install_ and mount that under _/var/lib/docker_.
 [NOTE]
 [yellow-background]#Ensure you are on the correct host!  It would not be good if you are on the wrong host.  You should be on the Atomic VM's when you perform the following operation.#
+
+. Create the Atomic_Host_sdb.layout file that will be used to partition _sdb_.  You can just copy the following contents into your shell on the Atomic Host VM's.
++
 ----
 cat << EOF > Atomic_Host_sdb.layout
 # partition table of /dev/sdb
