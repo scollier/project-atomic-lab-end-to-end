@@ -6,11 +6,13 @@ Updated: 2014-05-19 10:57
 :toc:
 :homepage http://projectatomic.io/:
 
+image:./content/images/logo.png[]
+
 == Introduction
 include::content/introduction/introduction.lab.adoc[tabsize=2]
 ////
-== Laptop Hypervisor Setup
-include::laptop_hypervisor_setup.lab.adoc[tabsize=2]
+//// == Laptop Hypervisor Setup
+//// include::laptop_hypervisor_setup.lab.adoc[tabsize=2]
 ////
 
 [[Compose_Server_Setup]]
@@ -38,13 +40,13 @@ include::content/geard/geard.lab.adoc[tabsize=2]
 include::content/atomic_host/upgrade_rollback_pa.lab.adoc[tabsize=2]
 
 ////
-[[More Information]]
-== More Information
-include::more_information.pa.lab.adoc[tabsize=2]
+//// [[More Information]]
+//// == More Information
+//// include::more_information.pa.lab.adoc[tabsize=2]
 ////
 
 ////
-[[Appendix]]
-== Appendix
-include::appendix.lab.adoc[tabsize=2]
+//// [[Appendix]]
+//// == Appendix
+//// include::appendix.lab.adoc[tabsize=2]
 ////

@@ -1,4 +1,4 @@
-==== Overview
+=== Overview
 In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.  
 
 This section describes building the images, but doesn't go into detail on the usage.  That will be in the following chapters.

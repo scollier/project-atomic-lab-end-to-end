@@ -13,14 +13,14 @@ For the purposes of this lab, we will be deploying Red Hat Enterprise Linux Atom
 +
 ----
 cd ~
-mkdir -p atomic/{1,2}
+mkdir -p /var/lib/libvirt/images/atomic/{1,2}
 ----
 . Download and decompress the images to the appropriate directories.  You only need to do the following step if the images haven't been downloaded for you already.
 +
 ----
 cd ~
 for i in 1 2; do 
-	pushd atomic/$i/; 
+	pushd /var/lib/libvirt/images/atomic/$i/; 
 	wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz; 
 	xz -d latest-qcow2.xz; 
 	popd; 
@@ -35,10 +35,10 @@ for i in 1 2; do
 	sudo virt-install \
 	--memory 2048 \
 	--name Atomic_Host_$i \
-	--disk latest-qcow2 \
+	--disk /var/lib/libvirt/images/atomic/$i/latest-qcow2 \
 	--import \
 	--noautoconsole \
-	--disk /root/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10; 
+	--disk /var/lib/libvirt/images/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10; 
 	popd; 
 done
 ----

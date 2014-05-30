@@ -1,0 +1,3323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+    "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+<meta name="generator" content="AsciiDoc 8.6.8" />
+<title>Project Atomic Lab: End to End</title>
+<style type="text/css">
+/* Shared CSS for AsciiDoc xhtml11 and html5 backends */
+
+/* Default font. */
+body {
+  font-family: Georgia,serif;
+}
+
+/* Title font. */
+h1, h2, h3, h4, h5, h6,
+div.title, caption.title,
+thead, p.table.header,
+#toctitle,
+#author, #revnumber, #revdate, #revremark,
+#footer {
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+body {
+  margin: 1em 5% 1em 5%;
+}
+
+a {
+  color: blue;
+  text-decoration: underline;
+}
+a:visited {
+  color: fuchsia;
+}
+
+em {
+  font-style: italic;
+  color: navy;
+}
+
+strong {
+  font-weight: bold;
+  color: #083194;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #527bbd;
+  margin-top: 1.2em;
+  margin-bottom: 0.5em;
+  line-height: 1.3;
+}
+
+h1, h2, h3 {
+  border-bottom: 2px solid silver;
+}
+h2 {
+  padding-top: 0.5em;
+}
+h3 {
+  float: left;
+}
+h3 + * {
+  clear: left;
+}
+h5 {
+  font-size: 1.0em;
+}
+
+div.sectionbody {
+  margin-left: 0;
+}
+
+hr {
+  border: 1px solid silver;
+}
+
+p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+ul, ol, li > p {
+  margin-top: 0;
+}
+ul > li     { color: #aaa; }
+ul > li > * { color: black; }
+
+.monospaced, code, pre {
+  font-family: "Courier New", Courier, monospace;
+  font-size: inherit;
+  color: navy;
+  padding: 0;
+  margin: 0;
+}
+
+
+#author {
+  color: #527bbd;
+  font-weight: bold;
+  font-size: 1.1em;
+}
+#email {
+}
+#revnumber, #revdate, #revremark {
+}
+
+#footer {
+  font-size: small;
+  border-top: 2px solid silver;
+  padding-top: 0.5em;
+  margin-top: 4.0em;
+}
+#footer-text {
+  float: left;
+  padding-bottom: 0.5em;
+}
+#footer-badges {
+  float: right;
+  padding-bottom: 0.5em;
+}
+
+#preamble {
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+div.imageblock, div.exampleblock, div.verseblock,
+div.quoteblock, div.literalblock, div.listingblock, div.sidebarblock,
+div.admonitionblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.admonitionblock {
+  margin-top: 2.0em;
+  margin-bottom: 2.0em;
+  margin-right: 10%;
+  color: #606060;
+}
+
+div.content { /* Block element content. */
+  padding: 0;
+}
+
+/* Block element titles. */
+div.title, caption.title {
+  color: #527bbd;
+  font-weight: bold;
+  text-align: left;
+  margin-top: 1.0em;
+  margin-bottom: 0.5em;
+}
+div.title + * {
+  margin-top: 0;
+}
+
+td div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content div.title:first-child {
+  margin-top: 0.0em;
+}
+div.content + div.title {
+  margin-top: 0.0em;
+}
+
+div.sidebarblock > div.content {
+  background: #ffffee;
+  border: 1px solid #dddddd;
+  border-left: 4px solid #f0f0f0;
+  padding: 0.5em;
+}
+
+div.listingblock > div.content {
+  border: 1px solid #dddddd;
+  border-left: 5px solid #f0f0f0;
+  background: #f8f8f8;
+  padding: 0.5em;
+}
+
+div.quoteblock, div.verseblock {
+  padding-left: 1.0em;
+  margin-left: 1.0em;
+  margin-right: 10%;
+  border-left: 5px solid #f0f0f0;
+  color: #888;
+}
+
+div.quoteblock > div.attribution {
+  padding-top: 0.5em;
+  text-align: right;
+}
+
+div.verseblock > pre.content {
+  font-family: inherit;
+  font-size: inherit;
+}
+div.verseblock > div.attribution {
+  padding-top: 0.75em;
+  text-align: left;
+}
+/* DEPRECATED: Pre version 8.2.7 verse style literal block. */
+div.verseblock + div.attribution {
+  text-align: left;
+}
+
+div.admonitionblock .icon {
+  vertical-align: top;
+  font-size: 1.1em;
+  font-weight: bold;
+  text-decoration: underline;
+  color: #527bbd;
+  padding-right: 0.5em;
+}
+div.admonitionblock td.content {
+  padding-left: 0.5em;
+  border-left: 3px solid #dddddd;
+}
+
+div.exampleblock > div.content {
+  border-left: 3px solid #dddddd;
+  padding-left: 0.5em;
+}
+
+div.imageblock div.content { padding-left: 0; }
+span.image img { border-style: none; }
+a.image:visited { color: white; }
+
+dl {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+dt {
+  margin-top: 0.5em;
+  margin-bottom: 0;
+  font-style: normal;
+  color: navy;
+}
+dd > *:first-child {
+  margin-top: 0.1em;
+}
+
+ul, ol {
+    list-style-position: outside;
+}
+ol.arabic {
+  list-style-type: decimal;
+}
+ol.loweralpha {
+  list-style-type: lower-alpha;
+}
+ol.upperalpha {
+  list-style-type: upper-alpha;
+}
+ol.lowerroman {
+  list-style-type: lower-roman;
+}
+ol.upperroman {
+  list-style-type: upper-roman;
+}
+
+div.compact ul, div.compact ol,
+div.compact p, div.compact p,
+div.compact div, div.compact div {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+}
+
+tfoot {
+  font-weight: bold;
+}
+td > div.verse {
+  white-space: pre;
+}
+
+div.hdlist {
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
+}
+div.hdlist tr {
+  padding-bottom: 15px;
+}
+dt.hdlist1.strong, td.hdlist1.strong {
+  font-weight: bold;
+}
+td.hdlist1 {
+  vertical-align: top;
+  font-style: normal;
+  padding-right: 0.8em;
+  color: navy;
+}
+td.hdlist2 {
+  vertical-align: top;
+}
+div.hdlist.compact tr {
+  margin: 0;
+  padding-bottom: 0;
+}
+
+.comment {
+  background: yellow;
+}
+
+.footnote, .footnoteref {
+  font-size: 0.8em;
+}
+
+span.footnote, span.footnoteref {
+  vertical-align: super;
+}
+
+#footnotes {
+  margin: 20px 0 20px 0;
+  padding: 7px 0 0 0;
+}
+
+#footnotes div.footnote {
+  margin: 0 0 5px 0;
+}
+
+#footnotes hr {
+  border: none;
+  border-top: 1px solid silver;
+  height: 1px;
+  text-align: left;
+  margin-left: 0;
+  width: 20%;
+  min-width: 100px;
+}
+
+div.colist td {
+  padding-right: 0.5em;
+  padding-bottom: 0.3em;
+  vertical-align: top;
+}
+div.colist td img {
+  margin-top: 0.3em;
+}
+
+@media print {
+  #footer-badges { display: none; }
+}
+
+#toc {
+  margin-bottom: 2.5em;
+}
+
+#toctitle {
+  color: #527bbd;
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-top: 1.0em;
+  margin-bottom: 0.1em;
+}
+
+div.toclevel0, div.toclevel1, div.toclevel2, div.toclevel3, div.toclevel4 {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+div.toclevel2 {
+  margin-left: 2em;
+  font-size: 0.9em;
+}
+div.toclevel3 {
+  margin-left: 4em;
+  font-size: 0.9em;
+}
+div.toclevel4 {
+  margin-left: 6em;
+  font-size: 0.9em;
+}
+
+span.aqua { color: aqua; }
+span.black { color: black; }
+span.blue { color: blue; }
+span.fuchsia { color: fuchsia; }
+span.gray { color: gray; }
+span.green { color: green; }
+span.lime { color: lime; }
+span.maroon { color: maroon; }
+span.navy { color: navy; }
+span.olive { color: olive; }
+span.purple { color: purple; }
+span.red { color: red; }
+span.silver { color: silver; }
+span.teal { color: teal; }
+span.white { color: white; }
+span.yellow { color: yellow; }
+
+span.aqua-background { background: aqua; }
+span.black-background { background: black; }
+span.blue-background { background: blue; }
+span.fuchsia-background { background: fuchsia; }
+span.gray-background { background: gray; }
+span.green-background { background: green; }
+span.lime-background { background: lime; }
+span.maroon-background { background: maroon; }
+span.navy-background { background: navy; }
+span.olive-background { background: olive; }
+span.purple-background { background: purple; }
+span.red-background { background: red; }
+span.silver-background { background: silver; }
+span.teal-background { background: teal; }
+span.white-background { background: white; }
+span.yellow-background { background: yellow; }
+
+span.big { font-size: 2em; }
+span.small { font-size: 0.6em; }
+
+span.underline { text-decoration: underline; }
+span.overline { text-decoration: overline; }
+span.line-through { text-decoration: line-through; }
+
+div.unbreakable { page-break-inside: avoid; }
+
+
+/*
+ * xhtml11 specific
+ *
+ * */
+
+div.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+div.tableblock > table {
+  border: 3px solid #527bbd;
+}
+thead, p.table.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.table {
+  margin-top: 0;
+}
+/* Because the table frame attribute is overriden by CSS in most browsers. */
+div.tableblock > table[frame="void"] {
+  border-style: none;
+}
+div.tableblock > table[frame="hsides"] {
+  border-left-style: none;
+  border-right-style: none;
+}
+div.tableblock > table[frame="vsides"] {
+  border-top-style: none;
+  border-bottom-style: none;
+}
+
+
+/*
+ * html5 specific
+ *
+ * */
+
+table.tableblock {
+  margin-top: 1.0em;
+  margin-bottom: 1.5em;
+}
+thead, p.tableblock.header {
+  font-weight: bold;
+  color: #527bbd;
+}
+p.tableblock {
+  margin-top: 0;
+}
+table.tableblock {
+  border-width: 3px;
+  border-spacing: 0px;
+  border-style: solid;
+  border-color: #527bbd;
+  border-collapse: collapse;
+}
+th.tableblock, td.tableblock {
+  border-width: 1px;
+  padding: 4px;
+  border-style: solid;
+  border-color: #527bbd;
+}
+
+table.tableblock.frame-topbot {
+  border-left-style: hidden;
+  border-right-style: hidden;
+}
+table.tableblock.frame-sides {
+  border-top-style: hidden;
+  border-bottom-style: hidden;
+}
+table.tableblock.frame-none {
+  border-style: hidden;
+}
+
+th.tableblock.halign-left, td.tableblock.halign-left {
+  text-align: left;
+}
+th.tableblock.halign-center, td.tableblock.halign-center {
+  text-align: center;
+}
+th.tableblock.halign-right, td.tableblock.halign-right {
+  text-align: right;
+}
+
+th.tableblock.valign-top, td.tableblock.valign-top {
+  vertical-align: top;
+}
+th.tableblock.valign-middle, td.tableblock.valign-middle {
+  vertical-align: middle;
+}
+th.tableblock.valign-bottom, td.tableblock.valign-bottom {
+  vertical-align: bottom;
+}
+
+
+/*
+ * manpage specific
+ *
+ * */
+
+body.manpage h1 {
+  padding-top: 0.5em;
+  padding-bottom: 0.5em;
+  border-top: 2px solid silver;
+  border-bottom: 2px solid silver;
+}
+body.manpage h2 {
+  border-style: none;
+}
+body.manpage div.sectionbody {
+  margin-left: 3em;
+}
+
+@media print {
+  body.manpage div#toc { display: none; }
+}
+
+
+</style>
+<script type="text/javascript">
+/*<![CDATA[*/
+var asciidoc = {  // Namespace.
+
+/////////////////////////////////////////////////////////////////////
+// Table Of Contents generator
+/////////////////////////////////////////////////////////////////////
+
+/* Author: Mihai Bazon, September 2002
+ * http://students.infoiasi.ro/~mishoo
+ *
+ * Table Of Content generator
+ * Version: 0.4
+ *
+ * Feel free to use this script under the terms of the GNU General Public
+ * License, as long as you do not remove or alter this notice.
+ */
+
+ /* modified by Troy D. Hanson, September 2006. License: GPL */
+ /* modified by Stuart Rackham, 2006, 2009. License: GPL */
+
+// toclevels = 1..4.
+toc: function (toclevels) {
+
+  function getText(el) {
+    var text = "";
+    for (var i = el.firstChild; i != null; i = i.nextSibling) {
+      if (i.nodeType == 3 /* Node.TEXT_NODE */) // IE doesn't speak constants.
+        text += i.data;
+      else if (i.firstChild != null)
+        text += getText(i);
+    }
+    return text;
+  }
+
+  function TocEntry(el, text, toclevel) {
+    this.element = el;
+    this.text = text;
+    this.toclevel = toclevel;
+  }
+
+  function tocEntries(el, toclevels) {
+    var result = new Array;
+    var re = new RegExp('[hH]([1-'+(toclevels+1)+'])');
+    // Function that scans the DOM tree for header elements (the DOM2
+    // nodeIterator API would be a better technique but not supported by all
+    // browsers).
+    var iterate = function (el) {
+      for (var i = el.firstChild; i != null; i = i.nextSibling) {
+        if (i.nodeType == 1 /* Node.ELEMENT_NODE */) {
+          var mo = re.exec(i.tagName);
+          if (mo && (i.getAttribute("class") || i.getAttribute("className")) != "float") {
+            result[result.length] = new TocEntry(i, getText(i), mo[1]-1);
+          }
+          iterate(i);
+        }
+      }
+    }
+    iterate(el);
+    return result;
+  }
+
+  var toc = document.getElementById("toc");
+  if (!toc) {
+    return;
+  }
+
+  // Delete existing TOC entries in case we're reloading the TOC.
+  var tocEntriesToRemove = [];
+  var i;
+  for (i = 0; i < toc.childNodes.length; i++) {
+    var entry = toc.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div'
+     && entry.getAttribute("class")
+     && entry.getAttribute("class").match(/^toclevel/))
+      tocEntriesToRemove.push(entry);
+  }
+  for (i = 0; i < tocEntriesToRemove.length; i++) {
+    toc.removeChild(tocEntriesToRemove[i]);
+  }
+
+  // Rebuild TOC entries.
+  var entries = tocEntries(document.getElementById("content"), toclevels);
+  for (var i = 0; i < entries.length; ++i) {
+    var entry = entries[i];
+    if (entry.element.id == "")
+      entry.element.id = "_toc_" + i;
+    var a = document.createElement("a");
+    a.href = "#" + entry.element.id;
+    a.appendChild(document.createTextNode(entry.text));
+    var div = document.createElement("div");
+    div.appendChild(a);
+    div.className = "toclevel" + entry.toclevel;
+    toc.appendChild(div);
+  }
+  if (entries.length == 0)
+    toc.parentNode.removeChild(toc);
+},
+
+
+/////////////////////////////////////////////////////////////////////
+// Footnotes generator
+/////////////////////////////////////////////////////////////////////
+
+/* Based on footnote generation code from:
+ * http://www.brandspankingnew.net/archive/2005/07/format_footnote.html
+ */
+
+footnotes: function () {
+  // Delete existing footnote entries in case we're reloading the footnodes.
+  var i;
+  var noteholder = document.getElementById("footnotes");
+  if (!noteholder) {
+    return;
+  }
+  var entriesToRemove = [];
+  for (i = 0; i < noteholder.childNodes.length; i++) {
+    var entry = noteholder.childNodes[i];
+    if (entry.nodeName.toLowerCase() == 'div' && entry.getAttribute("class") == "footnote")
+      entriesToRemove.push(entry);
+  }
+  for (i = 0; i < entriesToRemove.length; i++) {
+    noteholder.removeChild(entriesToRemove[i]);
+  }
+
+  // Rebuild footnote entries.
+  var cont = document.getElementById("content");
+  var spans = cont.getElementsByTagName("span");
+  var refs = {};
+  var n = 0;
+  for (i=0; i<spans.length; i++) {
+    if (spans[i].className == "footnote") {
+      n++;
+      var note = spans[i].getAttribute("data-note");
+      if (!note) {
+        // Use [\s\S] in place of . so multi-line matches work.
+        // Because JavaScript has no s (dotall) regex flag.
+        note = spans[i].innerHTML.match(/\s*\[([\s\S]*)]\s*/)[1];
+        spans[i].innerHTML =
+          "[<a id='_footnoteref_" + n + "' href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+        spans[i].setAttribute("data-note", note);
+      }
+      noteholder.innerHTML +=
+        "<div class='footnote' id='_footnote_" + n + "'>" +
+        "<a href='#_footnoteref_" + n + "' title='Return to text'>" +
+        n + "</a>. " + note + "</div>";
+      var id =spans[i].getAttribute("id");
+      if (id != null) refs["#"+id] = n;
+    }
+  }
+  if (n == 0)
+    noteholder.parentNode.removeChild(noteholder);
+  else {
+    // Process footnoterefs.
+    for (i=0; i<spans.length; i++) {
+      if (spans[i].className == "footnoteref") {
+        var href = spans[i].getElementsByTagName("a")[0].getAttribute("href");
+        href = href.match(/#.*/)[0];  // Because IE return full URL.
+        n = refs[href];
+        spans[i].innerHTML =
+          "[<a href='#_footnote_" + n +
+          "' title='View footnote' class='footnote'>" + n + "</a>]";
+      }
+    }
+  }
+},
+
+install: function(toclevels) {
+  var timerId;
+
+  function reinstall() {
+    asciidoc.footnotes();
+    if (toclevels) {
+      asciidoc.toc(toclevels);
+    }
+  }
+
+  function reinstallAndRemoveTimer() {
+    clearInterval(timerId);
+    reinstall();
+  }
+
+  timerId = setInterval(reinstall, 500);
+  if (document.addEventListener)
+    document.addEventListener("DOMContentLoaded", reinstallAndRemoveTimer, false);
+  else
+    window.onload = reinstallAndRemoveTimer;
+}
+
+}
+asciidoc.install(2);
+/*]]>*/
+</script>
+</head>
+<body class="article">
+<div id="header">
+<h1>Project Atomic Lab: End to End</h1>
+<span id="author">&lt;scollier@redhat.com&gt;</span><br />
+<span id="revdate">Updated</span>
+<br /><span id="revremark">2014-05-19 10:57</span>
+<div id="toc">
+  <div id="toctitle">Table of Contents</div>
+  <noscript><p><b>JavaScript must be enabled in your browser to display the table of contents.</b></p></noscript>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph"><p><span class="image">
+<img alt="./content/images/logo.png" src="data:image/png;base64,
+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
+Uq7bAAAAAElFTkSuQmCC" />
+</span></p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_introduction">Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph"><p>Project Atomic and Docker are very fast moving spaces at the moment.  There is a already lot of existing documentation out there.  This lab attempts to make use of some of that documentation and provide a comprehensive example of an end to end deployment using Project Atomic components.  Considering how fast moving this space is, if you use this guide and find some steps, or anything out of date, please submite a PR and let&#8217;s get it fixed. I will try to include links to external documentation that I borrowed from when possible.</p></div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Compose_Server_Setup">Red Hat Enterprise Linux Atomic Host Compose Server</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_configure_the_compose_server">Configure the Compose Server</h3>
+<div class="paragraph"><p>The Atomic compose server builds the trees of content that the Red Hat Enterprise Linux Atomic Hosts consume.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_deploy_a_red_hat_enterprise_linux_7_virtual_machine">Deploy a Red Hat Enterprise Linux 7 Virtual Machine</h3>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+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" />
+</td>
+<td class="content">Perform this on the hypervisor</td>
+</tr></table>
+</div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Create the directory structure, from <em>roots</em> home directory
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+mkdir atomic/build_server</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Download the image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd atomic/build_server
+wget http://download.devel.redhat.com/brewroot/packages/rhel-server-kvm/7.0/7/images/rhel-server-kvm-7.0-7.x86_64.qcow2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Change the password on the image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>virt-sysprep -a rhel-server-kvm-7.0-7.x86_64.qcow2 --root-password password:redhat</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Install the Red Hat Enterprise Linux image
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd atomic/build_server
+virt-install \
+  --memory 4096 \
+  --name Compose_Server \
+  --disk ~/atomic/build_server/rhel-server-kvm-7.0-7.x86_64.qcow2 \
+  --import \
+  --noautoconsole</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Configure SSH, do this from within the virtual console
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+grep -i passwordauth /etc/ssh/sshd_config
+systemctl restart sshd</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Get the IP address from the image and SSH in, instead of using the virt-console
+</p>
+</li>
+<li>
+<p>
+Now you should be SSH&#8217;d into the VM.  Add the collider repo for RHEL internal content
+</p>
+</li>
+</ol></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+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" />
+</td>
+<td class="content">Perform on the build server</td>
+</tr></table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat &lt;&lt; EOF &gt; /etc/yum.repos.d/collider.repo
+[collider-rhel-7]
+name=Collider RHEL 7 Packages
+baseurl=http://download.lab.bos.redhat.com/brewroot/repos/collider-rhel-7-build/latest/x86_64/
+enabled=1
+gpgcheck=0
+EOF</code></pre>
+</div></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Install <em>rpm-ostree</em> tools
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>yum -y install httpd yum-utils ostree binutils nss-altfiles firewalld</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Edit the <em>/etc/nsswitch.conf</em> file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>sed -i 's/passwd:     files sss/passwd:     files sss altfiles/' /etc/nsswitch.conf
+sed -i 's/shadow:     files sss/passwd:     files sss altfiles/' /etc/nsswitch.conf</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Disable SELinux on the compose server
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config &amp;&amp; cat /etc/selinux/config</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Create the repo and set up Apache
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>mkdir /srv/rpm-ostree &amp;&amp;
+cd /srv/rpm-ostree &amp;&amp;
+mkdir -p repo &amp;&amp;
+ostree --repo=repo init --mode=archive-z2 &amp;&amp;
+
+cat &gt; /etc/httpd/conf.d/rpm-ostree.conf &lt;&lt;EOF
+DocumentRoot /srv/rpm-ostree
+&lt;Directory "/srv/rpm-ostree"&gt;
+Options Indexes FollowSymLinks
+AllowOverride None
+Require all granted
+&lt;/Directory&gt;
+EOF</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Create a systemd service file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat &gt; /etc/systemd/system/rpm-ostree-autobuilder.service &lt;&lt;EOF
+[Unit]
+Description=RPM-OSTree autobuilder
+
+[Service]
+WorkingDirectory=/srv/rpm-ostree
+ExecStart=/usr/bin/rpm-ostree-autobuilder
+
+[Install]
+WantedBy=multi-user.target
+EOF</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Enable services and configure firewall
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl start firewalld &amp;&amp;
+systemctl enable firewalld &amp;&amp;
+systemctl daemon-reload &amp;&amp;
+systemctl enable httpd &amp;&amp;
+systemctl start httpd &amp;&amp;
+systemctl reload httpd &amp;&amp;
+systemctl enable rpm-ostree-autobuilder &amp;&amp;
+systemctl start rpm-ostree-autobuilder &amp;&amp;
+firewall-cmd --add-service=http &amp;&amp;
+firewall-cmd --add-service=http --permanent</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Reboot the host
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl reboot</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Create the <em>products.json</em> file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat &gt; /srv/rpm-ostree/products.json &lt;&lt; EOF
+{
+    "comment": "Red Hat Enterprise Linux Atomic Host 7.0",
+
+    "osname": "rhel-atomic-host",
+    "ref": "rhel-atomic-host/7.0-buildmaster/x86_64/base",
+
+    "repos": ["collider-rhel-7-build", "collider-rhel-7-candidate"],
+
+    "selinux": true,
+
+    "bootstrap_packages": ["filesystem", "glibc", "nss-altfiles", "shadow-utils",
+         "redhat-release-atomic-controller"],
+
+    "packages": ["kernel", "rpm-ostree", "lvm2", "syslinux-extlinux",
+     "btrfs-progs", "e2fsprogs", "xfsprogs",
+     "docker",
+     "selinux-policy-targeted",
+     "audit",
+     "min-cloud-agent",
+     "subscription-manager",
+     "openssh-server", "openssh-clients",
+     "passwd",
+     "NetworkManager", "vim-minimal", "nano",
+     "sudo"],
+
+    "units": ["docker.service", "docker.socket"]
+}
+EOF</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>FIXME NEED PACKAGE FROM COLLIDER BEFORE COMPLETING THIS SECTION</p></div>
+<div class="sect3">
+<h4 id="_links">Links</h4>
+<div class="paragraph"><p><a href="http://www.projectatomic.io/blog/2014/04/build-your-own-atomic-host-on-fedora-20/">http://www.projectatomic.io/blog/2014/04/build-your-own-atomic-host-on-fedora-20/</a></p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Configure_PA_VMs">Configure Project Atomic VMs</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_options_for_deployment">Options for Deployment</h3>
+<div class="paragraph"><p>There are a few different ways to obtain Atomic images.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+In .qcow2 format
+</p>
+</li>
+<li>
+<p>
+Deploy from rpm
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>For the purposes of this lab, we will be deploying Red Hat Enterprise Linux Atomic Controllers via the .qcow2 pre-built images.</p></div>
+</div>
+<div class="sect2">
+<h3 id="_obtaining_the_images">Obtaining the images</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+On the host running the VM&#8217;s, create the directory structure.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+mkdir -p atomic/{1,2}</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Download and decompress the images to the appropriate directories.  You only need to do the following step if the images haven&#8217;t been downloaded for you already.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+for i in 1 2; do
+  pushd atomic/$i/;
+  wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz;
+  xz -d latest-qcow2.xz;
+  popd;
+done</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Install the image and create an additional drive
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+for i in 1 2; do
+  pushd atomic/$i/;
+  sudo virt-install \
+  --memory 2048 \
+  --name Atomic_Host_$i \
+  --disk latest-qcow2 \
+  --import \
+  --noautoconsole \
+  --disk /root/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10;
+  popd;
+done</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Set a password for the <em>root</em> user on each Atomic host.
+</p>
+</li>
+<li>
+<p>
+Get IP Address of both hosts and open up a terminal console to each machine.
+</p>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_configure_disk_partitions">Configure Disk Partitions</h3>
+<div class="paragraph"><p>The Red Hat Enterprise Linux Atomic Controllers come with a fairly small disk image.  We need to confiure the second disk that was added with <em>virt-install</em> and mount that under <em>/var/lib/docker</em>.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+iVBORw0KGgoAAAANSUhEUgAAADAAAAAwCAYAAABXAvmHAAAJhUlEQVRoge2ZWWycVxXHf+fce7/v
+m/GaGCde4pI0aQlJC0kRtE1L00JbLIjY4QkeUB9YHhAIJFCExAsKUkE8IAFFPIDUIqhBRSDRBUqC
+CimFFBCBpCWx02IaZ3G2SdyxPZ7vHh6+mcnSZnFjKIge6Wj8zYzvPf9z/me5d8TM+F8WfbkNuFx5
+BcDLLf/fAEZGRmx4eNh6enqsp6fHhoeHbWRk5D9aFeSlVqHNmzfb6H33sHnT7ZQmD5GfOMax6Sm+
+Pl5h1Yc+xpYtW2SBbX1ReUkRGBkZsdH77mHLW95EOv4Ms3ueJh6YYPHUFF9aljJ63z3cf//9/5FI
+vKQIDA8P293L2yhVjjH7t51ocDiviFecF46n7XzBreChhx4qNhH5t0XjJUVgx44ddGUZ9b/vIpQD
+oRQIWSDJAiFL6B9axo4dO4gxAmANWVDLG+Ln82URMRGhVCqRHxonlAPqFXWKC4r6IhI6OMjMzBN4
+/4LlTUQQEZxzZ32QJAlpmrb+p16vU6vVOHXq1AWjN18AnDj0F971vrs4OnmYJVkoDA4FCPUO172I
+Cgnt7SV++4vvsGhRJx3tJbIsRVVpsUnOBBABBVFEClKYwbKr7sTM7EIUnBcA7z21k7t49x1X8JXv
+bOWra7rw5QRtcN8PLCfvvZJvb9vJycpJpg4/hp/N0I4SMQs4Jw0A5zBXHGiCaIZIKABgpGlKjPEF
+0TpT5pUDRXiVt99+Le03r+WzuytM1gO6pB/3+o0cbxvk8yOPMjW6i2iR2lxOjJDHSDMFogmGwzQ7
+rRJAUpAENAGXIZq2AFzQpvkACCEQcahP+cRH3sKHn9zHXU+MM7rtGeD33NDXzaZynZU9gcezpUw9
+X6OzIyOakkfF4QEpPG6nDRNNEA2FSgKimETSNCXPc0II57VpXhEolUqoOrxPSLOMT330Dv5SqfKD
+NR388Y2L+caQsjITNv3pMBs3rOT56ZyZGaM+J0QUxDc0INrWUgggoRGBAOIRAt77hY1AmqaoeJxP
+cN645jVDbNn8Hj73o8fZ/af9mEE9j9y2YRXt5YzZWmRmzjj1/BwhTXAKzitOHEbeWlc0AVwDnCv8
+KoZzjotV33lTSL1HNKAuEtKM1169jM98/E6mTk3x4Nbd7Bk7TEdHRvAeVY+hmDqmZwx1kIkiqrhz
+S2zL+AbNMC6l/80LgHMOEY9oQvBCks5RKpXo7JhFxbhz42pet2aQet1YtLiDJAkIDq8BHwJmwlwO
+UaD0ojsrNKuUReIZyb9gABCHcwWFgg+0lTPyvIRToVzKWLpkMfV6REQplYvmZCj1uuBUSdJwTg8A
+XBdoCZMOsBkQBeGi/J83gBgjmABC8AlJGsjzFLMyaXDM1etEA0VR50iCx6mSZhkiijpPjEpQD+SF
+4WdJrTAewdCFB1CtVlFVVATnhMQnWJqC5aTBk+c5IIgWRoTgSZJAmiZAo1s7hwsppglI+fTiljeY
+nyHkLQotKIAYI4igzpFHISQOiwEnKTEG8hhRVZw6YjRQLfJGHcF7jleqTBw8znXr12MABnv37efY
+iSnesG4tiUsRUQwD7JIAzKsPqCqiRbVwweM04XdPjhJN+dvTBxgbn6G9q59yZx9/3HWEb33vN+zc
+/RzOJ+w/eJLtO8Z5ZNtT7PvHIUQTvvv9X/Lc/mN0d3by3fseRLQwvWh0Fy+h8wbQ2VFG1KM+xfuA
+qufo8So/fejPPD/rqJys8pvf7eLAoeNMHqnw2U9+kH3jVQ5MClMzKUla5obr13HliiEMmDx6gltv
+uY7Vr1nBQF8PJopQ9AFTt/AROFfMjCW9XTy19xB33Hodb924jr1j+/nDk3/nzTdei4jw3nfeyCOP
+bufa1y5jzeoVrcHM8HR3dfHlr/2Q+x94jFtuuh44/9B2PplXDryYLF3STXd3e+t5UXcHY89OsOH6
+NS2Qed7wpM1Rm50G4MGHH2P961Zy3bqreXrPP5mrzwLt5y6/cACq1eoLCKm+TN/SAebmfn8aUG83
+PYs7+cnPH+eqKwd5as8/edc7bi02847pmVkATk1VWbF8AOcca1Yv59DkqcYK0tCL02deACqVCldc
+0YdIwLmEPM9RV6NnUZlPf3wT6oqJcePN6wHhzTeu4/CRCrfctJ4sSxBRli7pYfHEMUSU97/7Th75
+1RP8eec+Yp5zzTVXM9DfDyogBvHS6HTJACYmJnjVoq5GFw0454gCEOnoaMfiNGZFFRFxJGkbywZ6
+i1NWoy9kWYmbb1gHKCHApuGbisVFGyoYUswa5OR5ftF56JIBjI6OMtDfWwAQ35jnc8AVpRXBohVq
+UowECKqK4RBxoE0W6gvGCcEjaOEAwEQWdpgbGxujt7erOLO2mk3R8i0Wz9EiuUGz+qlKEQEUaJbI
+4lTHmTVePKgWzpDGJGpc8CDTlEsuo88++wxXDA0UIUbAOP23KGZKjI48KnkuhcbiPbPCOBoeBikO
+Lk2VxjqNRilaAEqSZGEAbN261bZt+zW33XY7IAXXm6Ou0YhIMamaaUOl5WRrzg00viuKWWxpQUOH
+NAZFQRpD48Xlkig0MTHBB95zG+VSylz1KCbWyDOh2XyK+56IqjWMKigkUnzWnPPFFFRRLZ29SQRU
+ELOGY4pZ6LKOlM07mZ07d/KOtw1TcB4sGkTDiDQ9K1IkrKeYmQC08d7pZLSiRBpE5s7aS0XAHFEK
+AGY51Wr18g80Zmb33nsvX/z8XdSmj2AWOXhwkrxe46+79jB55Dh/3T2GxUhHextdXW2sXN7PNWtW
+IQKDA71FFBoAjIgQkVg/a5+oHrU5zIznDhxk964xKpXKggAoTlWW8+OfPorlOQ//cjsDy1bS2dFO
+W+diVly1iL6+Pqanpzl5qsL4pPHwN3/G1InDlMsZ7Z1tDA30cfWqIa5dexV9fb2YnT7UTxw4xsHJ
+o4yOjfOP8QOMjx/k4OQx7r777lY0zycXvJ02M4sxMjg4SL1eR0TYsGEDw8PD9PX10d7ejogUN3a1
+GqpKCIE8z5mdnUVVqVarbN++nba2Nvbu3csDDzyAqrJ8+atb+zjn6e/vZ/Xq1axatYq1a9fS29tL
+lmUMDQ1RKpXOm9EXvV6v1+tWr9eZnp5mZmaGWq1GjLHF62aiNZ+bnPfe45xrvTZzxMyYmZk56+LX
+zKjX661DvHOOJElIkoRSqYT3/vLvRlW15eHCa4VxzdvmpjZDfubzuXeb3vuzqCEixBhbo0NTkyS5
+PAr9L8j/96+U/w3yCoCXW14B8HLLvwDd67nwZIEPdgAAAABJRU5ErkJggg==" />
+</td>
+<td class="content"><span class="yellow-background">Ensure you are on the correct host!  It would not be good if you are on the wrong host.  You should be on the Atomic VM&#8217;s when you perform the following operation.</span></td>
+</tr></table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat &lt;&lt; EOF &gt; Atomic_Host_sdb.layout
+# partition table of /dev/sdb
+unit: sectors
+
+/dev/sdb1 : start=     2048, size= 20969472, Id=83
+/dev/sdb2 : start=        0, size=        0, Id= 0
+/dev/sdb3 : start=        0, size=        0, Id= 0
+/dev/sdb4 : start=        0, size=        0, Id= 0
+EOF
+
+sfdisk /dev/sdb &lt; Atomic_Host_sdb.layout</code></pre>
+</div></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Format <em>/dev/sdb1</em>
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>mkfs.xfs /dev/sdb1</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Ensure that only <em>/dev/sdb1</em> is mounted to <em>/var/lib/docker</em>
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl stop docker
+mount
+df -hal
+umount /var/lib/docker
+mount</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Get the UUID from <em>/dev/sdb1</em> and add it to the <em>/etc/fstab</em>
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cp /etc/fstab{,.orig}
+cat /etc/fstab
+echo "$(blkid /dev/sdb1 | awk '{ print $2 }') /var/lib/docker xfs defaults 1 1" &gt;&gt; /etc/fstab
+cat /etc/fstab
+mount -a
+mount
+df -hal
+systemctl start docker
+ls /var/lib/docker</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_validate_hostname_and_networking">Validate Hostname and Networking</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Set the hostname for each of your Red Hat Enterprise Linux Atomic Controller&#8217;s.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>hostnamectl set-hostname atomic1.local     # on host 1
+hostnamectl set-hostname atomic2.local     # on host 2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Ensure you can ping the other controller
+</p>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_validate_selinux">Validate SELinux</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Ensure that selinux is set to enforcing mode on each controller.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>getenforce</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_ensure_docker_and_geard_are_functional">Ensure Docker and geard are Functional</h3>
+<div class="paragraph"><p>+</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl status docker
+systemctl status geard</code></pre>
+</div></div>
+</div>
+<div class="sect2">
+<h3 id="_upgrade_both_controllers">Upgrade both controllers.</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Disable GPG support
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>echo "gpg-verify=false" &gt;&gt; /ostree/repo/config</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Run the following on both of the Atomic controllers.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>rpm-ostree upgrade
+reboot</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Building_Images">Building Docker Images</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_overview">Overview</h3>
+<div class="paragraph"><p>In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.</p></div>
+<div class="paragraph"><p>This section describes building the images, but doesn&#8217;t go into detail on the usage.  That will be in the following chapters.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Download the Dockerfiles and Scripts to a host that has the <em>tar</em> binary.  The Atomic Hosts do not have this tool by default.  So download it somewhere, extract the files and <em>scp</em> them over.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+curl -o dockerfiles.tar.bz2 -L https://github.com/scollier/project-atomic-lab-end-to-end/blob/master/content/docker/dockerfiles.tar.bz2?raw=true
+tar xjvf dockerfiles.tar.bz2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Copy the Atomic Host 1 directory from the tar file to Atomic Host 1. Replace <em>x.x.x.x</em> with the IP address of Atomic Host 1.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+scp -r Dockerfiles/atomic_host_1 root@x.x.x.x:</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Copy the Atomic Host 2 directory from the tar file to Atomic Host 2. Replace <em>x.x.x.x</em> with the IP address of Atomic Host 2.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd ~
+scp -r Dockerfiles/atomic_host_2 root@x.x.x.x:</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="sect3">
+<h4 id="_apache_image_atomic_host_1">Apache Image Atomic Host 1</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+cd ~/atomic_host_1/apache
+docker build -t demo/apache .</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_apache_image_atomic_host_2">Apache Image Atomic Host 2</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+cd ~/atomic_host_2/apache
+docker build -t demo/apache .</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_mediawiki_image">Mediawiki Image</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1
+. Build the image</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+cd ~/atomic_host_1/mediawiki
+docker build -t demo/mediawiki .</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_mariadb_image">MariaDB Image</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1
+. Build the image</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+cd ~/atomic_host_1/mariadb
+docker build -t demo/mariadb .</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_mongodb_image">MongoDB Image</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1
+. Build the image</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+cd ~/atomic_host_1/mongodb
+docker build -t demo/mongodb .</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_links_2">Links</h4>
+<div class="paragraph"><p>More example Dockerfiles are on the Fedora Cloud SIG github page:</p></div>
+<div class="paragraph"><p><a href="https://github.com/fedora-cloud/Fedora-Dockerfiles">https://github.com/fedora-cloud/Fedora-Dockerfiles</a></p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Docker_Basics">Docker Basics</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_overview_2">Overview</h3>
+<div class="paragraph"><p>The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them to be portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.</p></div>
+<div class="paragraph"><p>Red Hat has been investing in containers for a number of years in Red Hat Enterprise Linux and has been working on Docker in the upstream community since mid-2013. Red Hat&#8217;s commitment to Docker and container technology is demonstrated not just in this background work, but also in the efforts to establish Docker containers as a standard part of the Red Hat Enterprise Linux environment. Red Hat has production experience leveraging container technologies like cgroups and namespaces since Red Hat Enterrise Linux 6. Establishing, consuming and sharing these capabilities as a part of Red Hat Enterprise Linux is a major step in making them consumable by enterprise customers.</p></div>
+<div class="paragraph"><p>This lab has 3 sections:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Overview
+</p>
+</li>
+<li>
+<p>
+Lab 1: Docker Environment
+</p>
+</li>
+<li>
+<p>
+Lab 2: Containers can Talk
+</p>
+</li>
+</ol></div>
+<div class="sect3">
+<h4 id="_lab_environment">Lab Environment</h4>
+<div class="paragraph"><p>Perform all activities on the Red Hat Enterprise Linux Atomic Host 1 unless instructed otherwise.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+SSH Access
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ssh root@IPAddress_of_RHELAH1</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_what_you_can_expect_to_learn_from_this_lab">What you can expect to learn from this lab</h4>
+<div class="paragraph"><p>Topics covered:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Explore Docker
+</p>
+</li>
+<li>
+<p>
+Saving Content
+</p>
+</li>
+<li>
+<p>
+Host exploration
+</p>
+</li>
+<li>
+<p>
+External Logging
+</p>
+</li>
+<li>
+<p>
+Starting containers on boot
+</p>
+</li>
+<li>
+<p>
+Linking containers
+</p>
+</li>
+</ol></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_docker_overview">Docker Overview</h3>
+<div class="sect3">
+<h4 id="_explore_docker">Explore Docker</h4>
+<div class="paragraph"><p>All actions in this lab will performed by the user <em>root</em>.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check to ensure that SELinux is running on the host.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>getenforce</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Take a look at the documetation and general help as well as command specific help that is provide by the Docker package.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>rpm -qd docker
+man docker
+man docker-run
+docker --help
+docker run --help</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+A Docker <em>image</em> is basically a layer.  A layer never changes.  To take a look a the images that are on this system.  There should be <em>nginx</em>,<em>mariadb</em>,mongodb,mediawiki,apache.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images --help
+docker images</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Docker provides the <em>run</em> option to run a image.  Check out the <em>run</em> options and then run the image.  The following command launches the image, executes the command <em>echo hello</em>, and then exits.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker run --help
+docker run fedora echo hello</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check the logs.  The following commands will list the last container that ran so you can get the UUID and check the logs.  This should return the output of "echo hello".  Finally, run with the <em>-t</em> option to allocate a psuedo-tty.  Note that <em>-l</em> below is lowercase <em>L</em>.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps -l
+docker logs &lt;Container UUID&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Tag the base image with a new name.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker tag docker-registry.usersys.redhat.com/brew/rhel7 rhel7</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+To run an interactive instance that you can look around in, pass the options <em>-i</em> and <em>-t</em>. The <em>-i</em> option starts an interactive terminal.  The <em>-t</em> option allocates a pseudo-tty. You should see different results than before.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker run -i -t rhel7 bash</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check out the IP address of the container and also look at the route.  You can see that the default route is that of the <em>docker0</em> bridge on the host.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ip a
+hostname</code></pre>
+</div></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>This is a slimmed down base image.  There are not many tools on here by default.</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Switch to the Fedora image and take a look around. Grab the hostname of the container.  By default the hostname is set to the UUID of the container.  We will look at how to change that later.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker run -i -t fedora bash
+ip a
+ip r
+hostname</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+What processes are running inside the container?
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ps aux</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+What is the SELinux security label of the processes?
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ps -Z</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_saving_content">Saving Content</h4>
+<div class="paragraph"><p>Now that we have an idea of what&#8217;s going on inside the container, let&#8217;s take a look at the process required to save a file.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Create a file inside the container and see if it persists the next time you run the container.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>echo "Hello World" &gt;&gt; ~/file1
+ls ~/</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Exit the container.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>exit</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Run the container again and check to see if the file exists.  The file should be gone.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker run -i -t fedora bash
+ls ~/</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Let&#8217;s try this again and this time we&#8217;ll commit the container.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>echo "Hello World" &gt;&gt; ~/file2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Exit the container and commit the container.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>exit
+docker ps -l
+docker commit &lt;Container UUID&gt; file2/container
+ae4b621fc73d0a66bf1e98657dee570043cb7f9910c0b96782a914fee85437f2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Now lets see if it saved the file.  Now <em>docker images</em> should show the newly commited container. Launch it again and check for the file.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+docker run -i -t file2/container bash
+ls ~/
+exit</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_host_exploration">Host exploration</h4>
+<div class="paragraph"><p>Now that we have explored what&#8217;s on the inside of a container, let&#8217;s see what is going on outside of the container.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Let&#8217;s launch a container that will run for a long time then confirm it is running.  The <em>-d</em> option runs the container in daemon mode.  Remember, you can always get help with the options.  Run these commands on the host (you should not be inside a container at this time).
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker run --help
+docker run -d rhel7 sleep 999999</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List the images that are currently running on the system.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Now, check out the networking on the host. You should see the <em>docker0</em> bridge and a <em>veth</em> interface attached.  The <em>veth</em> interface is one end of a virtual device that connects the container to the host machine. You should see that the IP address of the bridge is used as the default gateway of the container that you saw earlier.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ip a</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+What are the firewall rules on the host?  You can see from the <em>nat</em> table that all the traffic is masqueraded so that you can reach the outside world from the containers.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>iptables -nvL
+iptables -nvL -t nat</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+What is Docker putting on the file system?  Check <em>/var/lib/docker</em> to see what Docker actually puts down.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls /var/lib/docker</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+The root filesystem for the container is in the devicemapper directory.  Grab the <em>Container ID</em> and complete the path below.  Replace &lt;Container UUID&gt; with the output from <em>docker ps -l</em> and use tab completion to complete the &lt;Container UUID&gt;.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps -l
+ls /var/lib/docker/devicemapper/mnt/&lt;Container ID&gt;&lt;tab&gt;&lt;tab&gt;/rootfs</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+How do I get the IP address of a running container? Grab the &lt;Container UUID&gt; of a running container.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps
+docker inspect &lt;Container UUID&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+That is quite a lot of output, let&#8217;s add a filter.  Replace &lt;Container ID&gt; with the output of <em>docker ps</em>.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps
+docker inspect --format '{{ .NetworkSettings.IPAddress }}' &lt;Container UUID&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Stop the container and check out its status. The container will not be running anymore, so it is not visible with <em>docker ps</em>.  To see the &lt;Container ID&gt; of a stopped container, use the <em>-a</em> option.  The <em>-a</em> option shows all containers, started or stopped.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker stop &lt;Container UUID&gt;
+docker ps
+docker ps -a</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_where_are_my_logs">Where are my logs?</h4>
+<div class="paragraph"><p>The containers do not run syslog.  In order to get logs from the container, there are a couple of methods.  The first is to run the container with <em>/dev/log</em> socket bind mounted inside the container.  The other is to write to external volumes.  That&#8217;s in a later lab.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Launch the container with an interactive shell. The file <em>/dev/log</em> is a socket.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker run -v /dev/log:/dev/log -i -t rhel7 bash</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Now that the container is running.  Open another terminal and inspect the bind mount.  Do not run this inside the container.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps -l
+docker inspect --format '{{.Volumes}}' &lt;Container UUID&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Go back to the original terminal. Generate a message with <em>logger</em> and exit the container.  This should write the message to the host journal.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>logger "This is a log Entry"
+exit</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check the logs on the host to ensure the bind mount was successful.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>journalctl | grep -i "This is a log Entry"</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_control_that_service">Control that Service!</h4>
+<div class="paragraph"><p>We can control services with systemd.  Systemd allows us to start, stop, and control which services are enabled on boot, among many other things.  In this section we will use systemd to enable the <em>nginx</em> service to start on boot.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Have a look at the docker images.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+You will notice a repository called <em>demo/nginx</em>, that is what will be used in this section.
+</p>
+</li>
+<li>
+<p>
+Here is the systemd unit file that needs to be created in order for this to work.  The content below needs to be placed in the <em>/etc/systemd/system/nginx.service</em> file.  This is a trivial file that does not provide full control of the service.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat &gt; /etc/systemd/system/nginx.service &lt;&lt; EOF
+[Unit]
+Description=nginx server
+After=docker.service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash -c '/usr/bin/docker start nginx || /usr/bin/docker run --name nginx -p 80:80 demo/nginx'
+
+[Install]
+WantedBy=multi-user.target
+EOF</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Now control the service.  Enable the service on reboot.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl enable nginx.service
+systemctl is-enabled nginx.service</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Start the service.  When starting this service, make sure there are no other containers using port 80 or it will fail.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps
+systemctl start nginx.service
+docker ps</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>It&#8217;s that easy!</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Before moving to the next lab, ensure that <em>nginx</em> is stopped, or else there will be a port conflict on port 80.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps | grep -i nginx</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+If it is running:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker stop nginx
+systemctl disable nginx.service</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_containers_can_talk">Containers can Talk</h3>
+<div class="paragraph"><p>Now that we have the fundamentals down, let&#8217;s do something a bit more interesting with these containers.  This lab will cover launching a <em>MariaDB</em> and <em>Mediawiki</em> container. The two will be tied together via the Docker <em>link</em> functionality.  This lab will build upon things we learned in lab 1 and expand on that.  We&#8217;ll be looking at external volumes, links, and additional options to the Docker <em>run</em> command.</p></div>
+<div class="paragraph"><p><strong>A bit about links</strong></p></div>
+<div class="paragraph"><p>Straight from the Docker.io site:</p></div>
+<div class="paragraph"><p>"Links: service discovery for docker. Links allow containers to discover and securely communicate with each other by using the flag -link name:alias  When two containers are linked together Docker creates a parent child relationship between the containers. The parent container will be able to access information via environment variables of the child such as name, exposed ports, IP and other selected environment variables."</p></div>
+</div>
+<div class="sect2">
+<h3 id="_mariadb">MariaDB</h3>
+<div class="paragraph"><p>This section shows how to set up an external volume and use hostnames when launching the MariaDB container.</p></div>
+<div class="sect3">
+<h4 id="_review_the_mariadb_environment">Review the MariaDB Environment</h4>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Review the scripts and other content that are required to build and launch the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd /root/atomic_host_1/mariadb/; ls</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Review the Dockerfile. Look at the <em>Dockerfile</em>. From the contents below, you can see that the Dockerfile is starting with the RHEL7 base image and is maintained by Stephen Tweedie.  After the <em>FROM</em> and <em>MAINTAINER</em> commands are run, the commands to install software are run with <em>RUN</em>.  Think of the <em>RUN</em> command as executing a line in a shell script.  The remaining commands are <em>ADD</em>, which are used to add content to the image and finally <em>EXPOSE</em> and <em>CMD</em> which expose ports and provide the starting command, respectively.  Exposing the port will make the port available to the <em>Mediawiki</em> container when it is launched with the <em>-link</em> command.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code># cat Dockerfile
+FROM fedora:20
+MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
+
+RUN yum -y update; yum clean all
+RUN yum -y install mariadb-server pwgen supervisor psmisc net-tools; yum clean all
+
+VOLUME [ "/var/lib/mysql" ]
+
+ADD ./start.sh /start.sh
+ADD ./supervisord.conf /etc/supervisord.conf
+
+RUN chmod 755 /start.sh
+
+EXPOSE 3306
+
+CMD ["/bin/bash", "/start.sh"]</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Review the supervisord.conf file
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>Straight from the supervisord.org site:</p></div>
+<div class="paragraph"><p>"Supervisor: A Process Control System. Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems."</p></div>
+<div class="paragraph"><p>There are a couple of reasons to use <em>supervisord</em> inside a container.  The first is that Docker really only wants to be in charge of one service.  So if you are running multiple services in a POC container such as MariaDB and Apache at the same time, you need a way to manage those. Present <em>supervisord</em> as the service that runs on launch and let it control the other services in the background. Also, supervisord can run services in foreground mode.  Docker likes that.</p></div>
+<div class="paragraph"><p>The <em>supervisord.conf</em> file instructs the <em>supervisord</em> daemon as to which processes it is responsible for.  This <em>supervisord.conf</em> file has been pared down considerably.</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code># cat supervisord.conf
+[unix_http_server]
+file=/tmp/supervisor.sock   ; (the path to the socket file)
+
+[supervisord]
+logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)
+logfile_maxbytes=50MB        ; (max main logfile bytes b4 rotation;default 50MB)
+logfile_backups=10           ; (num of main logfile rotation backups;default 10)
+loglevel=info                ; (log level;default info; others: debug,warn,trace)
+pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
+nodaemon=false               ; (start in foreground if true;default false)
+minfds=1024                  ; (min. avail startup file descriptors;default 1024)
+minprocs=200                 ; (min. avail process descriptors;default 200)
+
+[rpcinterface:supervisor]
+supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+
+[supervisorctl]
+serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
+
+[program:mariadb]
+command=/usr/bin/mysqld_safe
+stdout_logfile=/var/log/supervisor/%(program_name)s.log
+stderr_logfile=/var/log/supervisor/%(program_name)s.log
+autorestart=true</code></pre>
+</div></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Review the start.sh script
+The <em>start.sh</em> script is called by the container to start the <em>supervisord</em> daemon.  The first thing the <em>start.sh</em> script does is checks to see if the database has been created yet.  If it has, just start the container, if not, create it.  The reason for this is this container uses a shared volume.  It only needs to create the database one time.  All other times the container starts, use existing data.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code># cat start.sh
+#!/bin/bash -x
+
+__mysql_config() {
+
+if [ ! -f /mariadb/db/ibdata1 ]; then
+  echo
+  echo "Database does not exist, creating now."
+  echo
+  sleep 2
+  mysql_install_db
+  chown -R mysql:mysql /var/lib/mysql
+  /usr/bin/mysqld_safe &amp;
+  sleep 10
+
+  echo "Running the start_mysql function."
+  mysqladmin -u root password mysqlPassword
+  mysql -uroot -pmysqlPassword -e "CREATE DATABASE testdb"
+
+  mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON testdb.* \
+  TO 'testdb'@'localhost' IDENTIFIED BY 'mysqlPassword'; FLUSH PRIVILEGES;"
+
+  mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* \
+  TO 'testdb'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+
+  mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* \
+  TO 'root'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+
+  mysql -uroot -pmysqlPassword -e "select user, host FROM mysql.user;"
+  killall mysqld
+  sleep 10
+fi
+}
+
+__run_supervisor() {
+echo "Running the run_supervisor function."
+supervisord -n
+}
+
+# Call all functions
+__mysql_config
+__run_supervisor</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_launch_the_mariadb_container">Launch the MariaDB Container</h4>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Either tail the audit log from your current terminal by placing the tail command in the background:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>tail -f /var/log/audit/audit.log | grep -i avc &amp;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Or open another terminal and watch for AVCs in the foreground:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>tail -f /var/log/audit/audit.log | grep -i avc</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Launch the container.  The /mariadb/db directory already exists and has database content inside.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb demo/mariadb</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Did the container start as expected?  You should see some AVC&#8217;s.  Look at the logs on the container and see the <em>permission denied</em> messages.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker logs mariadb</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+You will need to allow the proper SELinux permissions on the local <em>/mariadb/db</em> directory so <em>MariaDB</em> can access the directory.  Right now it&#8217;s at <em>default_t</em>, this needs to be changed per below.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls -lZd /mariadb/db
+chcon -Rvt svirt_sandbox_file_t /mariadb/db/</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Now launch the container again.  First the container will have to be removed because of a naming conflict.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps -a
+docker stop mariadb &amp;&amp; docker rm mariadb</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Launch the container again.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb demo/mariadb
+docker ps -l
+docker logs mariadb</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>The container should be running at this time. Kill the background <em>tail -f</em> process if you want.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_mediawiki">Mediawiki</h3>
+<div class="paragraph"><p>This section shows how to launch the <em>Mediawiki</em> container and link it back to the <em>MariaDB</em> container.</p></div>
+<div class="sect3">
+<h4 id="_review_the_mediawiki_environment">Review the Mediawiki Environment</h4>
+<div class="paragraph"><p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/atomic_host_1/mediawiki</em></p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Review the Dockerfile
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat Dockerfile
+FROM fedora:20
+MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
+
+# Basic RPM install...
+RUN yum -y update; yum clean all
+
+# Install:
+#  Mediawiki, obviously
+#  php, because mediawiki doesn't by itself install php into apache
+#  php-mysqlnd: this image will be configured to run against the
+#               Fedora-Dockerfiles mariadb image so we need the mysqld
+#               client support for php
+RUN yum -y install mediawiki php php-mysqlnd; yum clean all
+
+# Now wiki data.  We'll expose the wiki at $host/wiki, so the html root will be
+# at /var/www/html/wiki; to allow this to be used as a data volume we keep the
+# initialisation in a separate script.
+
+ADD ./config.sh /config.sh
+ADD ./run-apache.sh /run-apache.sh
+ADD ./LocalSettings.php /var/www/html/wiki/
+RUN chmod +x /run-apache.sh
+RUN chmod +x /config.sh
+RUN /config.sh
+
+# localhost:/wiki/mw-config should now be available to configure mediawiki.
+
+# Add script to update the IP address of a linked mariadb container if
+# needed:
+
+ADD run-mw.sh /run-mw.sh
+RUN chmod +x /run-mw.sh
+CMD ["/run-mw.sh"]</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Review the config.sh script
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code># cat config.sh
+#!/bin/bash
+#
+# The mediawiki rpm installs into /var/www/wiki.  We need to symlink this into
+# the served /var/www/html/ tree to make them visible.
+#
+# Standard config will put these in /var/www/html/wiki (ie. visible at
+# http://$HOSTNAME/wiki )
+
+mkdir -p /var/www/html/wiki
+
+cd /var/www/html/wiki
+ln -sf ../../wiki/* .
+
+# We want /var/www/html/wiki to be usable as a data volume, so it's
+# important that persistent data lives here, not in /var/www/wiki.
+
+chmod 711 .
+rm -f images
+mkdir images
+chown apache.apache images</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Review the run-mw.sh script
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code># cat run-mw.sh
+#!/bin/bash
+#
+# Run mediawiki in a docker container environment.
+
+function edit_in_place () {
+    tmp=`mktemp`
+    sed -e "$2" &lt; "$1" &gt; $tmp
+    cat $tmp &gt; "$1"
+    rm $tmp
+}
+
+# If we are talking to a mariadb/mysql instance in a linked container
+# (aliased "db" on port 3306), then we need to dynamically update the
+# MW config to refer to the correct DB server IP address.
+#
+# Docker will set the DB_PORT_3306_TCP_ADDR env variable to the right
+# IP in this case.
+#
+# We'll update lines like
+#   $wgDBserver = "localhost";
+# to point to the correct location.
+
+if [ "x$DB_PORT_3306_TCP_ADDR" != "x" ] ; then
+    # For initial configuration, it's also considerate to update the
+    # default settings that drive the config screen defaults
+    edit_in_place /usr/share/mediawiki/includes/DefaultSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
+
+    # Only update LocalSettings if they already exist; on initial
+    # setup they will not yet be here
+    if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
+        edit_in_place /var/www/html/wiki/LocalSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
+        sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
+    fi
+fi
+
+
+# Finally fall through to the apache startup script that the apache
+# Dockerfile (which we build on top of here) sets up
+exec /run-apache.sh</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect3">
+<h4 id="_launch_the_mediawiki_container">Launch the Mediawiki Container</h4>
+<div class="paragraph"><p>This section show&#8217;s how to use hostnames and link to an existing container.  Issue the <em>docker run</em> command and link to the <em>mariadb</em> container.</p></div>
+<div class="paragraph"><p>Run the container.  The command below is taking the enviroment variable <em>HOST_IP</em> and will inject that into the <em>run-mw.sh</em> script when the container is launched. The <em>HOST_IP</em> is the IP address of the virtual machine that is hosting the container.  Replace IP_OF_VIRTUAL_MACHINE with the IP address of the virtual machine running the container.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+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" />
+</td>
+<td class="content">In the following command, after the <em>-e</em>, leave the <em>HOST_IP</em> entry.  It&#8217;s used to hold the variable of the IP address of the Atomic Host 1 virtual machine.</td>
+</tr></table>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre><code>ip a
+
+docker run -d -e=HOST_IP=IP_OF_VIRTUAL_MACHINE --link mariadb:db  -v /var/www/html/ -p 80:80 --name mediawiki summit/mediawiki</code></pre>
+</div></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Explore the link that was made.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps | grep media</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+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" />
+</td>
+<td class="content">Notice in the <em>NAMES</em> column on the mariadb container and how the link is represented.</td>
+</tr></table>
+</div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Inspect the container and get volume information:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker inspect --format '{{ .Volumes }}' mediawiki</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Now take the output of the <em>docker inspect</em> command and use the UUID from that in the next command.  Explore the mediawiki content.  This directory is mapped to <em>/var/www/html/wiki</em> inside the container.
+<br />
+</p>
+</li>
+</ol></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls /var/lib/docker/vfs/dir/&lt;UUID Listed from Prior Query&gt;/wiki</code></pre>
+</div></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+For example, see how the LocalSettings.php file is there and has the correct content:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls /var/lib/docker/vfs/dir/1c8c23c24ebaea8e00fb8639e545c662516445faee7dcd5d89882fdbf1fd638d/wiki</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Take a look at the logs for the container and notice how the IP substitutions were done.  One IP address is for the MariaDB host and one IP address is the virtual machine IP address.  It&#8217;s the same IP address that was passed via the <em>docker run</em> command.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker logs mediawiki</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Open browser on the host running the VM and confirm the configuration is complete.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>firefox &amp;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Go to the <em>Mediawiki</em> home page. Use the IP address of the virtual machine.  The same IP address that was passed in as the HOST_IP in the docker run command.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>http://ip.address.here/wiki</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Thats it.  Now you can start using your wiki. You can click on <em>Create Account</em> in the top right and test it out, or log in with:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>Username: admin&lt;br&gt;
+Passwrod: redhat</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Now, how did this work?  The way this works is that the Dockerfile <em>CMD</em> command tells the container to launch with the <em>run-mw.sh</em> script.  Here&#8217;s the key thing about what that script is doing, let&#8217;s review:
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>if [ "x$DB_PORT_3306_TCP_ADDR" != "x" ] ; then
+    # For initial configuration, it's also considerate to update the
+    # default settings that drive the config screen defaults
+    edit_in_place /usr/share/mediawiki/includes/DefaultSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
+
+    # Only update LocalSettings if they already exist; on initial
+    # setup they will not yet be here
+    if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
+        edit_in_place /var/www/html/wiki/LocalSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
+        sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
+    fi
+fi</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>It&#8217;s doing a check for an existing LocalSettings.php file.  We added that file during the Docker build process.  That file was copied to /var/www/html/wiki.  So, the script runs, sees that the file exists and points the <em>$wbDBserver</em> variable to the MariaDB container.  So, no matter if these containers get shut down and have new IP addresses, the Mediawiki container will always be able to find the MariaDB container because of the <em>link</em>.  In addition, it&#8217;s using the <em>-e</em> option to pass environment variables, in this case, $HOST_IP to the <em>run-mw.sh</em> script to complete the configuration.</p></div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_continue_your_learning">Continue your Learning</h3>
+<div class="sect3">
+<h4 id="_how_to_install">How to Install</h4>
+<div class="paragraph"><p>On a Fedora host</p></div>
+<div class="literalblock">
+<div class="content">
+<pre><code>yum install fedora-dockerfiles docker-io</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_more_information">More Information</h4>
+<div class="paragraph"><p>Project Atomic site:</p></div>
+<div class="paragraph"><p><a href="http://projectatomic.io">http://projectatomic.io</a></p></div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="geard">Introduction to geard</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_geard">geard</h3>
+<div class="paragraph"><p>geard is a Docker container orchestration tool.  At the currrent release, it essentially does three things:</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+SSH
+</p>
+</li>
+<li>
+<p>
+Multiple container deployment
+</p>
+</li>
+<li>
+<p>
+Link
+</p>
+</li>
+</ol></div>
+<div class="paragraph"><p>This lab has 5 parts.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Single host / single container deployment
+</p>
+</li>
+<li>
+<p>
+Single host / multi container deployment
+</p>
+</li>
+<li>
+<p>
+Single host / MongoDB replica set configuration
+</p>
+</li>
+<li>
+<p>
+Multi host container linking
+</p>
+</li>
+<li>
+<p>
+SSH enablement for contianers
+</p>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_geard_lab_prerequisites">geard Lab Prerequisites</h3>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Two Atomic hosts
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>hostname   # on host 1
+hostname   # on host 2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check to see that geard and Docker are installed and running
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>rpm -qa | grep -i geard
+rpm -qa | grep -i docker
+systemctl status geard
+systemctl status docker</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check for the proper .json files in the users home directory
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls *.json
+http_single.json  mongo_deploy.json</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_deploy_a_single_container_br">Deploy a Single Container<br /></h3>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check which units geard has registered
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check to see which images are available and running within Docker
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Install the first unit
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear install demo/apache web-server --start -p 80:80</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List the units again
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Show the container is also recognized by Docker
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Make sure the web server is responding to requests
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>curl http://localhost</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List the units one more time
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Clean up the environmentnd
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear delete web-server
+gear list-units</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_deploy_multiple_containers_on_a_single_host">Deploy Multiple Containers on a Single Host</h3>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check the geard environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check out the <em>http_single_HTB.json</em> file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat http_single_HTB.json
+{
+  "Containers": [
+    {
+      "Name": "web-server",
+      "Image": "demo/apache",
+      "PublicPorts": [
+        {
+          "Internal": 80
+        }
+      ],
+      "Links": [
+        {
+          "To": "web-server",
+          "NonLocal": true,
+          "MatchPort": true
+        }
+      ],
+      "Count": 3
+    }
+  ],
+  "IdPrefix": "",
+  "RandomizeIds": false
+}</code></pre>
+</div></div>
+</li>
+</ol></div>
+<div class="paragraph"><p>This file tells geard to deploy an application with <em>Name</em> "web-server", to use <em>image</em> "demo/apache" with an internal port of 80 and a count of 3.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check out the <em>/var/lib/containers/</em> directory.  This is where geard stores it&#8217;s content. Right now there will not be any content in the <em>units</em> directory.  After a successful launch of the application there will be.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls /var/lib/containers/
+ls /var/lib/containers/units/</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Deploy the application. This tells geard to deploy all three web servers on the same host.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear deploy http_single_HTB.json</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check the <em>/var/lib/containers/</em> directory again to see what content geard added
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls /var/lib/containers/
+ls /var/lib/containers/units/</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check <em>systemd</em> integration
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl status ctr-web-server-1</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check to ensure the web servers are registered with geard and Docker
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Now that we have the ports listed as shown in <em>docker ps</em>, let&#8217;s make sure one of the web servers are running.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>curl http://localhost:4000</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Clean up the environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+gear delete web-server{1,2,3}
+gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_deploy_a_mongodb_replica_set_on_a_single_host">Deploy a MongoDB replica set on a single host</h3>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check the environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Explore the <em>mongo_deploy.json</em>, notice the name, count and image.  The .json file is also taking care of the linking.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat mongo_deploy.json
+{
+  "containers":[
+    {
+      "name":"db",
+      "count":3,
+      "image":"demo/mongo",
+      "publicports":[
+        {"internal":27017,"external":0}
+      ],
+      "links":[
+        {"to":"db","nonlocal":true,"matchport":true}
+      ]
+    }
+  ]
+}</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Deploy the application
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear deploy mongo_deploy.json</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List the units and container
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Connect with the MongoDB client
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>mongo --host localhost --port "PUT PORT HERE"</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Copy in the configuration file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat mongo_replica_json
+cfg = {
+    "_id" : "replica0",
+    "version" : 1,
+    "members" : [
+        {
+            "_id" : 0,
+            "host" : "192.168.1.1:27017"
+        },
+        {
+            "_id" : 1,
+            "host" : "192.168.1.2:27017"
+        },
+        {
+            "_id" : 2,
+            "host" : "192.168.1.3:27017"
+        },
+    ]
+}</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Initiate the replica set
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>&gt; rs.initiate(cfg)</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Refresh the configuration until you see PRIMARY and SECONDARY
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>&gt; rs.status()
+&gt; rs.status()
+&gt; rs.status()</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Clean up the environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps
+gear delete db-{1,2,3}
+gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_multi_host_application_linking">Multi-host Application Linking</h3>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Check the environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units
+docker ps</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Explore the <em>http_single.json</em> file
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cat http_single.json
+{
+  "Containers": [
+    {
+      "Name": "web-server",
+      "Image": "demo/apache",
+      "PublicPorts": [
+        {
+          "Internal": 80
+        }
+      ],
+      "Links": [
+        {
+          "To": "web-server",
+          "NonLocal": true,
+          "MatchPort": true
+        }
+      ],
+      "Count": 2
+    }
+  ],
+  "IdPrefix": "",
+  "RandomizeIds": false
+}</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Ensure that the geard and Docker daemons are running on the second host.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>systemctl status docker  # on host 1
+systemctl status docker  # on host 2
+systemctl status geard  # on host 1
+systemctl status geard  # on host 2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Deploy the application on both hosts, where <strong>x.x.x.x</strong> is the IP address of the second host
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear deploy http_single.json localhost x.x.x.x</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+List the units and containers on both hosts
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units    # on host 1
+gear list-units    # on host 2
+docker ps          # on host 1
+docker ps          # on host 2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+On host 1, get the pid for the web server container
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker inspect --format '{{ .State.Pid }}' &lt;container uid&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Use <em>nsenter</em> to enter the namespace of the PID and take a look at the IPtables rules. You will see that there is a rule forwarding all traffic to <em>192.168.1.x</em> to the external port on the localhost and the external port on the remote host.  Basically geard is telling the container that every application is local.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>nsenter -m -u -n -i -p -t &lt;PID FROM &lt;container uid&gt;&gt; bash
+iptables -nvL -t nat</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Ensure that you can get the index.html from each host
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>curl http://localhost:&lt;external port localhost&gt;
+curl http://localhost:&lt;external port remote host&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+On host 2, ensure that you can pull that web page as well and compare to the output that you got inside the container on host 1
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker ps
+curl http://localhost:&lt;external port localhost&gt;</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Clean up the environment
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>gear list-units   # on host 1
+gear list-units   # on host 2
+gear delete web-server-1    # on host 1
+gear delete web-server-2    # on host 2</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
+<div class="sect2">
+<h3 id="_ssh_enablement_for_containers">SSH Enablement for Containers</h3>
+<div class="paragraph"><p><strong>On host 1:</strong></p></div>
+<div class="paragraph"><p>TBD</p></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="Upgrade_Rollback">Upgrading and Rolling back a Project Atomic Host</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_project_atomic_host_upgrade_and_rollback">Project Atomic Host Upgrade and Rollback</h3>
+<div class="paragraph"><p>Need to put instructions for pulling a new tree and rollback</p></div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes"><hr /></div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2014-05-29 17:17:39 CDT
+</div>
+</div>
+</body>
+</html>
