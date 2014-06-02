@@ -75,6 +75,7 @@ systemctl stop docker
 mount
 df -hal
 umount /var/lib/docker
+mount /dev/sdb1 /var/lib/docker
 mount
 ----
 . Get the UUID from _/dev/sdb1_ and add it to the _/etc/fstab_
