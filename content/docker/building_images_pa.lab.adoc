@@ -58,6 +58,15 @@ docker build -t demo/mariadb .
 ----
 
 
+==== nginx Image
+Build this image on Atomic Host 1
+. Build the image
+----
+docker images
+cd ~/Dockerfiles/atomic_host_1/nginx
+docker build -t demo/nginx .
+----
+
 ==== MongoDB Image
 Build this image on Atomic Host 1
 . Build the image
