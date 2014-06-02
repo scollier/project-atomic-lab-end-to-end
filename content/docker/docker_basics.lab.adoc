@@ -313,7 +313,7 @@ This section shows how to set up an external volume and use hostnames when launc
 . Review the scripts and other content that are required to build and launch the _MariaDB_ container.  This lab does not require that you build the container as it has already been done to save time.  Rather, it provides the information you need to understand what the requirements of building a container like this.
 +
 ----
-cd /root/atomic_host_1/mariadb/; ls
+cd /root/Dockerfiles/atomic_host_1/mariadb/; ls
 ----
 
 . Review the Dockerfile. Look at the _Dockerfile_. From the contents below, you can see that the Dockerfile is starting with the RHEL7 base image and is maintained by Stephen Tweedie.  After the _FROM_ and _MAINTAINER_ commands are run, the commands to install software are run with _RUN_.  Think of the _RUN_ command as executing a line in a shell script.  The remaining commands are _ADD_, which are used to add content to the image and finally _EXPOSE_ and _CMD_ which expose ports and provide the starting command, respectively.  Exposing the port will make the port available to the _Mediawiki_ container when it is launched with the _-link_ command.
@@ -475,7 +475,7 @@ This section shows how to launch the _Mediawiki_ container and link it back to t
 
 ==== Review the Mediawiki Environment
 
-Review the scripts and other content that are required to build and launch the _Mediawiki_ container and link it to the _MariaDB_ container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in _/root/atomic_host_1/mediawiki_
+Review the scripts and other content that are required to build and launch the _Mediawiki_ container and link it to the _MariaDB_ container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in _/root/Dockerfiles/atomic_host_1/mediawiki_
 
 
 . Review the Dockerfile
