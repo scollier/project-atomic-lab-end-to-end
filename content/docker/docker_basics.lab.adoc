@@ -600,7 +600,7 @@ In the following command, after the _-e_, leave the _HOST_IP_ entry.  It's used 
 ----
 ip a
 
-docker run -d -e=HOST_IP=IP_OF_VIRTUAL_MACHINE --link mariadb:db  -v /var/www/html/ -p 80:80 --name mediawiki summit/mediawiki
+docker run -d -e=HOST_IP=IP_OF_VIRTUAL_MACHINE --link mariadb:db  -v /var/www/html/ -p 80:80 --name mediawiki demo/mediawiki
 ----
 . Explore the link that was made.
 +
