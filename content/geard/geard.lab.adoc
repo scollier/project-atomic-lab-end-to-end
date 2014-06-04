@@ -136,7 +136,7 @@ gear deploy mongo_deploy.json
 gear list-units
 docker ps
 ----
-. This lab does require that you have the MongoDB client installed on a workstation that can access this VM. Connect with the MongoDB client. Install the _mongodb_ package.  The PORT that you are connecting to on the next step is the port that _geard_ mapped.  Most likely 400x.  Replase _IP_OF_VM_ with the IP address of the host running the MongoDB replica set.  This should the Atomic Host 1.
+. This lab does require that you have the MongoDB client installed on a workstation that can access this VM. Connect with the MongoDB client. Install the _mongodb_ package.  The PORT that you are connecting to on the next step is the port that _geard_ mapped.  Most likely 400x.  Replace _IP_OF_VM_ with the IP address of the host running the MongoDB replica set.  This should the IP Address Atomic Host 1.
 +
 ----
 mongo --host IP_OF_VM --port "PUT PORT HERE"
