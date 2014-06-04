@@ -1053,7 +1053,7 @@ PAr9L8j/96+U/w3yCoCXW14B8HLLvwDd67nwZIEPdgAAAABJRU5ErkJggg==" />
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-Create the directory structure, from <em>roots</em> home directory
+Create the directory structure, from the <em>root</em> home directory
 </p>
 <div class="listingblock">
 <div class="content">
@@ -1086,8 +1086,7 @@ Install the Red Hat Enterprise Linux image
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>cd atomic/build_server
-virt-install \
+<pre><code>virt-install \
   --memory 4096 \
   --name Compose_Server \
   --disk ~/atomic/build_server/rhel-server-kvm-7.0-7.x86_64.qcow2 \
@@ -1097,13 +1096,33 @@ virt-install \
 </li>
 <li>
 <p>
-Configure SSH, do this from within the virtual console
+Open the VM virtual console
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-grep -i passwordauth /etc/ssh/sshd_config
-systemctl restart sshd</code></pre>
+<pre><code>$ virsh
+Welcome to virsh, the virtualization interactive terminal.
+
+Type:  'help' for help with commands
+       'quit' to quit
+
+virsh # console Compose_Server
+Connected to domain Compose_Server</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Configure SSH
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code># sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# grep -i passwordauth /etc/ssh/sshd_config
+#PasswordAuthentication yes
+PasswordAuthentication yes
+# PasswordAuthentication.  Depending on your PAM configuration,
+# PAM authentication, then enable this but set PasswordAuthentication
+# systemctl restart sshd</code></pre>
 </div></div>
 </li>
 <li>
@@ -1171,10 +1190,10 @@ PAr9L8j/96+U/w3yCoCXW14B8HLLvwDd67nwZIEPdgAAAABJRU5ErkJggg==" />
 </div>
 <div class="listingblock">
 <div class="content">
-<pre><code>cat &lt;&lt; EOF &gt; /etc/yum.repos.d/collider.repo
-[collider-rhel-7]
-name=Collider RHEL 7 Packages
-baseurl=http://download.lab.bos.redhat.com/brewroot/repos/collider-rhel-7-build/latest/x86_64/
+<pre><code>cat &lt;&lt; EOF &gt; /etc/yum.repos.d/extras-rhel-7.repo
+[extras-rhel-7-build]
+name=RHEL 7 Extra Packages
+baseurl=http://download.eng.bos.redhat.com/brewroot/repos/extras-rhel-7.0-build/latest/x86_64/
 enabled=1
 gpgcheck=0
 EOF</code></pre>
@@ -1288,7 +1307,7 @@ Create the <em>products.json</em> file
     "osname": "rhel-atomic-host",
     "ref": "rhel-atomic-host/7.0-buildmaster/x86_64/base",
 
-    "repos": ["collider-rhel-7-build", "collider-rhel-7-candidate"],
+    "repos": ["extras-rhel-7-build", "extras-rhel-7-candidate"],
 
     "selinux": true,
 
@@ -1389,8 +1408,12 @@ done</code></pre>
 </li>
 <li>
 <p>
-Set a password for the <em>root</em> user on each Atomic host.
+On each Atomic host, launch the console. Set a password for the <em>root</em> user on each Atomic host.
 </p>
+<div class="listingblock">
+<div class="content">
+<pre><code>passwd</code></pre>
+</div></div>
 </li>
 <li>
 <p>
@@ -1532,6 +1555,19 @@ hostnamectl set-hostname atomic2.local     # on host 2</code></pre>
 <p>
 Ensure you can ping the other controller
 </p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ping 10.0.0.1     # from host 1, replace IP address for host 2</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Ensure each host can resolve DNS
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>host redhat.com     # from each host</code></pre>
+</div></div>
 </li>
 </ol></div>
 </div>
@@ -1594,33 +1630,12 @@ reboot</code></pre>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-Download the Dockerfiles and Scripts to a host that has the <em>tar</em> binary.  The Atomic Hosts do not have this tool by default.  So download it somewhere, extract the files and <em>scp</em> them over.
+Download the Dockerfiles and Scripts to each Atomic host and extract them.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>cd ~
-curl -o dockerfiles.tar.bz2 -L https://github.com/scollier/project-atomic-lab-end-to-end/blob/master/content/docker/dockerfiles.tar.bz2?raw=true
-tar xjvf dockerfiles.tar.bz2</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Copy the Atomic Host 1 directory from the tar file to Atomic Host 1. Replace <em>x.x.x.x</em> with the IP address of Atomic Host 1.
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>cd ~
-scp -r Dockerfiles/atomic_host_1 root@x.x.x.x:</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Copy the Atomic Host 2 directory from the tar file to Atomic Host 2. Replace <em>x.x.x.x</em> with the IP address of Atomic Host 2.
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>cd ~
-scp -r Dockerfiles/atomic_host_2 root@x.x.x.x:</code></pre>
+<pre><code>curl -O https://raw.githubusercontent.com/scollier/project-atomic-lab-end-to-end/master/content/docker/dockerfiles.tar
+tar -xf dockerfiles.tar</code></pre>
 </div></div>
 </li>
 </ol></div>
@@ -1630,7 +1645,7 @@ scp -r Dockerfiles/atomic_host_2 root@x.x.x.x:</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_1/apache
+cd ~/Dockerfiles/atomic_host_1/apache
 docker build -t demo/apache .</code></pre>
 </div></div>
 </div>
@@ -1640,40 +1655,37 @@ docker build -t demo/apache .</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_2/apache
+cd ~/Dockerfiles/atomic_host_2/apache
 docker build -t demo/apache .</code></pre>
 </div></div>
 </div>
 <div class="sect3">
 <h4 id="_mediawiki_image">Mediawiki Image</h4>
-<div class="paragraph"><p>Build this image on Atomic Host 1
-. Build the image</p></div>
+<div class="paragraph"><p>Build this image on Atomic Host 1. Build the image</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_1/mediawiki
+cd ~/Dockerfiles/atomic_host_1/mediawiki
 docker build -t demo/mediawiki .</code></pre>
 </div></div>
 </div>
 <div class="sect3">
 <h4 id="_mariadb_image">MariaDB Image</h4>
-<div class="paragraph"><p>Build this image on Atomic Host 1
-. Build the image</p></div>
+<div class="paragraph"><p>Build this image on Atomic Host 1. Build the image</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_1/mariadb
+cd ~/Dockerfiles/atomic_host_1/mariadb
 docker build -t demo/mariadb .</code></pre>
 </div></div>
 </div>
 <div class="sect3">
 <h4 id="_mongodb_image">MongoDB Image</h4>
-<div class="paragraph"><p>Build this image on Atomic Host 1
-. Build the image</p></div>
+<div class="paragraph"><p>Build this image on Atomic Host 1. Build the image</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_1/mongodb
+cd ~/Dockerfiles/atomic_host_1/mongodb
 docker build -t demo/mongodb .</code></pre>
 </div></div>
 </div>
@@ -2193,7 +2205,7 @@ Review the scripts and other content that are required to build and launch the <
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>cd /root/atomic_host_1/mariadb/; ls</code></pre>
+<pre><code>cd /root/Dockerfiles/atomic_host_1/mariadb/; ls</code></pre>
 </div></div>
 </li>
 <li>
@@ -2392,7 +2404,7 @@ docker logs mariadb</code></pre>
 <div class="paragraph"><p>This section shows how to launch the <em>Mediawiki</em> container and link it back to the <em>MariaDB</em> container.</p></div>
 <div class="sect3">
 <h4 id="_review_the_mediawiki_environment">Review the Mediawiki Environment</h4>
-<div class="paragraph"><p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/atomic_host_1/mediawiki</em></p></div>
+<div class="paragraph"><p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/Dockerfiles/atomic_host_1/mediawiki</em></p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -3319,7 +3331,7 @@ gear delete web-server-2    # on host 2</code></pre>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-05-29 17:17:39 CDT
+Last updated 2014-06-02 11:41:25 EDT
 </div>
 </div>
 </body>
