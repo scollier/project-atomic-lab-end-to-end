@@ -53,7 +53,7 @@ docker --help
 docker run --help
 ----
 
-. A Docker _image_ is basically a layer.  A layer never changes.  To take a look a the images that are on this system.  There should be _nginx_,_mariadb_,mongodb,mediawiki,apache.
+. A Docker _image_ is basically a layer.  A layer never changes.  Take a look at the images that are on this system.  There should be _nginx_,_mariadb_,mongodb,mediawiki,apache.
 +
 ----
 docker images --help
@@ -76,7 +76,7 @@ docker logs <Container UUID>
 . Tag the base image with a new name.
 +
 ----
-docker tag docker-registry.usersys.redhat.com/brew/rhel7 rhel7
+docker tag registry.access.redhat.com/redhat/rhel7beta rhel7
 docker images | grep rhel7
 ----
 
