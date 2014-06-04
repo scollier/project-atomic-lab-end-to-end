@@ -25,24 +25,35 @@ xz -d latest-qcow2.xz
 cp latest-qcow2 ../2/
 popd 
 
-
+=======
+for i in 1 2; do
+	pushd /var/lib/libvirt/images/atomic/$i/;
+	wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz;
+	xz -d latest-qcow2.xz;
+	popd;
+done
 ----
 . Install the image and create an additional drive
 +
 ----
 cd ~
-for i in 1 2; do 
+for i in 1 2; do
 	sudo virt-install \
 	--memory 2048 \
 	--name Atomic_Host_$i \
 	--disk /var/lib/libvirt/images/atomic/$i/latest-qcow2 \
 	--import \
 	--noautoconsole \
-	--disk /var/lib/libvirt/images/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10; 
+	--disk /var/lib/libvirt/images/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10;
 done
 ----
-. Set a password for the _root_ user on each Atomic host via the _virt-manager_ console.
-. Get IP Address of both hosts via the _virt-manager_ console and then open up a terminal console and _ssh_ to each machine.  
+=======
+. On each Atomic host, launch the console. Set a password for the _root_ user on each Atomic host.
++
+----
+passwd
+----
+. Get IP Address of both hosts and open up a terminal console to each machine.
 
 === Configure Disk Partitions
 The Red Hat Enterprise Linux Atomic Controllers come with a fairly small disk image.  We need to confiure the second disk that was added with _virt-install_ and mount that under _/var/lib/docker_.
@@ -94,13 +105,22 @@ ls /var/lib/docker
 ----
 
 === Validate Hostname and Networking
-. Set the hostname for each of your Red Hat Enterprise Linux Atomic Controller's.  
+. Set the hostname for each of your Red Hat Enterprise Linux Atomic Controller's.
 +
 ----
 hostnamectl set-hostname atomic1.local     # on host 1
 hostnamectl set-hostname atomic2.local     # on host 2
 ----
 . Ensure you can ping the other controller
++
+----
+ping 10.0.0.1     # from host 1, replace IP address for host 2
+----
+. Ensure each host can resolve DNS
++
+----
+host redhat.com     # from each host
+----
 
 === Validate SELinux
 . Ensure that selinux is set to enforcing mode on each controller.
@@ -114,7 +134,7 @@ getenforce
 systemctl status docker
 systemctl status geard
 ----
-=== Upgrade both controllers. 
+=== Upgrade both controllers.
 . Disable GPG support
 +
 ----

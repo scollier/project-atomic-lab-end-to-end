@@ -1,26 +1,13 @@
 === Overview
-In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.  
+In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.
 
 This section describes building the images, but doesn't go into detail on the usage.  That will be in the following chapters.
 
-. Download the Dockerfiles and Scripts to a host that has the _tar_ binary.  The Atomic Hosts do not have this tool by default.  So download it somewhere, extract the files and _scp_ them over.
+. Download the Dockerfiles and Scripts to each Atomic host and extract them.
 +
 ----
-cd ~
-curl -o dockerfiles.tar.bz2 -L https://github.com/scollier/project-atomic-lab-end-to-end/blob/master/content/docker/dockerfiles.tar.bz2?raw=true
-tar xjvf dockerfiles.tar.bz2
-----
-. Copy the Atomic Host 1 directory from the tar file to Atomic Host 1. Replace _x.x.x.x_ with the IP address of Atomic Host 1.
-+
-----
-cd ~
-scp -r Dockerfiles/atomic_host_1 root@x.x.x.x:
-----
-. Copy the Atomic Host 2 directory from the tar file to Atomic Host 2. Replace _x.x.x.x_ with the IP address of Atomic Host 2.
-+
-----
-cd ~
-scp -r Dockerfiles/atomic_host_2 root@x.x.x.x:
+curl -O https://raw.githubusercontent.com/scollier/project-atomic-lab-end-to-end/master/content/docker/dockerfiles.tar
+tar -xf dockerfiles.tar
 ----
 ==== Apache Image Atomic Host 1
 Build this image on Atomic Host 1
@@ -39,8 +26,7 @@ docker build -t demo/apache .
 ----
 
 ==== Mediawiki Image
-Build this image on Atomic Host 1
-. Build the image
+Build this image on Atomic Host 1. Build the image
 ----
 docker images
 cd ~/Dockerfiles/atomic_host_1/mediawiki
@@ -49,8 +35,7 @@ docker build -t demo/mediawiki .
 
 
 ==== MariaDB Image
-Build this image on Atomic Host 1
-. Build the image
+Build this image on Atomic Host 1. Build the image
 ----
 docker images
 cd ~/Dockerfiles/atomic_host_1/mariadb
@@ -68,8 +53,7 @@ docker build -t demo/nginx .
 ----
 
 ==== MongoDB Image
-Build this image on Atomic Host 1
-. Build the image
+Build this image on Atomic Host 1. Build the image
 ----
 docker images
 cd ~/Dockerfiles/atomic_host_1/mongodb
