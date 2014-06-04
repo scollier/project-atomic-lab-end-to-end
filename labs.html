@@ -1630,7 +1630,7 @@ scp -r Dockerfiles/atomic_host_2 root@x.x.x.x:</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_1/apache
+cd ~/Dockerfiles/atomic_host_1/apache
 docker build -t demo/apache .</code></pre>
 </div></div>
 </div>
@@ -1640,7 +1640,7 @@ docker build -t demo/apache .</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_2/apache
+cd ~/Dockerfiles/atomic_host_2/apache
 docker build -t demo/apache .</code></pre>
 </div></div>
 </div>
@@ -1651,7 +1651,7 @@ docker build -t demo/apache .</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_1/mediawiki
+cd ~/Dockerfiles/atomic_host_1/mediawiki
 docker build -t demo/mediawiki .</code></pre>
 </div></div>
 </div>
@@ -1662,7 +1662,7 @@ docker build -t demo/mediawiki .</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_1/mariadb
+cd ~/Dockerfiles/atomic_host_1/mariadb
 docker build -t demo/mariadb .</code></pre>
 </div></div>
 </div>
@@ -1673,7 +1673,7 @@ docker build -t demo/mariadb .</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker images
-cd ~/atomic_host_1/mongodb
+cd ~/Dockerfiles/atomic_host_1/mongodb
 docker build -t demo/mongodb .</code></pre>
 </div></div>
 </div>
@@ -2193,7 +2193,7 @@ Review the scripts and other content that are required to build and launch the <
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>cd /root/atomic_host_1/mariadb/; ls</code></pre>
+<pre><code>cd /root/Dockerfiles/atomic_host_1/mariadb/; ls</code></pre>
 </div></div>
 </li>
 <li>
@@ -2392,7 +2392,7 @@ docker logs mariadb</code></pre>
 <div class="paragraph"><p>This section shows how to launch the <em>Mediawiki</em> container and link it back to the <em>MariaDB</em> container.</p></div>
 <div class="sect3">
 <h4 id="_review_the_mediawiki_environment">Review the Mediawiki Environment</h4>
-<div class="paragraph"><p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/atomic_host_1/mediawiki</em></p></div>
+<div class="paragraph"><p>Review the scripts and other content that are required to build and launch the <em>Mediawiki</em> container and link it to the <em>MariaDB</em> container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in <em>/root/Dockerfiles/atomic_host_1/mediawiki</em></p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -3319,7 +3319,7 @@ gear delete web-server-2    # on host 2</code></pre>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-05-29 17:17:39 CDT
+Last updated 2014-06-02 11:41:25 EDT
 </div>
 </div>
 </body>

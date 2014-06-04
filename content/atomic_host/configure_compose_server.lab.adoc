@@ -5,7 +5,7 @@ The Atomic compose server builds the trees of content that the Red Hat Enterpris
 
 NOTE: Perform this on the hypervisor
 
-. Create the directory structure, from _roots_ home directory
+. Create the directory structure, from the _root_ home directory
 +
 ----
 cd ~
@@ -25,7 +25,6 @@ virt-sysprep -a rhel-server-kvm-7.0-7.x86_64.qcow2 --root-password password:redh
 . Install the Red Hat Enterprise Linux image
 +
 ----
-cd atomic/build_server
 virt-install \
 	--memory 4096 \
 	--name Compose_Server \
@@ -33,12 +32,28 @@ virt-install \
 	--import \
 	--noautoconsole
 ----
-. Configure SSH, do this from within the virtual console
+. Open the VM virtual console
 +
 ----
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-grep -i passwordauth /etc/ssh/sshd_config
-systemctl restart sshd
+$ virsh
+Welcome to virsh, the virtualization interactive terminal.
+
+Type:  'help' for help with commands
+       'quit' to quit
+
+virsh # console Compose_Server
+Connected to domain Compose_Server
+----
+. Configure SSH
++
+----
+# sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# grep -i passwordauth /etc/ssh/sshd_config
+#PasswordAuthentication yes
+PasswordAuthentication yes
+# PasswordAuthentication.  Depending on your PAM configuration,
+# PAM authentication, then enable this but set PasswordAuthentication
+# systemctl restart sshd
 ----
 . Get the IP address from the image and SSH in, instead of using the virt-console
 . Now you should be SSH'd into the VM.  Add the collider repo for RHEL internal content  
@@ -46,10 +61,10 @@ systemctl restart sshd
 NOTE: Perform on the build server
 
 ----
-cat << EOF > /etc/yum.repos.d/collider.repo
-[collider-rhel-7]
-name=Collider RHEL 7 Packages
-baseurl=http://download.lab.bos.redhat.com/brewroot/repos/collider-rhel-7-build/latest/x86_64/
+cat << EOF > /etc/yum.repos.d/extras-rhel-7.repo
+[extras-rhel-7-build]
+name=RHEL 7 Extra Packages
+baseurl=http://download.eng.bos.redhat.com/brewroot/repos/extras-rhel-7.0-build/latest/x86_64/
 enabled=1
 gpgcheck=0
 EOF
@@ -131,7 +146,7 @@ cat > /srv/rpm-ostree/products.json << EOF
     "osname": "rhel-atomic-host",
     "ref": "rhel-atomic-host/7.0-buildmaster/x86_64/base",
     
-    "repos": ["collider-rhel-7-build", "collider-rhel-7-candidate"],
+    "repos": ["extras-rhel-7-build", "extras-rhel-7-candidate"],
 
     "selinux": true,
 
