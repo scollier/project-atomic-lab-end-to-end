@@ -133,7 +133,7 @@ gear deploy mongo_deploy.json
 . Copy the contents of the replica set file and paste that into the mongodb shell, which you will be launching in the next step.
 +
 ----
-cat mongo_replica.json 
+cat ~/mongo_replica.json 
 cfg = {
     "_id" : "replica0",
     "version" : 1,
