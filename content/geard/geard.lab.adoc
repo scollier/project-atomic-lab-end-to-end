@@ -130,18 +130,7 @@ cat mongo_deploy.json
 ----
 gear deploy mongo_deploy.json
 ----
-. List the units and container
-+
-----
-gear list-units
-docker ps
-----
-. This lab does require that you have the MongoDB client installed on a workstation that can access this VM. Connect with the MongoDB client. Install the _mongodb_ package.  The PORT that you are connecting to on the next step is the port that _geard_ mapped.  Most likely 400x.  Replace _IP_OF_VM_ with the IP address of the host running the MongoDB replica set.  This should the IP Address Atomic Host 1.
-+
-----
-mongo --host IP_OF_VM --port "PUT PORT HERE"
-----
-. Copy in the configuration file
+. Copy the contents of the replica set file and paste that into the mongodb shell, which you will be launching in the next step.
 +
 ----
 cat mongo_replica.json 
@@ -164,7 +153,18 @@ cfg = {
     ]
 }
 ----
-. Initiate the replica set
+. List the units and container
++
+----
+gear list-units
+docker ps
+----
+. This lab does require that you have the MongoDB client installed on a workstation that can access this VM. Connect with the MongoDB client. Install the _mongodb_ package.  The PORT that you are connecting to on the next step is the port that _geard_ mapped.  Most likely 400x.  Replace _IP_OF_VM_ with the IP address of the host running the MongoDB replica set.  This should the IP Address Atomic Host 1.
++
+----
+mongo --host IP_OF_VM --port "PUT PORT HERE"
+----
+. Paste the contents of the replica configuration file in here. Initiate the replica set
 +
 ----
 > rs.initiate(cfg)
