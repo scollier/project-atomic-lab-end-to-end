@@ -1375,12 +1375,25 @@ mkdir -p /var/lib/libvirt/images/atomic/{1,2}</code></pre>
 </li>
 <li>
 <p>
-Download and decompress the images to the appropriate directories.  You only need to do the following step if the images haven&#8217;t been downloaded for you already.
+Download and decompress the images to the appropriate directories.  You only need to do the following step if the images haven&#8217;t been downloaded for you already.  Perform this as a user with <em>sudo</em> access.
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><code>cd ~
-for i in 1 2; do
+pushd /var/lib/libvirt/images/atomic/1/
+wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz
+xz -d latest-qcow2.xz
+cp latest-qcow2 ../2/
+popd</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Install the image and create an additional drive
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>for i in 1 2; do
   pushd /var/lib/libvirt/images/atomic/$i/;
   wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz;
   xz -d latest-qcow2.xz;
@@ -1516,6 +1529,7 @@ Ensure that only <em>/dev/sdb1</em> is mounted to <em>/var/lib/docker</em>
 mount
 df -hal
 umount /var/lib/docker
+mount /dev/sdb1 /var/lib/docker
 mount</code></pre>
 </div></div>
 </li>
@@ -1587,7 +1601,6 @@ Ensure that selinux is set to enforcing mode on each controller.
 </div>
 <div class="sect2">
 <h3 id="_ensure_docker_and_geard_are_functional">Ensure Docker and geard are Functional</h3>
-<div class="paragraph"><p>+</p></div>
 <div class="listingblock">
 <div class="content">
 <pre><code>systemctl status docker
@@ -1677,6 +1690,17 @@ docker build -t demo/mediawiki .</code></pre>
 <pre><code>docker images
 cd ~/Dockerfiles/atomic_host_1/mariadb
 docker build -t demo/mariadb .</code></pre>
+</div></div>
+</div>
+<div class="sect3">
+<h4 id="_nginx_image">nginx Image</h4>
+<div class="paragraph"><p>Build this image on Atomic Host 1
+. Build the image</p></div>
+<div class="listingblock">
+<div class="content">
+<pre><code>docker images
+cd ~/Dockerfiles/atomic_host_1/nginx
+docker build -t demo/nginx .</code></pre>
 </div></div>
 </div>
 <div class="sect3">
@@ -1838,7 +1862,8 @@ Tag the base image with a new name.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>docker tag docker-registry.usersys.redhat.com/brew/rhel7 rhel7</code></pre>
+<pre><code>docker tag docker-registry.usersys.redhat.com/brew/rhel7 rhel7
+docker images</code></pre>
 </div></div>
 </li>
 <li>
@@ -1852,16 +1877,14 @@ To run an interactive instance that you can look around in, pass the options <em
 </li>
 <li>
 <p>
-Check out the IP address of the container and also look at the route.  You can see that the default route is that of the <em>docker0</em> bridge on the host.
+Explore the <em>hosts</em> file and look at the IP Address. Try some <em>ip</em> commands&#8230; This is a slimmed down base image.  There are not many tools on here by default.  Exit the container when finished.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>ip a
-hostname</code></pre>
-</div></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>This is a slimmed down base image.  There are not many tools on here by default.</code></pre>
+<pre><code>cat /etc/hosts
+ip a
+ip r
+exit</code></pre>
 </div></div>
 </li>
 <li>
@@ -1898,6 +1921,58 @@ What is the SELinux security label of the processes?
 </div>
 <div class="sect3">
 <h4 id="_saving_content">Saving Content</h4>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+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" />
+</td>
+<td class="content">Perform these actions while still inside the Fedora container.</td>
+</tr></table>
+</div>
 <div class="paragraph"><p>Now that we have an idea of what&#8217;s going on inside the container, let&#8217;s take a look at the process required to save a file.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -2216,111 +2291,125 @@ Review the Dockerfile. Look at the <em>Dockerfile</em>. From the contents below,
 <div class="content">
 <pre><code># cat Dockerfile
 FROM fedora:20
-MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
+MAINTAINER Scott Collier &lt;scollier@redhat.com&gt;
 
-RUN yum -y update; yum clean all
 RUN yum -y install mariadb-server pwgen supervisor psmisc net-tools; yum clean all
 
-VOLUME [ "/var/lib/mysql" ]
+RUN mkdir -p /var/log/mysql &amp;&amp; \
+    touch /var/log/mysql/.keep /var/lib/mysql/.keep &amp;&amp; \
+    chown -R mysql:mysql /var/log/mysql /var/lib/mysql
 
-ADD ./start.sh /start.sh
-ADD ./supervisord.conf /etc/supervisord.conf
+USER mysql
 
-RUN chmod 755 /start.sh
+ADD ./simple.cnf /etc/my.cnf.d/
+ADD ./config_mariadb.sh /config_mariadb.sh
 
 EXPOSE 3306
 
-CMD ["/bin/bash", "/start.sh"]</code></pre>
+CMD [ "/config_mariadb.sh" ]</code></pre>
 </div></div>
 </li>
 <li>
 <p>
-Review the supervisord.conf file
+Review the <em>simple.cnf</em> file.
 </p>
-</li>
-</ol></div>
-<div class="paragraph"><p>Straight from the supervisord.org site:</p></div>
-<div class="paragraph"><p>"Supervisor: A Process Control System. Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems."</p></div>
-<div class="paragraph"><p>There are a couple of reasons to use <em>supervisord</em> inside a container.  The first is that Docker really only wants to be in charge of one service.  So if you are running multiple services in a POC container such as MariaDB and Apache at the same time, you need a way to manage those. Present <em>supervisord</em> as the service that runs on launch and let it control the other services in the background. Also, supervisord can run services in foreground mode.  Docker likes that.</p></div>
-<div class="paragraph"><p>The <em>supervisord.conf</em> file instructs the <em>supervisord</em> daemon as to which processes it is responsible for.  This <em>supervisord.conf</em> file has been pared down considerably.</p></div>
 <div class="listingblock">
 <div class="content">
-<pre><code># cat supervisord.conf
-[unix_http_server]
-file=/tmp/supervisor.sock   ; (the path to the socket file)
+<pre><code>[client]
+default-character-set  = utf8
 
-[supervisord]
-logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)
-logfile_maxbytes=50MB        ; (max main logfile bytes b4 rotation;default 50MB)
-logfile_backups=10           ; (num of main logfile rotation backups;default 10)
-loglevel=info                ; (log level;default info; others: debug,warn,trace)
-pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
-nodaemon=false               ; (start in foreground if true;default false)
-minfds=1024                  ; (min. avail startup file descriptors;default 1024)
-minprocs=200                 ; (min. avail process descriptors;default 200)
+[mysqld_safe]
+nice    = 0
+log-error=/var/log/mysql/mysqld.log
 
-[rpcinterface:supervisor]
-supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
+[server]
+user    = mysql
+tmpdir    = /tmp
+skip-external-locking
 
-[supervisorctl]
-serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
+max_connections   = 32
+connect_timeout   = 5
+wait_timeout    = 600
+max_allowed_packet  = 16M
+thread_cache_size       = 128
+sort_buffer_size  = 4M
+bulk_insert_buffer_size = 16M
+tmp_table_size    = 32M
+max_heap_table_size = 32M
+myisam_recover          = BACKUP
+key_buffer_size   = 128M
+table_cache             = 400
+myisam_sort_buffer_size = 512M
+concurrent_insert = 2
+read_buffer_size  = 2M
+read_rnd_buffer_size  = 1M
+query_cache_limit   = 128K
+query_cache_size    = 64M
+log_warnings    = 2
+slow_query_log
+slow_query_log_file   = /var/log/mysql/mariadb-slow.log
+long_query_time = 10
+log_slow_verbosity  = query_plan
+log_slow_admin_statements
+log_bin     = /var/log/mysql/mariadb-bin
+log_bin_index   = /var/log/mysql/mariadb-bin.index
+expire_logs_days  = 10
+max_binlog_size         = 100M
+default_storage_engine  = InnoDB
+sql_mode    = NO_ENGINE_SUBSTITUTION,TRADITIONAL
+innodb_log_file_size  = 16M
+innodb_buffer_pool_size = 265M
+innodb_log_buffer_size  = 8M
+innodb_file_per_table = 1
+innodb_open_files = 400
+innodb_io_capacity  = 400
+innodb_flush_method = O_DIRECT
 
-[program:mariadb]
-command=/usr/bin/mysqld_safe
-stdout_logfile=/var/log/supervisor/%(program_name)s.log
-stderr_logfile=/var/log/supervisor/%(program_name)s.log
-autorestart=true</code></pre>
+[mysqldump]
+quick
+quote-names
+max_allowed_packet  = 16M
+
+[mysql]
+
+[isamchk]
+key_buffer    = 16M</code></pre>
 </div></div>
-<div class="olist arabic"><ol class="arabic">
+</li>
 <li>
 <p>
-Review the start.sh script
-The <em>start.sh</em> script is called by the container to start the <em>supervisord</em> daemon.  The first thing the <em>start.sh</em> script does is checks to see if the database has been created yet.  If it has, just start the container, if not, create it.  The reason for this is this container uses a shared volume.  It only needs to create the database one time.  All other times the container starts, use existing data.
+Review the config_mariadb.sh file
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code># cat start.sh
-#!/bin/bash -x
+<pre><code># cat config_mariadb.sh
+#!/bin/bash
 
 __mysql_config() {
+mysql_install_db
+mkdir -vp /var/run/mariadb
+chown -vR mysql:mysql /var/run/mariadb/
+chown -R mysql:mysql /var/lib/mysql/
+chown -R mysql:mysql /var/log/mariadb/
+cd '/usr' ; /usr/bin/mysqld_safe --datadir='/var/lib/mysql' &amp;
+sleep 10
 
-if [ ! -f /mariadb/db/ibdata1 ]; then
-  echo
-  echo "Database does not exist, creating now."
-  echo
-  sleep 2
-  mysql_install_db
-  chown -R mysql:mysql /var/lib/mysql
-  /usr/bin/mysqld_safe &amp;
-  sleep 10
-
-  echo "Running the start_mysql function."
-  mysqladmin -u root password mysqlPassword
-  mysql -uroot -pmysqlPassword -e "CREATE DATABASE testdb"
-
-  mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON testdb.* \
-  TO 'testdb'@'localhost' IDENTIFIED BY 'mysqlPassword'; FLUSH PRIVILEGES;"
-
-  mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* \
-  TO 'testdb'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-
-  mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* \
-  TO 'root'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-
-  mysql -uroot -pmysqlPassword -e "select user, host FROM mysql.user;"
-  killall mysqld
-  sleep 10
-fi
-}
-
-__run_supervisor() {
-echo "Running the run_supervisor function."
-supervisord -n
+echo "Running the start_mysql function."
+mysqladmin -u root password mysqlPassword
+mysql -uroot -pmysqlPassword -e "UPDATE mysql.user SET Password=PASSWORD('mysqlPassword') WHERE User='root'; FLUSH PRIVILEGES;"
+mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON testdb.* TO 'testdb'@'localhost' IDENTIFIED BY 'mysqlPassword'; FLUSH PRIVILEGES;"
+mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* TO 'testdb'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+mysql -uroot -pmysqlPassword -e "delete from user where user=''";
+mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+mysql -uroot -pmysqlPassword -e "select user, host FROM mysql.user WHERE Host &lt;&gt; 'localhost';"
+sleep 10
+killall mysqld
+rm -f /var/lib/mysql/mysql.lock
+exec /usr/libexec/mysqld
 }
 
 # Call all functions
-__mysql_config
-__run_supervisor</code></pre>
+__mysql_config</code></pre>
 </div></div>
 </li>
 </ol></div>
@@ -2352,7 +2441,7 @@ Launch the container.  The /mariadb/db directory already exists and has database
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb demo/mariadb</code></pre>
+<pre><code>docker run -p 3306:3306 -t -d --name mariadb -v /mariadb/db:/var/lib/mysql -v /mariadb/logs:/var/log/mariadb demo/mariadb</code></pre>
 </div></div>
 </li>
 <li>
@@ -2371,7 +2460,8 @@ You will need to allow the proper SELinux permissions on the local <em>/mariadb/
 <div class="listingblock">
 <div class="content">
 <pre><code>ls -lZd /mariadb/db
-chcon -Rvt svirt_sandbox_file_t /mariadb/db/</code></pre>
+chcon -Rvt svirt_sandbox_file_t /mariadb/db/
+chcon -Rvt svirt_sandbox_file_t /mariadb/logs/</code></pre>
 </div></div>
 </li>
 <li>
@@ -2390,7 +2480,7 @@ Launch the container again.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb demo/mariadb
+<pre><code>docker run -p 3306:3306 -t -d --name mariadb -v /mariadb/db:/var/lib/mysql -v /mariadb/logs:/var/log/mariadb demo/mariadb
 docker ps -l
 docker logs mariadb</code></pre>
 </div></div>
@@ -2412,40 +2502,42 @@ Review the Dockerfile
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>cat Dockerfile
+<pre><code># cat Dockerfile
 FROM fedora:20
 MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
 
-# Basic RPM install...
-RUN yum -y update; yum clean all
+ENV container docker
 
-# Install:
-#  Mediawiki, obviously
-#  php, because mediawiki doesn't by itself install php into apache
-#  php-mysqlnd: this image will be configured to run against the
-#               Fedora-Dockerfiles mariadb image so we need the mysqld
-#               client support for php
-RUN yum -y install mediawiki php php-mysqlnd; yum clean all
+VOLUME [ "/sys/fs/cgroup" ]
+
+RUN yum -y update; yum clean all
+RUN yum -y install systemd mediawiki php php-mysqlnd httpd; yum clean all; \
+(cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+rm -f /lib/systemd/system/multi-user.target.wants/*;\
+rm -f /etc/systemd/system/*.wants/*;\
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*; \
+systemctl enable httpd.service
+# yum -y erase iprutils
 
 # Now wiki data.  We'll expose the wiki at $host/wiki, so the html root will be
 # at /var/www/html/wiki; to allow this to be used as a data volume we keep the
 # initialisation in a separate script.
 
 ADD ./config.sh /config.sh
-ADD ./run-apache.sh /run-apache.sh
 ADD ./LocalSettings.php /var/www/html/wiki/
-RUN chmod +x /run-apache.sh
 RUN chmod +x /config.sh
 RUN /config.sh
 
-# localhost:/wiki/mw-config should now be available to configure mediawiki.
-
-# Add script to update the IP address of a linked mariadb container if
-# needed:
-
 ADD run-mw.sh /run-mw.sh
 RUN chmod +x /run-mw.sh
-CMD ["/run-mw.sh"]</code></pre>
+
+EXPOSE 80
+
+CMD [ "/run-mw.sh" ]</code></pre>
 </div></div>
 </li>
 <li>
@@ -2454,8 +2546,7 @@ Review the config.sh script
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code># cat config.sh
-#!/bin/bash
+<pre><code>#!/bin/bash
 #
 # The mediawiki rpm installs into /var/www/wiki.  We need to symlink this into
 # the served /var/www/html/ tree to make them visible.
@@ -2483,8 +2574,7 @@ Review the run-mw.sh script
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code># cat run-mw.sh
-#!/bin/bash
+<pre><code>#!/bin/bash
 #
 # Run mediawiki in a docker container environment.
 
@@ -2514,15 +2604,13 @@ if [ "x$DB_PORT_3306_TCP_ADDR" != "x" ] ; then
     # Only update LocalSettings if they already exist; on initial
     # setup they will not yet be here
     if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
-        edit_in_place /var/www/html/wiki/LocalSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
-        sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
+  edit_in_place /var/www/html/wiki/LocalSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
     fi
 fi
 
-
 # Finally fall through to the apache startup script that the apache
 # Dockerfile (which we build on top of here) sets up
-exec /run-apache.sh</code></pre>
+exec /usr/sbin/init</code></pre>
 </div></div>
 </li>
 </ol></div>
@@ -2587,7 +2675,17 @@ PAr9L8j/96+U/w3yCoCXW14B8HLLvwDd67nwZIEPdgAAAABJRU5ErkJggg==" />
 <div class="content">
 <pre><code>ip a
 
-docker run -d -e=HOST_IP=IP_OF_VIRTUAL_MACHINE --link mariadb:db  -v /var/www/html/ -p 80:80 --name mediawiki summit/mediawiki</code></pre>
+docker run \
+-e=HOST_IP=IP_OF_VIRTUAL_MACHINE \
+--link mariadb:db \
+-v /var/www/html/ \
+--name mediawiki \
+--privileged \
+-p 80:80 \
+-t \
+-d \
+-e 'container=docker' \
+-v /sys/fs/cgroup:/sys/fs/cgroup:ro demo/mediawiki</code></pre>
 </div></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -2829,6 +2927,17 @@ hostname   # on host 2</code></pre>
 </li>
 <li>
 <p>
+Copy down the .json files needed
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>for i in http_single.json mongo_deploy.json mongo_replica.json; do
+  curl -O https://raw.githubusercontent.com/aweiteka/project-atomic-lab-end-to-end/master/content/geard/$i
+done</code></pre>
+</div></div>
+</li>
+<li>
+<p>
 Check to see that geard and Docker are installed and running
 </p>
 <div class="listingblock">
@@ -2903,11 +3012,11 @@ Show the container is also recognized by Docker
 </li>
 <li>
 <p>
-Make sure the web server is responding to requests
+Make sure the web server is responding to requests.  Replace <em>IP_OF_VM</em> with the IP addres of the host running the container.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>curl http://localhost</code></pre>
+<pre><code>curl http://IP_OF_VM</code></pre>
 </div></div>
 </li>
 <li>
@@ -3030,11 +3139,11 @@ docker ps</code></pre>
 </li>
 <li>
 <p>
-Now that we have the ports listed as shown in <em>docker ps</em>, let&#8217;s make sure one of the web servers are running.
+Now that we have the ports listed as shown in <em>docker ps</em>, let&#8217;s make sure one of the web servers are running.  Replace <em>IP_OF_VM</em> with the IP address of the host running the container.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>curl http://localhost:4000</code></pre>
+<pre><code>curl http://IP_OF_VM:4000</code></pre>
 </div></div>
 </li>
 <li>
@@ -3331,7 +3440,7 @@ gear delete web-server-2    # on host 2</code></pre>
 <div id="footnotes"><hr /></div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2014-06-02 11:41:25 EDT
+Last updated 2014-05-29 17:17:39 CDT
 </div>
 </div>
 </body>

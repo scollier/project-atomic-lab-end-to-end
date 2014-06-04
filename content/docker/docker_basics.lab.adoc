@@ -328,110 +328,120 @@ cd /root/Dockerfiles/atomic_host_1/mariadb/; ls
 ----
 # cat Dockerfile 
 FROM fedora:20
-MAINTAINER Stephen Tweedie <sct@redhat.com>
+MAINTAINER Scott Collier <scollier@redhat.com>
 
-RUN yum -y update; yum clean all
 RUN yum -y install mariadb-server pwgen supervisor psmisc net-tools; yum clean all
 
-VOLUME [ "/var/lib/mysql" ]
+RUN mkdir -p /var/log/mysql && \
+    touch /var/log/mysql/.keep /var/lib/mysql/.keep && \
+    chown -R mysql:mysql /var/log/mysql /var/lib/mysql
 
-ADD ./start.sh /start.sh
-ADD ./supervisord.conf /etc/supervisord.conf
+USER mysql
 
-RUN chmod 755 /start.sh
+ADD ./simple.cnf /etc/my.cnf.d/
+ADD ./config_mariadb.sh /config_mariadb.sh
 
 EXPOSE 3306
 
-CMD ["/bin/bash", "/start.sh"]
+CMD [ "/config_mariadb.sh" ]
 ----
 
-
-. Review the supervisord.conf file
-
-Straight from the supervisord.org site:
-
-"Supervisor: A Process Control System. Supervisor is a client/server system that allows its users to monitor and control a number of processes on UNIX-like operating systems."
-
-There are a couple of reasons to use _supervisord_ inside a container.  The first is that Docker really only wants to be in charge of one service.  So if you are running multiple services in a POC container such as MariaDB and Apache at the same time, you need a way to manage those. Present _supervisord_ as the service that runs on launch and let it control the other services in the background. Also, supervisord can run services in foreground mode.  Docker likes that.
-
-The _supervisord.conf_ file instructs the _supervisord_ daemon as to which processes it is responsible for.  This _supervisord.conf_ file has been pared down considerably.
-
-----
-# cat supervisord.conf 
-[unix_http_server]
-file=/tmp/supervisor.sock   ; (the path to the socket file)
-
-[supervisord]
-logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)
-logfile_maxbytes=50MB        ; (max main logfile bytes b4 rotation;default 50MB)
-logfile_backups=10           ; (num of main logfile rotation backups;default 10)
-loglevel=info                ; (log level;default info; others: debug,warn,trace)
-pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
-nodaemon=false               ; (start in foreground if true;default false)
-minfds=1024                  ; (min. avail startup file descriptors;default 1024)
-minprocs=200                 ; (min. avail process descriptors;default 200)
-
-[rpcinterface:supervisor]
-supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
-
-[supervisorctl]
-serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
-
-[program:mariadb]
-command=/usr/bin/mysqld_safe
-stdout_logfile=/var/log/supervisor/%(program_name)s.log
-stderr_logfile=/var/log/supervisor/%(program_name)s.log
-autorestart=true
-----
-
-. Review the start.sh script
-The _start.sh_ script is called by the container to start the _supervisord_ daemon.  The first thing the _start.sh_ script does is checks to see if the database has been created yet.  If it has, just start the container, if not, create it.  The reason for this is this container uses a shared volume.  It only needs to create the database one time.  All other times the container starts, use existing data.
+. Review the _simple.cnf_ file.
 +
 ----
-# cat start.sh 
-#!/bin/bash -x
+[client]
+default-character-set  = utf8
+
+[mysqld_safe]
+nice		= 0
+log-error=/var/log/mysql/mysqld.log
+
+[server]
+user		= mysql
+tmpdir		= /tmp
+skip-external-locking
+
+max_connections		= 32
+connect_timeout		= 5
+wait_timeout		= 600
+max_allowed_packet	= 16M
+thread_cache_size       = 128
+sort_buffer_size	= 4M
+bulk_insert_buffer_size	= 16M
+tmp_table_size		= 32M
+max_heap_table_size	= 32M
+myisam_recover          = BACKUP
+key_buffer_size		= 128M
+table_cache             = 400
+myisam_sort_buffer_size	= 512M
+concurrent_insert	= 2
+read_buffer_size	= 2M
+read_rnd_buffer_size	= 1M
+query_cache_limit		= 128K
+query_cache_size		= 64M
+log_warnings		= 2
+slow_query_log
+slow_query_log_file		= /var/log/mysql/mariadb-slow.log
+long_query_time = 10
+log_slow_verbosity	= query_plan
+log_slow_admin_statements
+log_bin			= /var/log/mysql/mariadb-bin
+log_bin_index		= /var/log/mysql/mariadb-bin.index
+expire_logs_days	= 10
+max_binlog_size         = 100M
+default_storage_engine	= InnoDB
+sql_mode		= NO_ENGINE_SUBSTITUTION,TRADITIONAL
+innodb_log_file_size	= 16M
+innodb_buffer_pool_size	= 265M
+innodb_log_buffer_size	= 8M
+innodb_file_per_table	= 1
+innodb_open_files	= 400
+innodb_io_capacity	= 400
+innodb_flush_method	= O_DIRECT
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet	= 16M
+
+[mysql]
+
+[isamchk]
+key_buffer		= 16M
+----
+. Review the config_mariadb.sh file
++
+----
+# cat config_mariadb.sh 
+#!/bin/bash
 
 __mysql_config() {
+mysql_install_db
+mkdir -vp /var/run/mariadb
+chown -vR mysql:mysql /var/run/mariadb/
+chown -R mysql:mysql /var/lib/mysql/
+chown -R mysql:mysql /var/log/mariadb/
+cd '/usr' ; /usr/bin/mysqld_safe --datadir='/var/lib/mysql' &
+sleep 10
 
-if [ ! -f /mariadb/db/ibdata1 ]; then
-  echo
-  echo "Database does not exist, creating now."
-  echo
-  sleep 2
-  mysql_install_db
-  chown -R mysql:mysql /var/lib/mysql
-  /usr/bin/mysqld_safe & 
-  sleep 10
-
-  echo "Running the start_mysql function."
-  mysqladmin -u root password mysqlPassword
-  mysql -uroot -pmysqlPassword -e "CREATE DATABASE testdb"
-  
-  mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON testdb.* \
-  TO 'testdb'@'localhost' IDENTIFIED BY 'mysqlPassword'; FLUSH PRIVILEGES;"
-  
-  mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* \
-  TO 'testdb'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-  
-  mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* \
-  TO 'root'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
-  
-  mysql -uroot -pmysqlPassword -e "select user, host FROM mysql.user;"
-  killall mysqld
-  sleep 10
-fi
-}
-
-__run_supervisor() {
-echo "Running the run_supervisor function."
-supervisord -n
+echo "Running the start_mysql function."
+mysqladmin -u root password mysqlPassword
+mysql -uroot -pmysqlPassword -e "UPDATE mysql.user SET Password=PASSWORD('mysqlPassword') WHERE User='root'; FLUSH PRIVILEGES;"
+mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON testdb.* TO 'testdb'@'localhost' IDENTIFIED BY 'mysqlPassword'; FLUSH PRIVILEGES;"
+mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* TO 'testdb'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+mysql -uroot -pmysqlPassword -e "delete from user where user=''";
+mysql -uroot -pmysqlPassword -e "GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'mysqlPassword' WITH GRANT OPTION; FLUSH PRIVILEGES;"
+mysql -uroot -pmysqlPassword -e "select user, host FROM mysql.user WHERE Host <> 'localhost';"
+sleep 10
+killall mysqld
+rm -f /var/lib/mysql/mysql.lock
+exec /usr/libexec/mysqld
 }
 
 # Call all functions
 __mysql_config
-__run_supervisor
-----
-    
+
+----    
 ==== Launch the MariaDB Container
 
 . Either tail the audit log from your current terminal by placing the tail command in the background:
@@ -447,7 +457,7 @@ tail -f /var/log/audit/audit.log | grep -i avc
 . Launch the container.  The /mariadb/db directory already exists and has database content inside.
 +
 ----
-docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb demo/mariadb
+docker run -p 3306:3306 -t -d --name mariadb -v /mariadb/db:/var/lib/mysql -v /mariadb/logs:/var/log/mariadb demo/mariadb
 ----
 . Did the container start as expected?  You should see some AVC's.  Look at the logs on the container and see the _permission denied_ messages.
 +
@@ -459,6 +469,7 @@ docker logs mariadb
 ----
 ls -lZd /mariadb/db
 chcon -Rvt svirt_sandbox_file_t /mariadb/db/
+chcon -Rvt svirt_sandbox_file_t /mariadb/logs/
 ----
 . Now launch the container again.  First the container will have to be removed because of a naming conflict.
 +
@@ -469,7 +480,7 @@ docker stop mariadb && docker rm mariadb
 . Launch the container again.    
 +
 ----
-docker run -d -v /mariadb/db:/var/lib/mysql -p 3306:3306 --name mariadb demo/mariadb
+docker run -p 3306:3306 -t -d --name mariadb -v /mariadb/db:/var/lib/mysql -v /mariadb/logs:/var/log/mariadb demo/mariadb
 docker ps -l
 docker logs mariadb
 ----
@@ -488,45 +499,46 @@ Review the scripts and other content that are required to build and launch the _
 . Review the Dockerfile
 +
 ----
-cat Dockerfile 
+# cat Dockerfile 
 FROM fedora:20
 MAINTAINER Stephen Tweedie <sct@redhat.com>
 
-# Basic RPM install...
-RUN yum -y update; yum clean all
+ENV container docker
 
-# Install:
-#  Mediawiki, obviously
-#  php, because mediawiki doesn't by itself install php into apache
-#  php-mysqlnd: this image will be configured to run against the 
-#               Fedora-Dockerfiles mariadb image so we need the mysqld
-#               client support for php
-RUN yum -y install mediawiki php php-mysqlnd; yum clean all
+VOLUME [ "/sys/fs/cgroup" ]
+
+RUN yum -y update; yum clean all
+RUN yum -y install systemd mediawiki php php-mysqlnd httpd; yum clean all; \
+(cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == systemd-tmpfiles-setup.service ] || rm -f $i; done); \
+rm -f /lib/systemd/system/multi-user.target.wants/*;\
+rm -f /etc/systemd/system/*.wants/*;\
+rm -f /lib/systemd/system/local-fs.target.wants/*; \
+rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+rm -f /lib/systemd/system/basic.target.wants/*;\
+rm -f /lib/systemd/system/anaconda.target.wants/*; \
+systemctl enable httpd.service
+# yum -y erase iprutils
 
 # Now wiki data.  We'll expose the wiki at $host/wiki, so the html root will be
 # at /var/www/html/wiki; to allow this to be used as a data volume we keep the
 # initialisation in a separate script.
 
 ADD ./config.sh /config.sh
-ADD ./run-apache.sh /run-apache.sh
 ADD ./LocalSettings.php /var/www/html/wiki/
-RUN chmod +x /run-apache.sh
 RUN chmod +x /config.sh
 RUN /config.sh
 
-# localhost:/wiki/mw-config should now be available to configure mediawiki.
-
-# Add script to update the IP address of a linked mariadb container if
-# needed:
-
 ADD run-mw.sh /run-mw.sh
 RUN chmod +x /run-mw.sh
-CMD ["/run-mw.sh"]
+
+EXPOSE 80
+
+CMD [ "/run-mw.sh" ]
 ----
 . Review the config.sh script
 +
 ----
-# cat config.sh 
 #!/bin/bash
 #
 # The mediawiki rpm installs into /var/www/wiki.  We need to symlink this into
@@ -547,11 +559,11 @@ chmod 711 .
 rm -f images
 mkdir images
 chown apache.apache images
+
 ----
 . Review the run-mw.sh script
 +
 ----
-# cat run-mw.sh 
 #!/bin/bash
 #
 # Run mediawiki in a docker container environment.
@@ -582,15 +594,13 @@ if [ "x$DB_PORT_3306_TCP_ADDR" != "x" ] ; then
     # Only update LocalSettings if they already exist; on initial
     # setup they will not yet be here
     if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
-        edit_in_place /var/www/html/wiki/LocalSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
-        sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
+	edit_in_place /var/www/html/wiki/LocalSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
     fi
 fi
 
-
 # Finally fall through to the apache startup script that the apache
 # Dockerfile (which we build on top of here) sets up
-exec /run-apache.sh
+exec /usr/sbin/init
 ----
 
 
@@ -607,7 +617,17 @@ In the following command, after the _-e_, leave the _HOST_IP_ entry.  It's used 
 ----
 ip a
 
-docker run -d -e=HOST_IP=IP_OF_VIRTUAL_MACHINE --link mariadb:db  -v /var/www/html/ -p 80:80 --name mediawiki demo/mediawiki
+docker run \
+-e=HOST_IP=IP_OF_VIRTUAL_MACHINE \
+--link mariadb:db \
+-v /var/www/html/ \
+--name mediawiki \
+--privileged \
+-p 80:80 \
+-t \
+-d \
+-e 'container=docker' \
+-v /sys/fs/cgroup:/sys/fs/cgroup:ro demo/mediawiki
 ----
 . Explore the link that was made.
 +

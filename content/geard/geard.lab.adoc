@@ -20,6 +20,13 @@ This lab has 5 parts.
 hostname   # on host 1
 hostname   # on host 2
 ----
+. Copy down the .json files needed
++
+----
+for i in http_single.json mongo_deploy.json mongo_replica.json; do
+	curl -O https://raw.githubusercontent.com/aweiteka/project-atomic-lab-end-to-end/master/content/geard/$i
+done
+----
 . Check to see that geard and Docker are installed and running
 +
 ----
@@ -66,10 +73,10 @@ gear list-units
 ----
 docker ps
 ----
-. Make sure the web server is responding to requests
+. Make sure the web server is responding to requests.  Replace _IP_OF_VM_ with the IP addres of the host running the container.
 +
 ----
-curl http://localhost
+curl http://IP_OF_VM
 ----
 . List the units one more time
 +
@@ -152,10 +159,10 @@ systemctl status ctr-web-server-1
 gear list-units
 docker ps
 ----
-. Now that we have the ports listed as shown in _docker ps_, let's make sure one of the web servers are running.
+. Now that we have the ports listed as shown in _docker ps_, let's make sure one of the web servers are running.  Replace _IP_OF_VM_ with the IP address of the host running the container.
 +
 ----
-curl http://localhost:4000
+curl http://IP_OF_VM:4000
 ----
 . Clean up the environment
 +
