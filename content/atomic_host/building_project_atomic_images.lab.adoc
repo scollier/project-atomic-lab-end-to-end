@@ -15,7 +15,7 @@ For the purposes of this lab, we will be deploying Red Hat Enterprise Linux Atom
 cd ~
 mkdir -p /var/lib/libvirt/images/atomic/{1,2}
 ----
-. Download and decompress the images to the appropriate directories.  You only need to do the following step if the images haven't been downloaded for you already.
+. Download and decompress the images to the appropriate directories.  You only need to do the following step if the images haven't been downloaded for you already.  Perform this as a user with _sudo_ access.
 +
 ----
 cd ~
@@ -41,8 +41,8 @@ for i in 1 2; do
 	--disk /var/lib/libvirt/images/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10; 
 done
 ----
-. Set a password for the _root_ user on each Atomic host.
-. Get IP Address of both hosts and open up a terminal console to each machine.  
+. Set a password for the _root_ user on each Atomic host via the _virt-manager_ console.
+. Get IP Address of both hosts via the _virt-manager_ console and then open up a terminal console and _ssh_ to each machine.  
 
 === Configure Disk Partitions
 The Red Hat Enterprise Linux Atomic Controllers come with a fairly small disk image.  We need to confiure the second disk that was added with _virt-install_ and mount that under _/var/lib/docker_.
@@ -110,7 +110,6 @@ getenforce
 ----
 
 === Ensure Docker and geard are Functional
-+
 ----
 systemctl status docker
 systemctl status geard
