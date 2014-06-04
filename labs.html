@@ -1393,20 +1393,6 @@ Install the image and create an additional drive
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>for i in 1 2; do
-  pushd /var/lib/libvirt/images/atomic/$i/;
-  wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz;
-  xz -d latest-qcow2.xz;
-  popd;
-done</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Install the image and create an additional drive
-</p>
-<div class="listingblock">
-<div class="content">
 <pre><code>cd ~
 for i in 1 2; do
   sudo virt-install \
@@ -1648,7 +1634,7 @@ Download the Dockerfiles and Scripts to each Atomic host and extract them.
 <div class="listingblock">
 <div class="content">
 <pre><code>curl -O https://raw.githubusercontent.com/scollier/project-atomic-lab-end-to-end/master/content/docker/dockerfiles.tar
-tar -xf dockerfiles.tar</code></pre>
+tar -xvf dockerfiles.tar</code></pre>
 </div></div>
 </li>
 </ol></div>
@@ -1726,7 +1712,7 @@ docker build -t demo/mongodb .</code></pre>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_overview_2">Overview</h3>
-<div class="paragraph"><p>The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them to be portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.</p></div>
+<div class="paragraph"><p>The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.</p></div>
 <div class="paragraph"><p>Red Hat has been investing in containers for a number of years in Red Hat Enterprise Linux and has been working on Docker in the upstream community since mid-2013. Red Hat&#8217;s commitment to Docker and container technology is demonstrated not just in this background work, but also in the efforts to establish Docker containers as a standard part of the Red Hat Enterprise Linux environment. Red Hat has production experience leveraging container technologies like cgroups and namespaces since Red Hat Enterrise Linux 6. Establishing, consuming and sharing these capabilities as a part of Red Hat Enterprise Linux is a major step in making them consumable by enterprise customers.</p></div>
 <div class="paragraph"><p>This lab has 3 sections:</p></div>
 <div class="olist arabic"><ol class="arabic">
@@ -1746,21 +1732,6 @@ Lab 2: Containers can Talk
 </p>
 </li>
 </ol></div>
-<div class="sect3">
-<h4 id="_lab_environment">Lab Environment</h4>
-<div class="paragraph"><p>Perform all activities on the Red Hat Enterprise Linux Atomic Host 1 unless instructed otherwise.</p></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-SSH Access
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>ssh root@IPAddress_of_RHELAH1</code></pre>
-</div></div>
-</li>
-</ol></div>
-</div>
 <div class="sect3">
 <h4 id="_what_you_can_expect_to_learn_from_this_lab">What you can expect to learn from this lab</h4>
 <div class="paragraph"><p>Topics covered:</p></div>
@@ -1797,12 +1768,78 @@ Linking containers
 </li>
 </ol></div>
 </div>
+<div class="sect3">
+<h4 id="_lab_environment">Lab Environment</h4>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+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" />
+</td>
+<td class="content">Perform all activities on the Red Hat Enterprise Linux Atomic Host 1 unless instructed otherwise.</td>
+</tr></table>
+</div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+SSH Access
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ssh root@IPAddress_of_RHELAH1</code></pre>
+</div></div>
+</li>
+</ol></div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_docker_overview">Docker Overview</h3>
 <div class="sect3">
 <h4 id="_explore_docker">Explore Docker</h4>
-<div class="paragraph"><p>All actions in this lab will performed by the user <em>root</em>.</p></div>
+<div class="paragraph"><p>All actions in this lab will performed by a user with root privileges.</p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
@@ -1863,7 +1900,7 @@ Tag the base image with a new name.
 <div class="listingblock">
 <div class="content">
 <pre><code>docker tag docker-registry.usersys.redhat.com/brew/rhel7 rhel7
-docker images</code></pre>
+docker images | grep rhel7</code></pre>
 </div></div>
 </li>
 <li>
@@ -2285,7 +2322,7 @@ Review the scripts and other content that are required to build and launch the <
 </li>
 <li>
 <p>
-Review the Dockerfile. Look at the <em>Dockerfile</em>. From the contents below, you can see that the Dockerfile is starting with the RHEL7 base image and is maintained by Stephen Tweedie.  After the <em>FROM</em> and <em>MAINTAINER</em> commands are run, the commands to install software are run with <em>RUN</em>.  Think of the <em>RUN</em> command as executing a line in a shell script.  The remaining commands are <em>ADD</em>, which are used to add content to the image and finally <em>EXPOSE</em> and <em>CMD</em> which expose ports and provide the starting command, respectively.  Exposing the port will make the port available to the <em>Mediawiki</em> container when it is launched with the <em>-link</em> command.
+Review the Dockerfile. Look at the <em>Dockerfile</em>. From the contents below, you can see that the Dockerfile is starting with the Fedora base image and is maintained by Scott Collier.  After the <em>FROM</em> and <em>MAINTAINER</em> commands are run, the commands to install software are run with <em>RUN</em>.  Think of the <em>RUN</em> command as executing a line in a shell script.  After the software is installed we do some configuration of MariaDB. Next, we <em>ADD</em> a basic MariaDB configuraiton file as well as a script that will be used to do more configuration and launch the database.  Finally <em>EXPOSE</em> and <em>CMD</em> which expose ports and provide the starting command, respectively.  Exposing the port will make the port available to the <em>Mediawiki</em> container when it is launched with the <em>-link</em> command.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -2311,7 +2348,7 @@ CMD [ "/config_mariadb.sh" ]</code></pre>
 </li>
 <li>
 <p>
-Review the <em>simple.cnf</em> file.
+Review the <em>simple.cnf</em> file. This configuraiton file has some basic settings for how we want to run the MariaDB container.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -2378,7 +2415,7 @@ key_buffer    = 16M</code></pre>
 </li>
 <li>
 <p>
-Review the config_mariadb.sh file
+Review the config_mariadb.sh file. This script installs the database, sets permissions on some directories, creates a test database and assigns the appropriate access controls.  Of course, this is just an example and it can be heavily modified.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -2455,23 +2492,37 @@ Did the container start as expected?  You should see some AVC&#8217;s.  Look at 
 </li>
 <li>
 <p>
-You will need to allow the proper SELinux permissions on the local <em>/mariadb/db</em> directory so <em>MariaDB</em> can access the directory.  Right now it&#8217;s at <em>default_t</em>, this needs to be changed per below.
+You will need to allow the proper SELinux permissions on the local <em>/mariadb/db</em> directory so <em>MariaDB</em> can access the directory.  Right now it&#8217;s at <em>default_t</em>, this needs to be changed per below.  In addition, create the directory that we will use for the MariaDB log files and change it&#8217;s SELinux permissions as well.
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><code>ls -lZd /mariadb/db
 chcon -Rvt svirt_sandbox_file_t /mariadb/db/
+ls -lZd /mariadb/db
+mkdir -vp /mariadb/logs
 chcon -Rvt svirt_sandbox_file_t /mariadb/logs/</code></pre>
 </div></div>
 </li>
 <li>
 <p>
-Now launch the container again.  First the container will have to be removed because of a naming conflict.
+Now launch the container again.  Whether or not the container is still running, you will have to be removed because of a naming conflict.
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><code>docker ps -a
 docker stop mariadb &amp;&amp; docker rm mariadb</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Grab the database files for the lab and extract them.  The purpose of this is to create an environment that already exists.  By using these database files, the wiki will start right up.  Otherwise, you could just create the wiki from scratch.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd /mariadb/db/
+curl -O https://raw.githubusercontent.com/scollier/project-atomic-lab-end-to-end/master/content/docker/database_files.tar
+tar xvf database_files.tar
+cd</code></pre>
 </div></div>
 </li>
 <li>
@@ -2483,6 +2534,16 @@ Launch the container again.
 <pre><code>docker run -p 3306:3306 -t -d --name mariadb -v /mariadb/db:/var/lib/mysql -v /mariadb/logs:/var/log/mariadb demo/mariadb
 docker ps -l
 docker logs mariadb</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Take a look at the database files in <em>/mariadb/db/</em> and also take a look at the log files in <em>/mariadb/logs/</em>.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>ls /mariadb/db/*
+tail -f /mariadb/logs/mariadb.log</code></pre>
 </div></div>
 </li>
 </ol></div>
@@ -2498,13 +2559,13 @@ docker logs mariadb</code></pre>
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-Review the Dockerfile
+Review the Dockerfile. This is a systemctl based dockerfile.  This is work being done so that the <em>wants</em> files don&#8217;t have to be removed.  At some point there will be a minimal systemd environment for containers.
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><code># cat Dockerfile
 FROM fedora:20
-MAINTAINER Stephen Tweedie &lt;sct@redhat.com&gt;
+MAINTAINER Scott Collier &lt;scollier@redhat.com&gt;
 
 ENV container docker
 
@@ -2542,7 +2603,7 @@ CMD [ "/run-mw.sh" ]</code></pre>
 </li>
 <li>
 <p>
-Review the config.sh script
+Review the config.sh script. Check the comments in the script.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -2570,7 +2631,7 @@ chown apache.apache images</code></pre>
 </li>
 <li>
 <p>
-Review the run-mw.sh script
+Review the run-mw.sh script.  Check the comments in the script.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -2774,20 +2835,11 @@ Now take the output of the <em>docker inspect</em> command and use the UUID from
 <div class="olist arabic"><ol class="arabic">
 <li>
 <p>
-For example, see how the LocalSettings.php file is there and has the correct content:
+For example, see how the <em>LocalSettings.php</em> file is there and has the correct content:
 </p>
 <div class="listingblock">
 <div class="content">
 <pre><code>ls /var/lib/docker/vfs/dir/1c8c23c24ebaea8e00fb8639e545c662516445faee7dcd5d89882fdbf1fd638d/wiki</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Take a look at the logs for the container and notice how the IP substitutions were done.  One IP address is for the MariaDB host and one IP address is the virtual machine IP address.  It&#8217;s the same IP address that was passed via the <em>docker run</em> command.
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>docker logs mediawiki</code></pre>
 </div></div>
 </li>
 <li>
@@ -2814,7 +2866,7 @@ Thats it.  Now you can start using your wiki. You can click on <em>Create Accoun
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>Username: admin&lt;br&gt;
+<pre><code>Username: admin
 Passwrod: redhat</code></pre>
 </div></div>
 </li>
@@ -2840,22 +2892,15 @@ fi</code></pre>
 </li>
 </ol></div>
 <div class="paragraph"><p>It&#8217;s doing a check for an existing LocalSettings.php file.  We added that file during the Docker build process.  That file was copied to /var/www/html/wiki.  So, the script runs, sees that the file exists and points the <em>$wbDBserver</em> variable to the MariaDB container.  So, no matter if these containers get shut down and have new IP addresses, the Mediawiki container will always be able to find the MariaDB container because of the <em>link</em>.  In addition, it&#8217;s using the <em>-e</em> option to pass environment variables, in this case, $HOST_IP to the <em>run-mw.sh</em> script to complete the configuration.</p></div>
+<div class="admonitionblock">
+<table><tr>
+<td class="icon">
+<img alt="Note" src="data:image/png;base64,
+" />
+</td>
+<td class="content">Stop and delete the mediawiki and mariadb containers before moving forward.</td>
+</tr></table>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_continue_your_learning">Continue your Learning</h3>
-<div class="sect3">
-<h4 id="_how_to_install">How to Install</h4>
-<div class="paragraph"><p>On a Fedora host</p></div>
-<div class="literalblock">
-<div class="content">
-<pre><code>yum install fedora-dockerfiles docker-io</code></pre>
-</div></div>
-</div>
-<div class="sect3">
-<h4 id="_more_information">More Information</h4>
-<div class="paragraph"><p>Project Atomic site:</p></div>
-<div class="paragraph"><p><a href="http://projectatomic.io">http://projectatomic.io</a></p></div>
 </div>
 </div>
 </div>
@@ -2927,11 +2972,13 @@ hostname   # on host 2</code></pre>
 </li>
 <li>
 <p>
-Copy down the .json files needed
+Copy down the json files to both hosts.  Open a terminal session to each host and complete the following.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>for i in http_single.json mongo_deploy.json mongo_replica.json; do
+<pre><code>cd
+
+for i in http_single.json mongo_deploy.json mongo_replica.json mongo_replica_json; do
   curl -O https://raw.githubusercontent.com/aweiteka/project-atomic-lab-end-to-end/master/content/geard/$i
 done</code></pre>
 </div></div>
@@ -2955,7 +3002,7 @@ Check for the proper .json files in the users home directory
 <div class="listingblock">
 <div class="content">
 <pre><code>ls *.json
-http_single.json  mongo_deploy.json</code></pre>
+http_single.json  mongo_deploy.json  mongo_replica.json</code></pre>
 </div></div>
 </li>
 </ol></div>
@@ -2989,7 +3036,7 @@ Install the first unit
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>gear install demo/apache web-server --start -p 80:80</code></pre>
+<pre><code>gear install demo/mongodb mongodb --start -p 27017:27017</code></pre>
 </div></div>
 </li>
 <li>
@@ -3012,11 +3059,11 @@ Show the container is also recognized by Docker
 </li>
 <li>
 <p>
-Make sure the web server is responding to requests.  Replace <em>IP_OF_VM</em> with the IP addres of the host running the container.
+Make sure the MongoDB server is responding to requests.  It will notify you that you are trying to access the database over the native driver port.  Just ignore it, we are just making sure it is listening.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>curl http://IP_OF_VM</code></pre>
+<pre><code>curl http://localhost:27017</code></pre>
 </div></div>
 </li>
 <li>
@@ -3030,130 +3077,11 @@ List the units one more time
 </li>
 <li>
 <p>
-Clean up the environmentnd
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>gear delete web-server
-gear list-units</code></pre>
-</div></div>
-</li>
-</ol></div>
-</div>
-<div class="sect2">
-<h3 id="_deploy_multiple_containers_on_a_single_host">Deploy Multiple Containers on a Single Host</h3>
-<div class="paragraph"><p><strong>On host 1:</strong></p></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-Check the geard environment
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>gear list-units
-docker ps</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Check out the <em>http_single_HTB.json</em> file
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>cat http_single_HTB.json
-{
-  "Containers": [
-    {
-      "Name": "web-server",
-      "Image": "demo/apache",
-      "PublicPorts": [
-        {
-          "Internal": 80
-        }
-      ],
-      "Links": [
-        {
-          "To": "web-server",
-          "NonLocal": true,
-          "MatchPort": true
-        }
-      ],
-      "Count": 3
-    }
-  ],
-  "IdPrefix": "",
-  "RandomizeIds": false
-}</code></pre>
-</div></div>
-</li>
-</ol></div>
-<div class="paragraph"><p>This file tells geard to deploy an application with <em>Name</em> "web-server", to use <em>image</em> "demo/apache" with an internal port of 80 and a count of 3.</p></div>
-<div class="olist arabic"><ol class="arabic">
-<li>
-<p>
-Check out the <em>/var/lib/containers/</em> directory.  This is where geard stores it&#8217;s content. Right now there will not be any content in the <em>units</em> directory.  After a successful launch of the application there will be.
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>ls /var/lib/containers/
-ls /var/lib/containers/units/</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Deploy the application. This tells geard to deploy all three web servers on the same host.
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>gear deploy http_single_HTB.json</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Check the <em>/var/lib/containers/</em> directory again to see what content geard added
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>ls /var/lib/containers/
-ls /var/lib/containers/units/</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Check <em>systemd</em> integration
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>systemctl status ctr-web-server-1</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Check to ensure the web servers are registered with geard and Docker
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>gear list-units
-docker ps</code></pre>
-</div></div>
-</li>
-<li>
-<p>
-Now that we have the ports listed as shown in <em>docker ps</em>, let&#8217;s make sure one of the web servers are running.  Replace <em>IP_OF_VM</em> with the IP address of the host running the container.
-</p>
-<div class="listingblock">
-<div class="content">
-<pre><code>curl http://IP_OF_VM:4000</code></pre>
-</div></div>
-</li>
-<li>
-<p>
 Clean up the environment
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>gear list-units
-gear delete web-server{1,2,3}
+<pre><code>gear delete mongodb
 gear list-units
 docker ps</code></pre>
 </div></div>
@@ -3180,13 +3108,15 @@ Explore the <em>mongo_deploy.json</em>, notice the name, count and image.  The .
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>cat mongo_deploy.json
+<pre><code>cd
+
+cat mongo_deploy.json
 {
   "containers":[
     {
       "name":"db",
       "count":3,
-      "image":"demo/mongo",
+      "image":"demo/mongodb",
       "publicports":[
         {"internal":27017,"external":0}
       ],
@@ -3219,11 +3149,11 @@ docker ps</code></pre>
 </li>
 <li>
 <p>
-Connect with the MongoDB client
+This lab does require that you have the MongoDB client installed on a workstation that can access this VM. Connect with the MongoDB client. Install the <em>mongodb</em> package.  The PORT that you are connecting to on the next step is the port that <em>geard</em> mapped.  Most likely 400x.  Replase <em>IP_OF_VM</em> with the IP address of the host running the MongoDB replica set.  This should the Atomic Host 1.
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code>mongo --host localhost --port "PUT PORT HERE"</code></pre>
+<pre><code>mongo --host IP_OF_VM --port "PUT PORT HERE"</code></pre>
 </div></div>
 </li>
 <li>
@@ -3264,7 +3194,7 @@ Initiate the replica set
 </li>
 <li>
 <p>
-Refresh the configuration until you see PRIMARY and SECONDARY
+Refresh the configuration until you see PRIMARY and SECONDARY replica set members.
 </p>
 <div class="listingblock">
 <div class="content">
@@ -3289,7 +3219,7 @@ docker ps</code></pre>
 </ol></div>
 </div>
 <div class="sect2">
-<h3 id="_multi_host_application_linking">Multi-host Application Linking</h3>
+<h3 id="_multi_host_application_linking_skip_this_section_it_needs_work">Multi-host Application Linking - SKIP THIS SECTION, IT NEEDS WORK</h3>
 <div class="paragraph"><p><strong>On host 1:</strong></p></div>
 <div class="olist arabic"><ol class="arabic">
 <li>
@@ -3432,7 +3362,82 @@ gear delete web-server-2    # on host 2</code></pre>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_project_atomic_host_upgrade_and_rollback">Project Atomic Host Upgrade and Rollback</h3>
-<div class="paragraph"><p>Need to put instructions for pulling a new tree and rollback</p></div>
+<div class="paragraph"><p>This section needs to be filled out a bit more and explain what&#8217;s going on behind the scenes.</p></div>
+<div class="olist arabic"><ol class="arabic">
+<li>
+<p>
+Read the man page.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>man rpm-ostree</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check help
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>rpm-ostree --help</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Check out the entries in <em>/boot</em>.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd /boot
+ls
+cat loader.1/entries/ostree-rh-atomic-controller-0.conf
+cat loader.1/entries/ostree-rh-atomic-controller-1.conf</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Explore the <em>/ostree</em> directory.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>cd /ostree; ls</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Rollback to the prior install on Atomic Controller 1 by using the <em>rpm-ostree rollback</em> command.
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>rpm-ostree rollback
+
+Moving 'aab68bc5a9c24b08ffa2eb10e9c7ca4c572258fa9a5ef1e34d3c12e60920f389.0' to be first deployment
+Transaction complete; bootconfig swap: yes deployment count change: 0)
+Changed:
+  cockpit-0.8-1.el7.x86_64
+&lt;snip&gt;
+  subscription-manager-1.10.14-7.el7.x86_64
+Removed:
+  c-ares-1.10.0-3.el7.x86_64
+  cups-libs-1:1.6.3-14.el7.x86_64
+  sssd-ldap-1.11.2-65.el7.x86_64
+&lt;snip&gt;
+  sssd-proxy-1.11.2-65.el7.x86_64
+  subscription-manager-plugin-ostree-1.11.7-1.git.95.3f56593.el7.x86_64
+  tar-2:1.26-29.el7.x86_64
+Sucessfully reset deployment order; run "systemctl reboot" to start a reboot</code></pre>
+</div></div>
+</li>
+<li>
+<p>
+Reboot to go back to the original install
+</p>
+<div class="listingblock">
+<div class="content">
+<pre><code>reboot</code></pre>
+</div></div>
+</li>
+</ol></div>
 </div>
 </div>
 </div>

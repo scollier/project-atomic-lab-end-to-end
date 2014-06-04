@@ -20,10 +20,12 @@ This lab has 5 parts.
 hostname   # on host 1
 hostname   # on host 2
 ----
-. Copy down the .json files needed
+. Copy down the json files to both hosts.  Open a terminal session to each host and complete the following.
 +
 ----
-for i in http_single.json mongo_deploy.json mongo_replica.json; do
+cd
+
+for i in http_single.json mongo_deploy.json mongo_replica.json mongo_replica_json; do
 	curl -O https://raw.githubusercontent.com/aweiteka/project-atomic-lab-end-to-end/master/content/geard/$i
 done
 ----
@@ -39,7 +41,7 @@ systemctl status docker
 +
 ----
 ls *.json
-http_single.json  mongo_deploy.json
+http_single.json  mongo_deploy.json  mongo_replica.json
 ----
 
 
@@ -61,7 +63,7 @@ docker ps
 . Install the first unit
 +
 ----
-gear install demo/apache web-server --start -p 80:80
+gear install demo/mongodb mongodb --start -p 27017:27017
 ----
 . List the units again
 +
@@ -73,106 +75,23 @@ gear list-units
 ----
 docker ps
 ----
-. Make sure the web server is responding to requests.  Replace _IP_OF_VM_ with the IP addres of the host running the container.
+. Make sure the MongoDB server is responding to requests.  It will notify you that you are trying to access the database over the native driver port.  Just ignore it, we are just making sure it is listening.
 +
 ----
-curl http://IP_OF_VM
+curl http://localhost:27017
 ----
 . List the units one more time
 +
 ----
 gear list-units
 ----
-. Clean up the environmentnd
-+
-----
-gear delete web-server
-gear list-units
-----
-
-
-=== Deploy Multiple Containers on a Single Host
-
-*On host 1:*
-
-. Check the geard environment
-+
-----
-gear list-units
-docker ps
-----
-. Check out the _http_single_HTB.json_ file 
-+
-----
-cat http_single_HTB.json
-{
-  "Containers": [
-    {
-      "Name": "web-server",
-      "Image": "demo/apache",
-      "PublicPorts": [
-        {
-          "Internal": 80
-        }
-      ],
-      "Links": [
-        {
-          "To": "web-server",
-          "NonLocal": true,
-          "MatchPort": true
-        }
-      ],
-      "Count": 3
-    }
-  ],
-  "IdPrefix": "",
-  "RandomizeIds": false
-}
-----
-This file tells geard to deploy an application with _Name_ "web-server", to use _image_ "demo/apache" with an internal port of 80 and a count of 3.
-
-. Check out the _/var/lib/containers/_ directory.  This is where geard stores it's content. Right now there will not be any content in the _units_ directory.  After a successful launch of the application there will be.
-+
-----
-ls /var/lib/containers/
-ls /var/lib/containers/units/
-----
-. Deploy the application. This tells geard to deploy all three web servers on the same host.
-+
-----
-gear deploy http_single_HTB.json
-----
-. Check the _/var/lib/containers/_ directory again to see what content geard added
-+
-----
-ls /var/lib/containers/
-ls /var/lib/containers/units/
-----
-. Check _systemd_ integration
-+
-----
-systemctl status ctr-web-server-1
-----
-. Check to ensure the web servers are registered with geard and Docker
-+
-----
-gear list-units
-docker ps
-----
-. Now that we have the ports listed as shown in _docker ps_, let's make sure one of the web servers are running.  Replace _IP_OF_VM_ with the IP address of the host running the container.
-+
-----
-curl http://IP_OF_VM:4000
-----
 . Clean up the environment
 +
 ----
-gear list-units
-gear delete web-server{1,2,3}
+gear delete mongodb
 gear list-units
 docker ps
 ----
-
 
 === Deploy a MongoDB replica set on a single host
 
@@ -187,13 +106,15 @@ docker ps
 . Explore the _mongo_deploy.json_, notice the name, count and image.  The .json file is also taking care of the linking.
 +
 ----
+cd
+
 cat mongo_deploy.json
 {
   "containers":[
     {
       "name":"db",
       "count":3,
-      "image":"demo/mongo",
+      "image":"demo/mongodb",
       "publicports":[
         {"internal":27017,"external":0}
       ],
@@ -215,10 +136,10 @@ gear deploy mongo_deploy.json
 gear list-units
 docker ps
 ----
-. Connect with the MongoDB client
+. This lab does require that you have the MongoDB client installed on a workstation that can access this VM. Connect with the MongoDB client. Install the _mongodb_ package.  The PORT that you are connecting to on the next step is the port that _geard_ mapped.  Most likely 400x.  Replase _IP_OF_VM_ with the IP address of the host running the MongoDB replica set.  This should the Atomic Host 1.
 +
 ----
-mongo --host localhost --port "PUT PORT HERE"
+mongo --host IP_OF_VM --port "PUT PORT HERE"
 ----
 . Copy in the configuration file
 +
@@ -248,7 +169,7 @@ cfg = {
 ----
 > rs.initiate(cfg)
 ----
-. Refresh the configuration until you see PRIMARY and SECONDARY
+. Refresh the configuration until you see PRIMARY and SECONDARY replica set members.
 +
 ----
 > rs.status()
@@ -266,7 +187,7 @@ docker ps
 ----
 
 
-=== Multi-host Application Linking
+=== Multi-host Application Linking - SKIP THIS SECTION, IT NEEDS WORK
 
 *On host 1:*
 
@@ -363,26 +284,4 @@ gear delete web-server-2    # on host 2
 *On host 1:*
 
 TBD
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

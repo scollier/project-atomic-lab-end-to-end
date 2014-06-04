@@ -25,17 +25,6 @@ xz -d latest-qcow2.xz
 cp latest-qcow2 ../2/
 popd 
 ----
-
-. Install the image and create an additional drive
-+
-----
-for i in 1 2; do
-	pushd /var/lib/libvirt/images/atomic/$i/;
-	wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz;
-	xz -d latest-qcow2.xz;
-	popd;
-done
-----
 . Install the image and create an additional drive
 +
 ----

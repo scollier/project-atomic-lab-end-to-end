@@ -7,7 +7,7 @@ This section describes building the images, but doesn't go into detail on the us
 +
 ----
 curl -O https://raw.githubusercontent.com/scollier/project-atomic-lab-end-to-end/master/content/docker/dockerfiles.tar
-tar -xf dockerfiles.tar
+tar -xvf dockerfiles.tar
 ----
 ==== Apache Image Atomic Host 1
 Build this image on Atomic Host 1

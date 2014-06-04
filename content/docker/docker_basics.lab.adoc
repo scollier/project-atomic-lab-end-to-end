@@ -1,6 +1,6 @@
 === Overview 
 
-The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them to be portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.
+The rapid adoption of Docker demonstrates that the benefits of Docker and containers in general are valued by enterprise developers and administrators. Specifically, Docker and containers enable rapid application deployment by only including the minimal runtime requirements of the application. This minimal size and the mentality of replacing containers, rather than updating them, simplifies maintenance. Additionally, containers allow applications bring all of their runtime requirements with them, making them portable across multiple Red Hat Enterprise Linux environments. This means that containers can ease testing and troubleshooting efforts by providing a consistent runtime across development, QA and production environments. In addition, containers run applications in isolated memory, process, filesystem and networking spaces. The isolation ensures that any security breaches are limited to the container.
 
 Red Hat has been investing in containers for a number of years in Red Hat Enterprise Linux and has been working on Docker in the upstream community since mid-2013. Red Hat's commitment to Docker and container technology is demonstrated not just in this background work, but also in the efforts to establish Docker containers as a standard part of the Red Hat Enterprise Linux environment. Red Hat has production experience leveraging container technologies like cgroups and namespaces since Red Hat Enterrise Linux 6. Establishing, consuming and sharing these capabilities as a part of Red Hat Enterprise Linux is a major step in making them consumable by enterprise customers.
 
@@ -9,15 +9,6 @@ This lab has 3 sections:
 . Overview
 . Lab 1: Docker Environment
 . Lab 2: Containers can Talk
-
-==== Lab Environment
-Perform all activities on the Red Hat Enterprise Linux Atomic Host 1 unless instructed otherwise.
-
-. SSH Access
-+
-----
-ssh root@IPAddress_of_RHELAH1
-----
 
 ==== What you can expect to learn from this lab
 
@@ -30,11 +21,22 @@ Topics covered:
 . Starting containers on boot
 . Linking containers
 
+==== Lab Environment
+
+[NOTE]
+
+Perform all activities on the Red Hat Enterprise Linux Atomic Host 1 unless instructed otherwise.
+
+. SSH Access
++
+----
+ssh root@IPAddress_of_RHELAH1
+----
 
 === Docker Overview
  
 ==== Explore Docker
-All actions in this lab will performed by the user _root_.
+All actions in this lab will performed by a user with root privileges.
 
 . Check to ensure that SELinux is running on the host.
 +    
@@ -75,7 +77,7 @@ docker logs <Container UUID>
 +
 ----
 docker tag docker-registry.usersys.redhat.com/brew/rhel7 rhel7
-docker images
+docker images | grep rhel7
 ----
 
 . To run an interactive instance that you can look around in, pass the options _-i_ and _-t_. The _-i_ option starts an interactive terminal.  The _-t_ option allocates a pseudo-tty. You should see different results than before.  
@@ -323,7 +325,7 @@ This section shows how to set up an external volume and use hostnames when launc
 cd /root/Dockerfiles/atomic_host_1/mariadb/; ls
 ----
 
-. Review the Dockerfile. Look at the _Dockerfile_. From the contents below, you can see that the Dockerfile is starting with the RHEL7 base image and is maintained by Stephen Tweedie.  After the _FROM_ and _MAINTAINER_ commands are run, the commands to install software are run with _RUN_.  Think of the _RUN_ command as executing a line in a shell script.  The remaining commands are _ADD_, which are used to add content to the image and finally _EXPOSE_ and _CMD_ which expose ports and provide the starting command, respectively.  Exposing the port will make the port available to the _Mediawiki_ container when it is launched with the _-link_ command.
+. Review the Dockerfile. Look at the _Dockerfile_. From the contents below, you can see that the Dockerfile is starting with the Fedora base image and is maintained by Scott Collier.  After the _FROM_ and _MAINTAINER_ commands are run, the commands to install software are run with _RUN_.  Think of the _RUN_ command as executing a line in a shell script.  After the software is installed we do some configuration of MariaDB. Next, we _ADD_ a basic MariaDB configuraiton file as well as a script that will be used to do more configuration and launch the database.  Finally _EXPOSE_ and _CMD_ which expose ports and provide the starting command, respectively.  Exposing the port will make the port available to the _Mediawiki_ container when it is launched with the _-link_ command.
 +
 ----
 # cat Dockerfile 
@@ -346,7 +348,7 @@ EXPOSE 3306
 CMD [ "/config_mariadb.sh" ]
 ----
 
-. Review the _simple.cnf_ file.
+. Review the _simple.cnf_ file. This configuraiton file has some basic settings for how we want to run the MariaDB container.
 +
 ----
 [client]
@@ -409,7 +411,7 @@ max_allowed_packet	= 16M
 [isamchk]
 key_buffer		= 16M
 ----
-. Review the config_mariadb.sh file
+. Review the config_mariadb.sh file. This script installs the database, sets permissions on some directories, creates a test database and assigns the appropriate access controls.  Of course, this is just an example and it can be heavily modified.
 +
 ----
 # cat config_mariadb.sh 
@@ -464,18 +466,28 @@ docker run -p 3306:3306 -t -d --name mariadb -v /mariadb/db:/var/lib/mysql -v /m
 ----
 docker logs mariadb
 ----
-. You will need to allow the proper SELinux permissions on the local _/mariadb/db_ directory so _MariaDB_ can access the directory.  Right now it's at _default_t_, this needs to be changed per below.
+. You will need to allow the proper SELinux permissions on the local _/mariadb/db_ directory so _MariaDB_ can access the directory.  Right now it's at _default_t_, this needs to be changed per below.  In addition, create the directory that we will use for the MariaDB log files and change it's SELinux permissions as well.
 +
 ----
 ls -lZd /mariadb/db
 chcon -Rvt svirt_sandbox_file_t /mariadb/db/
+ls -lZd /mariadb/db
+mkdir -vp /mariadb/logs
 chcon -Rvt svirt_sandbox_file_t /mariadb/logs/
 ----
-. Now launch the container again.  First the container will have to be removed because of a naming conflict.
+. Now launch the container again.  Whether or not the container is still running, you will have to be removed because of a naming conflict.
 +
 ----
 docker ps -a
 docker stop mariadb && docker rm mariadb
+----
+. Grab the database files for the lab and extract them.  The purpose of this is to create an environment that already exists.  By using these database files, the wiki will start right up.  Otherwise, you could just create the wiki from scratch.
++
+----
+cd /mariadb/db/
+curl -O https://raw.githubusercontent.com/scollier/project-atomic-lab-end-to-end/master/content/docker/database_files.tar
+tar xvf database_files.tar
+cd
 ----
 . Launch the container again.    
 +
@@ -483,6 +495,12 @@ docker stop mariadb && docker rm mariadb
 docker run -p 3306:3306 -t -d --name mariadb -v /mariadb/db:/var/lib/mysql -v /mariadb/logs:/var/log/mariadb demo/mariadb
 docker ps -l
 docker logs mariadb
+----
+. Take a look at the database files in _/mariadb/db/_ and also take a look at the log files in _/mariadb/logs/_.
++
+----
+ls /mariadb/db/*
+tail -f /mariadb/logs/mariadb.log
 ----
 
 The container should be running at this time. Kill the background _tail -f_ process if you want.
@@ -496,12 +514,12 @@ This section shows how to launch the _Mediawiki_ container and link it back to t
 Review the scripts and other content that are required to build and launch the _Mediawiki_ container and link it to the _MariaDB_ container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in _/root/Dockerfiles/atomic_host_1/mediawiki_
 
 
-. Review the Dockerfile
+. Review the Dockerfile. This is a systemctl based dockerfile.  This is work being done so that the _wants_ files don't have to be removed.  At some point there will be a minimal systemd environment for containers. 
 +
 ----
 # cat Dockerfile 
 FROM fedora:20
-MAINTAINER Stephen Tweedie <sct@redhat.com>
+MAINTAINER Scott Collier <scollier@redhat.com>
 
 ENV container docker
 
@@ -536,7 +554,7 @@ EXPOSE 80
 
 CMD [ "/run-mw.sh" ]
 ----
-. Review the config.sh script
+. Review the config.sh script. Check the comments in the script.
 +
 ----
 #!/bin/bash
@@ -561,7 +579,7 @@ mkdir images
 chown apache.apache images
 
 ----
-. Review the run-mw.sh script
+. Review the run-mw.sh script.  Check the comments in the script.
 +
 ----
 #!/bin/bash
@@ -648,15 +666,10 @@ docker inspect --format '{{ .Volumes }}' mediawiki
 ----
 ls /var/lib/docker/vfs/dir/<UUID Listed from Prior Query>/wiki
 ----   
-. For example, see how the LocalSettings.php file is there and has the correct content:
+. For example, see how the _LocalSettings.php_ file is there and has the correct content:
 +
 ----
 ls /var/lib/docker/vfs/dir/1c8c23c24ebaea8e00fb8639e545c662516445faee7dcd5d89882fdbf1fd638d/wiki
-----
-. Take a look at the logs for the container and notice how the IP substitutions were done.  One IP address is for the MariaDB host and one IP address is the virtual machine IP address.  It's the same IP address that was passed via the _docker run_ command.
-+
-----
-docker logs mediawiki
 ----
 . Open browser on the host running the VM and confirm the configuration is complete.
 +
@@ -671,7 +684,7 @@ http://ip.address.here/wiki
 . Thats it.  Now you can start using your wiki. You can click on _Create Account_ in the top right and test it out, or log in with:
 +
 ----
-Username: admin<br>
+Username: admin
 Passwrod: redhat
 ----
 
@@ -693,19 +706,7 @@ fi
 
 ----
 It's doing a check for an existing LocalSettings.php file.  We added that file during the Docker build process.  That file was copied to /var/www/html/wiki.  So, the script runs, sees that the file exists and points the _$wbDBserver_ variable to the MariaDB container.  So, no matter if these containers get shut down and have new IP addresses, the Mediawiki container will always be able to find the MariaDB container because of the _link_.  In addition, it's using the _-e_ option to pass environment variables, in this case, $HOST_IP to the _run-mw.sh_ script to complete the configuration.  
-    
 
-=== Continue your Learning
+[NOTE]
 
-==== How to Install
-
-On a Fedora host
-
-    yum install fedora-dockerfiles docker-io
-    
-
-==== More Information
-
-Project Atomic site:
-
-http://projectatomic.io
+Stop and delete the mediawiki and mariadb containers before moving forward.

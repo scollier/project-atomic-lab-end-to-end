@@ -1,2 +1,52 @@
 === Project Atomic Host Upgrade and Rollback
-Need to put instructions for pulling a new tree and rollback
+This section needs to be filled out a bit more and explain what's going on behind the scenes.
+
+. Read the man page.
++
+----
+man rpm-ostree
+----
+. Check help
++
+----
+rpm-ostree --help
+----
+. Check out the entries in _/boot_.
++
+----
+cd /boot
+ls
+cat loader.1/entries/ostree-rh-atomic-controller-0.conf 
+cat loader.1/entries/ostree-rh-atomic-controller-1.conf 
+----
+. Explore the _/ostree_ directory.
++
+----
+cd /ostree; ls
+----
+. Rollback to the prior install on Atomic Controller 1 by using the _rpm-ostree rollback_ command.
++
+----
+rpm-ostree rollback
+
+Moving 'aab68bc5a9c24b08ffa2eb10e9c7ca4c572258fa9a5ef1e34d3c12e60920f389.0' to be first deployment
+Transaction complete; bootconfig swap: yes deployment count change: 0)
+Changed:
+  cockpit-0.8-1.el7.x86_64
+<snip>
+  subscription-manager-1.10.14-7.el7.x86_64
+Removed:
+  c-ares-1.10.0-3.el7.x86_64
+  cups-libs-1:1.6.3-14.el7.x86_64
+  sssd-ldap-1.11.2-65.el7.x86_64
+<snip>
+  sssd-proxy-1.11.2-65.el7.x86_64
+  subscription-manager-plugin-ostree-1.11.7-1.git.95.3f56593.el7.x86_64
+  tar-2:1.26-29.el7.x86_64
+Sucessfully reset deployment order; run "systemctl reboot" to start a reboot
+----
+. Reboot to go back to the original install
++
+----
+reboot
+----
