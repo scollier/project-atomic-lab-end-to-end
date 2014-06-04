@@ -25,7 +25,7 @@ hostname   # on host 2
 ----
 cd
 
-for i in http_single.json mongo_deploy.json mongo_replica.json mongo_replica_json; do
+for i in http_single.json mongo_deploy.json mongo_replica.json; do
 	curl -O https://raw.githubusercontent.com/aweiteka/project-atomic-lab-end-to-end/master/content/geard/$i
 done
 ----
@@ -144,7 +144,7 @@ mongo --host IP_OF_VM --port "PUT PORT HERE"
 . Copy in the configuration file
 +
 ----
-cat mongo_replica_json 
+cat mongo_replica.json 
 cfg = {
     "_id" : "replica0",
     "version" : 1,
