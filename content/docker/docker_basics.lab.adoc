@@ -328,8 +328,6 @@ cd /root/Dockerfiles/atomic_host_1/mariadb/; ls
 . Review the Dockerfile. Look at the _Dockerfile_. From the contents below, you can see that the Dockerfile is starting with the Fedora base image and is maintained by Scott Collier.  After the _FROM_ and _MAINTAINER_ commands are run, the commands to install software are run with _RUN_.  Think of the _RUN_ command as executing a line in a shell script.  After the software is installed we do some configuration of MariaDB. Next, we _ADD_ a basic MariaDB configuraiton file as well as a script that will be used to do more configuration and launch the database.  Finally _EXPOSE_ and _CMD_ which expose ports and provide the starting command, respectively.  Exposing the port will make the port available to the _Mediawiki_ container when it is launched with the _-link_ command.
 +
 ----
-# cat Dockerfile 
-FROM fedora:20
 MAINTAINER Scott Collier <scollier@redhat.com>
 
 RUN yum -y install mariadb-server pwgen supervisor psmisc net-tools; yum clean all
@@ -337,8 +335,6 @@ RUN yum -y install mariadb-server pwgen supervisor psmisc net-tools; yum clean a
 RUN mkdir -p /var/log/mysql && \
     touch /var/log/mysql/.keep /var/lib/mysql/.keep && \
     chown -R mysql:mysql /var/log/mysql /var/lib/mysql
-
-USER mysql
 
 ADD ./simple.cnf /etc/my.cnf.d/
 ADD ./config_mariadb.sh /config_mariadb.sh
