@@ -19,10 +19,17 @@ ls -l
 cat loader/entries/ostree-rh-atomic-controller-0.conf
 cat loader/entries/ostree-rh-atomic-controller-1.conf
 ----
-. Explore the _/ostree_ directory.
+. Notice one of the entries in the ostree-rh-atomic-controller-0.conf.  The UUID will be different on your host.  But you need to explore that directory structure as that is where you are booting into.
++
+----
+ostree=/ostree/boot.1/rh-atomic-controller/426d63397efa20a7eb72ae55e2243d11b37dc4cfab40b44f381d8063ae0cd9f3/0
+----
+
+. Explore the _/ostree_ directory. 
 +
 ----
 cd /ostree; ls
+cd /ostree/boot.1/rh-atomic-controller/ostree/boot.1/rh-atomic-controller/<YOUR UUID>/0
 ----
 . Rollback to the prior install on Atomic Controller 1 by using the _rpm-ostree rollback_ command.
 +
