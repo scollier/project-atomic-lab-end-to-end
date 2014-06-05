@@ -11,13 +11,13 @@ man rpm-ostree
 ----
 rpm-ostree --help
 ----
-. Check out the entries in _/boot_.
+. Check out the entries in _/boot_.  Notice that _loader_ is a symlink.  That's how the atomic updates work, by swaping that symlink after an _rpm-ostree upgrade_
 +
 ----
 cd /boot
-ls
-cat loader.1/entries/ostree-rh-atomic-controller-0.conf 
-cat loader.1/entries/ostree-rh-atomic-controller-1.conf 
+ls -l
+cat loader/entries/ostree-rh-atomic-controller-0.conf
+cat loader/entries/ostree-rh-atomic-controller-1.conf
 ----
 . Explore the _/ostree_ directory.
 +
