@@ -168,13 +168,68 @@ mongo --host IP_OF_VM --port "PUT PORT HERE"
 +
 ----
 > rs.initiate(cfg)
+{
+        "info" : "Config now saved locally.  Should come online in about a minute.",
+        "ok" :
+}
 ----
-. Refresh the configuration until you see PRIMARY and SECONDARY replica set members.
+. Refresh the configuration until you see PRIMARY and SECONDARY replica set members.  Below is an example of what it looks like when working.
 +
 ----
 > rs.status()
 > rs.status()
 > rs.status()
+replica0:PRIMARY> rs.status()
+{
+        "set" : "replica0",
+        "date" : ISODate("2014-06-05T13:19:09Z"),
+        "myState" : 1,
+        "members" : [
+                {
+                        "_id" : 0,
+                        "name" : "192.168.1.1:27017",
+                        "health" : 1,
+                        "state" : 1,
+                        "stateStr" : "PRIMARY",
+                        "uptime" : 255,
+                        "optime" : Timestamp(1401974323, 1),
+                        "optimeDate" : ISODate("2014-06-05T13:18:43Z"),
+                        "electionTime" : Timestamp(1401974336, 1),
+                        "electionDate" : ISODate("2014-06-05T13:18:56Z"),
+                        "self" : true
+                },
+                {
+                        "_id" : 1,
+                        "name" : "192.168.1.2:27017",
+                        "health" : 1,
+                        "state" : 2,
+                        "stateStr" : "SECONDARY",
+                        "uptime" : 25,
+                        "optime" : Timestamp(1401974323, 1),
+                        "optimeDate" : ISODate("2014-06-05T13:18:43Z"),
+                        "lastHeartbeat" : ISODate("2014-06-05T13:19:08Z"),
+                        "lastHeartbeatRecv" : ISODate("2014-06-05T13:19:08Z"),
+                        "pingMs" : 0,
+                        "syncingTo" : "192.168.1.1:27017"
+                },
+                {
+                        "_id" : 2,
+                        "name" : "192.168.1.3:27017",
+                        "health" : 0,
+                        "state" : 8,
+                        "stateStr" : "SECONDARY",
+                        "uptime" : 0,
+                        "optime" : Timestamp(0, 0),
+                        "optimeDate" : ISODate("1970-01-01T00:00:00Z"),
+                        "lastHeartbeat" : ISODate("2014-06-05T13:19:08Z"),
+                        "lastHeartbeatRecv" : ISODate("1970-01-01T00:00:00Z"),
+                        "pingMs" : 0
+                        "syncingTo" : "192.168.1.1:27017"
+                }
+        ],
+        "ok" : 1
+}
+
 ----
 . Clean up the environment
 +
