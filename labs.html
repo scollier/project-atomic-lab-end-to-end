@@ -2326,17 +2326,13 @@ Review the Dockerfile. Look at the <em>Dockerfile</em>. From the contents below,
 </p>
 <div class="listingblock">
 <div class="content">
-<pre><code># cat Dockerfile
-FROM fedora:20
-MAINTAINER Scott Collier &lt;scollier@redhat.com&gt;
+<pre><code>MAINTAINER Scott Collier &lt;scollier@redhat.com&gt;
 
 RUN yum -y install mariadb-server pwgen supervisor psmisc net-tools; yum clean all
 
 RUN mkdir -p /var/log/mysql &amp;&amp; \
     touch /var/log/mysql/.keep /var/lib/mysql/.keep &amp;&amp; \
     chown -R mysql:mysql /var/log/mysql /var/lib/mysql
-
-USER mysql
 
 ADD ./simple.cnf /etc/my.cnf.d/
 ADD ./config_mariadb.sh /config_mariadb.sh
@@ -2879,8 +2875,8 @@ Now, how did this work?  The way this works is that the Dockerfile <em>CMD</em> 
     # Only update LocalSettings if they already exist; on initial
     # setup they will not yet be here
     if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
-    sed -i 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/' /var/www/html/wiki/LocalSettings.php
-    sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
+      sed -i 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/' /var/www/html/wiki/LocalSettings.php
+      sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
     fi
 fi</code></pre>
 </div></div>

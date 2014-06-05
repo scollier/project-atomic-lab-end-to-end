@@ -690,8 +690,8 @@ if [ "x$DB_PORT_3306_TCP_ADDR" != "x" ] ; then
     # Only update LocalSettings if they already exist; on initial
     # setup they will not yet be here
     if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
-    sed -i 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/' /var/www/html/wiki/LocalSettings.php
-    sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
+	    sed -i 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/' /var/www/html/wiki/LocalSettings.php
+   		sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
     fi
 fi
 ----
