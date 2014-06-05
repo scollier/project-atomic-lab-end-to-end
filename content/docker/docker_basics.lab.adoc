@@ -689,16 +689,15 @@ Passwrod: redhat
 if [ "x$DB_PORT_3306_TCP_ADDR" != "x" ] ; then
     # For initial configuration, it's also considerate to update the
     # default settings that drive the config screen defaults
-    edit_in_place /usr/share/mediawiki/includes/DefaultSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
+    sed -i 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/' /usr/share/mediawiki/includes/DefaultSettings.php
 
     # Only update LocalSettings if they already exist; on initial
     # setup they will not yet be here
     if [ -f /var/www/html/wiki/LocalSettings.php ] ; then
-        edit_in_place /var/www/html/wiki/LocalSettings.php 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/'
-        sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
+    sed -i 's/^\$wgDBserver =.*$/\$wgDBserver = "'$DB_PORT_3306_TCP_ADDR'";/' /var/www/html/wiki/LocalSettings.php
+    sed -i 's/^\$wgServer =.*$/\$wgServer = "http:\/\/'$HOST_IP'";/' /var/www/html/wiki/LocalSettings.php
     fi
 fi
-
 ----
 It's doing a check for an existing LocalSettings.php file.  We added that file during the Docker build process.  That file was copied to /var/www/html/wiki.  So, the script runs, sees that the file exists and points the _$wbDBserver_ variable to the MariaDB container.  So, no matter if these containers get shut down and have new IP addresses, the Mediawiki container will always be able to find the MariaDB container because of the _link_.  In addition, it's using the _-e_ option to pass environment variables, in this case, $HOST_IP to the _run-mw.sh_ script to complete the configuration.  
 
