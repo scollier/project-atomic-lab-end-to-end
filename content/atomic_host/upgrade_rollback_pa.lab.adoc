@@ -31,9 +31,11 @@ ostree=/ostree/boot.1/rh-atomic-controller/426d63397efa20a7eb72ae55e2243d11b37dc
 cd /ostree; ls
 cd /ostree/boot.1/rh-atomic-controller/ostree/boot.1/rh-atomic-controller/<YOUR UUID>/0
 ----
-. Rollback to the prior install on Atomic Controller 1 by using the _rpm-ostree rollback_ command.
+. Rollback to the prior install on Atomic Controller 1 by using the _rpm-ostree rollback_ command.  First, grab a copy of the RPMs installed, then compare to after the rollback.
 +
 ----
+rpm -qa | sort > /root/before-rollback
+
 rpm-ostree rollback
 
 Moving 'aab68bc5a9c24b08ffa2eb10e9c7ca4c572258fa9a5ef1e34d3c12e60920f389.0' to be first deployment
@@ -56,4 +58,9 @@ Sucessfully reset deployment order; run "systemctl reboot" to start a reboot
 +
 ----
 reboot
+----
+. Now compare the RPMs that are installed.
++
+----
+rpm -qa | sort | diff /root/before-rollback -
 ----

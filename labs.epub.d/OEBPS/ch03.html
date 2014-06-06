@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 3. Red Hat Enterprise Linux Atomic Host Compose Server</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"/></head><body><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a id="Compose_Server_Setup"/>Chapter 3. Red Hat Enterprise Linux Atomic Host Compose Server</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_configure_the_compose_server_as_of_6_5_2014_this_chapter_is_not_complete_skip"/>3.1. Configure the Compose Server - As of 6/5/2014, this chapter is not complete.  Skip.</h1></div></div></div><p>The Atomic compose server builds the trees of content that the Red Hat Enterprise Linux Atomic Hosts consume.</p></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_deploy_a_red_hat_enterprise_linux_7_virtual_machine"/>3.2. Deploy a Red Hat Enterprise Linux 7 Virtual Machine</h1></div></div></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Perform this on the hypervisor</p></div><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Create the directory structure, from the <span class="emphasis"><em>root</em></span> home directory
+</p><pre class="screen">cd ~
+mkdir -p atomic/build_server</pre></li><li class="listitem"><p class="simpara">
+Download the image
+</p><pre class="screen">cd atomic/build_server
+wget http://download.devel.redhat.com/brewroot/packages/rhel-server-kvm/7.0/7/images/rhel-server-kvm-7.0-7.x86_64.qcow2</pre></li><li class="listitem"><p class="simpara">
+Change the password on the image
+</p><pre class="screen">virt-sysprep -a rhel-server-kvm-7.0-7.x86_64.qcow2 --root-password password:redhat</pre></li><li class="listitem"><p class="simpara">
+Install the Red Hat Enterprise Linux image
+</p><pre class="screen">virt-install \
+  --memory 4096 \
+  --name Compose_Server \
+  --disk ~/atomic/build_server/rhel-server-kvm-7.0-7.x86_64.qcow2 \
+  --import \
+  --noautoconsole</pre></li><li class="listitem"><p class="simpara">
+Open the VM virtual console
+</p><pre class="screen">$ virsh
+Welcome to virsh, the virtualization interactive terminal.
+
+Type:  'help' for help with commands
+       'quit' to quit
+
+virsh # console Compose_Server
+Connected to domain Compose_Server</pre></li><li class="listitem"><p class="simpara">
+Configure SSH
+</p><pre class="screen"># sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# grep -i passwordauth /etc/ssh/sshd_config
+#PasswordAuthentication yes
+PasswordAuthentication yes
+# PasswordAuthentication.  Depending on your PAM configuration,
+# PAM authentication, then enable this but set PasswordAuthentication
+# systemctl restart sshd</pre></li><li class="listitem">
+Get the IP address from the image and SSH in, instead of using the virt-console
+</li><li class="listitem">
+Now you should be SSH’d into the VM.  Add the collider repo for RHEL internal content
+</li></ol></div><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p>Perform on the build server</p></div><pre class="screen">cat &lt;&lt; EOF &gt; /etc/yum.repos.d/extras-rhel-7.repo
+[extras-rhel-7-build]
+name=RHEL 7 Extra Packages
+baseurl=http://download.eng.bos.redhat.com/brewroot/repos/extras-rhel-7.0-build/latest/x86_64/
+enabled=1
+gpgcheck=0
+EOF</pre><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Install <span class="emphasis"><em>rpm-ostree</em></span> tools
+</p><pre class="screen">yum -y install httpd yum-utils ostree binutils nss-altfiles firewalld</pre></li><li class="listitem"><p class="simpara">
+Edit the <span class="emphasis"><em>/etc/nsswitch.conf</em></span> file
+</p><pre class="screen">sed -i 's/passwd:     files sss/passwd:     files sss altfiles/' /etc/nsswitch.conf
+sed -i 's/shadow:     files sss/passwd:     files sss altfiles/' /etc/nsswitch.conf</pre></li><li class="listitem"><p class="simpara">
+Disable SELinux on the compose server
+</p><pre class="screen">sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config &amp;&amp; cat /etc/selinux/config</pre></li><li class="listitem"><p class="simpara">
+Create the repo and set up Apache
+</p><pre class="screen">mkdir /srv/rpm-ostree &amp;&amp;
+cd /srv/rpm-ostree &amp;&amp;
+mkdir -p repo &amp;&amp;
+ostree --repo=repo init --mode=archive-z2 &amp;&amp;
+
+cat &gt; /etc/httpd/conf.d/rpm-ostree.conf &lt;&lt;EOF
+DocumentRoot /srv/rpm-ostree
+&lt;Directory "/srv/rpm-ostree"&gt;
+Options Indexes FollowSymLinks
+AllowOverride None
+Require all granted
+&lt;/Directory&gt;
+EOF</pre></li><li class="listitem"><p class="simpara">
+Create a systemd service file
+</p><pre class="screen">cat &gt; /etc/systemd/system/rpm-ostree-autobuilder.service &lt;&lt;EOF
+[Unit]
+Description=RPM-OSTree autobuilder
+
+[Service]
+WorkingDirectory=/srv/rpm-ostree
+ExecStart=/usr/bin/rpm-ostree-autobuilder
+
+[Install]
+WantedBy=multi-user.target
+EOF</pre></li><li class="listitem"><p class="simpara">
+Enable services and configure firewall
+</p><pre class="screen">systemctl start firewalld &amp;&amp;
+systemctl enable firewalld &amp;&amp;
+systemctl daemon-reload &amp;&amp;
+systemctl enable httpd &amp;&amp;
+systemctl start httpd &amp;&amp;
+systemctl reload httpd &amp;&amp;
+systemctl enable rpm-ostree-autobuilder &amp;&amp;
+systemctl start rpm-ostree-autobuilder &amp;&amp;
+firewall-cmd --add-service=http &amp;&amp;
+firewall-cmd --add-service=http --permanent</pre></li><li class="listitem"><p class="simpara">
+Reboot the host
+</p><pre class="screen">systemctl reboot</pre></li><li class="listitem"><p class="simpara">
+Create the <span class="emphasis"><em>products.json</em></span> file
+</p><pre class="screen">cat &gt; /srv/rpm-ostree/products.json &lt;&lt; EOF
+{
+    "comment": "Red Hat Enterprise Linux Atomic Host 7.0",
+
+    "osname": "rhel-atomic-host",
+    "ref": "rhel-atomic-host/7.0-buildmaster/x86_64/base",
+
+    "repos": ["extras-rhel-7-build", "extras-rhel-7-candidate"],
+
+    "selinux": true,
+
+    "bootstrap_packages": ["filesystem", "glibc", "nss-altfiles", "shadow-utils",
+         "redhat-release-atomic-controller"],
+
+    "packages": ["kernel", "rpm-ostree", "lvm2", "syslinux-extlinux",
+     "btrfs-progs", "e2fsprogs", "xfsprogs",
+     "docker",
+     "selinux-policy-targeted",
+     "audit",
+     "min-cloud-agent",
+     "subscription-manager",
+     "openssh-server", "openssh-clients",
+     "passwd",
+     "NetworkManager", "vim-minimal", "nano",
+     "sudo"],
+
+    "units": ["docker.service", "docker.socket"]
+}
+EOF</pre></li></ol></div><p>FIXME NEED PACKAGE FROM COLLIDER BEFORE COMPLETING THIS SECTION</p><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="_links"/>3.2.1. Links</h2></div></div></div><p><a class="ulink" href="http://www.projectatomic.io/blog/2014/04/build-your-own-atomic-host-on-fedora-20/">http://www.projectatomic.io/blog/2014/04/build-your-own-atomic-host-on-fedora-20/</a></p></div></div></div></body></html>

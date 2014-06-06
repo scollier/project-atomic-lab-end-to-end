@@ -2,9 +2,18 @@ NOTE: The following virtual network segments will be used for the labs:
 
 * Single Interface using KVM	Default Network		(eth0)  
 
-=== KVM Setup
+=== System Requirements
 
-NOTE: Virtualization software must be installed on your system in order to complete the setup steps (see pre-reqs doc for details).  For these labs, we will assume a functioning KVM environment. 
+- This lab can be completed on either a Fedora or RHEL host with the following specs.
+* test
+* test
+* test
+
+
+
+==== KVM Setup
+
+For these labs, we will assume a functioning KVM environment. 
 
 
 ==== KVM Networking Config

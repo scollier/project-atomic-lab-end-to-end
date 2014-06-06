@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 7. Introduction to geard</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"/></head><body><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a id="geard"/>Chapter 7. Introduction to geard</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_geard"/>7.1. geard</h1></div></div></div><p>geard is a Docker container orchestration tool.  At the currrent release, it essentially does three things:</p><div class="orderedlist"><ol class="orderedlist"><li class="listitem">
+SSH
+</li><li class="listitem">
+Multiple container deployment
+</li><li class="listitem">
+Link
+</li></ol></div><p>This lab has 5 parts.</p><div class="orderedlist"><ol class="orderedlist"><li class="listitem">
+Single host / single container deployment
+</li><li class="listitem">
+Single host / multi container deployment
+</li><li class="listitem">
+Single host / MongoDB replica set configuration
+</li><li class="listitem">
+Multi host container linking
+</li><li class="listitem">
+SSH enablement for contianers
+</li></ol></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_geard_lab_prerequisites"/>7.2. geard Lab Prerequisites</h1></div></div></div><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Two Atomic hosts
+</p><pre class="screen">hostname   # on host 1
+hostname   # on host 2</pre></li><li class="listitem"><p class="simpara">
+Copy down the json files to both hosts.  Open a terminal session to each host and complete the following.
+</p><pre class="screen">cd
+
+for i in http_single.json mongo_deploy.json mongo_replica.json; do
+  curl -O https://raw.githubusercontent.com/scollier/project-atomic-lab-end-to-end/master/content/geard/$i
+done</pre></li><li class="listitem"><p class="simpara">
+Check to see that geard and Docker are installed and running
+</p><pre class="screen">rpm -qa | grep -i geard
+rpm -qa | grep -i docker
+systemctl status geard
+systemctl status docker</pre></li><li class="listitem"><p class="simpara">
+Check for the proper .json files in the users home directory
+</p><pre class="screen">ls *.json
+http_single.json  mongo_deploy.json  mongo_replica.json</pre></li></ol></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_deploy_a_single_container_asciidoc_br"/>7.3. Deploy a Single Container</h1></div></div></div><p><span class="strong"><strong>On Atomic Host 1:</strong></span></p><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Check which units geard has registered
+</p><pre class="screen">gear list-units</pre></li><li class="listitem"><p class="simpara">
+Check to see which images are available and running within Docker
+</p><pre class="screen">docker images
+docker ps</pre></li><li class="listitem"><p class="simpara">
+Install the first unit
+</p><pre class="screen">gear install demo/mongodb mongodb --start -p 27017:27017</pre></li><li class="listitem"><p class="simpara">
+List the units again
+</p><pre class="screen">gear list-units</pre></li><li class="listitem"><p class="simpara">
+Show the container is also recognized by Docker
+</p><pre class="screen">docker ps</pre></li><li class="listitem"><p class="simpara">
+Make sure the MongoDB server is responding to requests.  It will notify you that you are trying to access the database over the native driver port.  Just ignore it, we are just making sure it is listening.
+</p><pre class="screen">curl http://localhost:27017</pre></li><li class="listitem"><p class="simpara">
+List the units one more time
+</p><pre class="screen">gear list-units</pre></li><li class="listitem"><p class="simpara">
+Clean up the environment
+</p><pre class="screen">gear delete mongodb
+gear list-units
+docker ps</pre></li></ol></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_deploy_a_mongodb_replica_set_on_a_single_host"/>7.4. Deploy a MongoDB replica set on a single host</h1></div></div></div><p><span class="strong"><strong>On host 1:</strong></span></p><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Check the environment
+</p><pre class="screen">gear list-units
+docker ps</pre></li><li class="listitem"><p class="simpara">
+Explore the <span class="emphasis"><em>mongo_deploy.json</em></span>, notice the name, count and image.  The .json file is also taking care of the linking.
+</p><pre class="screen">cd
+
+cat mongo_deploy.json
+{
+  "containers":[
+    {
+      "name":"db",
+      "count":3,
+      "image":"demo/mongodb",
+      "publicports":[
+        {"internal":27017,"external":0}
+      ],
+      "links":[
+        {"to":"db","nonlocal":true,"matchport":true}
+      ]
+    }
+  ]
+}</pre></li><li class="listitem"><p class="simpara">
+Deploy the application
+</p><pre class="screen"># gear deploy mongo_deploy.json
+==&gt; Deploying mongo_deploy.json
+ports: searching block 41, 4000-4099
+ports: Reserved port 4000
+local PortMapping: 27017 -&gt; 4000
+local Container db-1 is installed
+ports: Reserved port 4001
+local PortMapping: 27017 -&gt; 4001
+local Container db-2 is installed
+ports: Reserved port 4002
+local PortMapping: 27017 -&gt; 4002
+local Container db-3 is installed
+==&gt; Linking db: 192.168.1.1:27017 -&gt; localhost:4000
+==&gt; Linking db: 192.168.1.2:27017 -&gt; localhost:4001
+==&gt; Linking db: 192.168.1.3:27017 -&gt; localhost:4002
+local Container db-1 starting
+local Container db-2 starting
+local Container db-3 starting
+==&gt; Deployed as mongo_deploy.json.20140605-203024</pre></li><li class="listitem"><p class="simpara">
+Copy the contents of the replica set file and paste that into the mongodb shell, which you will be launching in the next step.
+</p><pre class="screen">cat ~/mongo_replica.json
+cfg = {
+    "_id" : "replica0",
+    "version" : 1,
+    "members" : [
+        {
+            "_id" : 0,
+            "host" : "192.168.1.1:27017"
+        },
+        {
+            "_id" : 1,
+            "host" : "192.168.1.2:27017"
+        },
+        {
+            "_id" : 2,
+            "host" : "192.168.1.3:27017"
+        },
+    ]
+}</pre></li><li class="listitem"><p class="simpara">
+List the units and container
+</p><pre class="screen">gear list-units
+docker ps</pre></li><li class="listitem"><p class="simpara">
+This lab does require that you have the MongoDB client installed on a workstation that can access this VM. Connect with the MongoDB client. Install the <span class="emphasis"><em>mongodb</em></span> package.  The PORT that you are connecting to on the next step is the port that <span class="emphasis"><em>geard</em></span> mapped.  Most likely 400x.  Replace <span class="emphasis"><em>IP_OF_VM</em></span> with the IP address of the host running the MongoDB replica set.  This should the IP Address Atomic Host 1.  Connect to the first MongoDB server, this should be running on port 4000.
+</p><pre class="screen">mongo --host IP_OF_VM --port "PUT PORT HERE"</pre></li><li class="listitem"><p class="simpara">
+Paste the contents of the replica configuration file in here. Initiate the replica set
+</p><pre class="screen">&gt; rs.initiate(cfg)
+{
+        "info" : "Config now saved locally.  Should come online in about a minute.",
+        "ok" :
+}</pre></li><li class="listitem"><p class="simpara">
+Refresh the configuration until you see PRIMARY and SECONDARY replica set members.  Below is an example of what it looks like when working.
+</p><pre class="screen">&gt; rs.status()
+&gt; rs.status()
+&gt; rs.status()
+replica0:PRIMARY&gt; rs.status()
+{
+        "set" : "replica0",
+        "date" : ISODate("2014-06-05T13:19:09Z"),
+        "myState" : 1,
+        "members" : [
+                {
+                        "_id" : 0,
+                        "name" : "192.168.1.1:27017",
+                        "health" : 1,
+                        "state" : 1,
+                        "stateStr" : "PRIMARY",
+                        "uptime" : 255,
+                        "optime" : Timestamp(1401974323, 1),
+                        "optimeDate" : ISODate("2014-06-05T13:18:43Z"),
+                        "electionTime" : Timestamp(1401974336, 1),
+                        "electionDate" : ISODate("2014-06-05T13:18:56Z"),
+                        "self" : true
+                },
+                {
+                        "_id" : 1,
+                        "name" : "192.168.1.2:27017",
+                        "health" : 1,
+                        "state" : 2,
+                        "stateStr" : "SECONDARY",
+                        "uptime" : 25,
+                        "optime" : Timestamp(1401974323, 1),
+                        "optimeDate" : ISODate("2014-06-05T13:18:43Z"),
+                        "lastHeartbeat" : ISODate("2014-06-05T13:19:08Z"),
+                        "lastHeartbeatRecv" : ISODate("2014-06-05T13:19:08Z"),
+                        "pingMs" : 0,
+                        "syncingTo" : "192.168.1.1:27017"
+                },
+                {
+                        "_id" : 2,
+                        "name" : "192.168.1.3:27017",
+                        "health" : 0,
+                        "state" : 8,
+                        "stateStr" : "SECONDARY",
+                        "uptime" : 0,
+                        "optime" : Timestamp(0, 0),
+                        "optimeDate" : ISODate("1970-01-01T00:00:00Z"),
+                        "lastHeartbeat" : ISODate("2014-06-05T13:19:08Z"),
+                        "lastHeartbeatRecv" : ISODate("1970-01-01T00:00:00Z"),
+                        "pingMs" : 0
+                        "syncingTo" : "192.168.1.1:27017"
+                }
+        ],
+        "ok" : 1
+}</pre></li><li class="listitem"><p class="simpara">
+Explore the replica set a bit more.
+</p><pre class="screen">docker logs db-1
+docker logs db-1
+docker logs db-3
+gear status db-1
+systemctl status ctr-db-2</pre></li><li class="listitem"><p class="simpara">
+Clean up the environment
+</p><pre class="screen">gear list-units
+docker ps
+gear delete db-{1,2,3}
+gear list-units
+docker ps</pre></li></ol></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_multi_host_application_linking_skip_this_section_it_needs_work"/>7.5. Multi-host Application Linking - SKIP THIS SECTION, IT NEEDS WORK</h1></div></div></div><p><span class="strong"><strong>On host 1:</strong></span></p><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Check the environment
+</p><pre class="screen">gear list-units
+docker ps</pre></li><li class="listitem"><p class="simpara">
+Explore the <span class="emphasis"><em>http_single.json</em></span> file
+</p><pre class="screen">cat http_single.json
+{
+  "Containers": [
+    {
+      "Name": "web-server",
+      "Image": "demo/apache",
+      "PublicPorts": [
+        {
+          "Internal": 80
+        }
+      ],
+      "Links": [
+        {
+          "To": "web-server",
+          "NonLocal": true,
+          "MatchPort": true
+        }
+      ],
+      "Count": 2
+    }
+  ],
+  "IdPrefix": "",
+  "RandomizeIds": false
+}</pre></li><li class="listitem"><p class="simpara">
+Ensure that the geard and Docker daemons are running on the second host.
+</p><pre class="screen">systemctl status docker  # on host 1
+systemctl status docker  # on host 2
+systemctl status geard  # on host 1
+systemctl status geard  # on host 2</pre></li><li class="listitem"><p class="simpara">
+Deploy the application on both hosts, where <span class="strong"><strong>x.x.x.x</strong></span> is the IP address of the second host
+</p><pre class="screen">gear deploy http_single.json localhost x.x.x.x</pre></li><li class="listitem"><p class="simpara">
+List the units and containers on both hosts
+</p><pre class="screen">gear list-units    # on host 1
+gear list-units    # on host 2
+docker ps          # on host 1
+docker ps          # on host 2</pre></li><li class="listitem"><p class="simpara">
+On host 1, get the pid for the web server container
+</p><pre class="screen">docker inspect --format '{{ .State.Pid }}' &lt;container uid&gt;</pre></li><li class="listitem"><p class="simpara">
+Use <span class="emphasis"><em>nsenter</em></span> to enter the namespace of the PID and take a look at the IPtables rules. You will see that there is a rule forwarding all traffic to <span class="emphasis"><em>192.168.1.x</em></span> to the external port on the localhost and the external port on the remote host.  Basically geard is telling the container that every application is local.
+</p><pre class="screen">nsenter -m -u -n -i -p -t &lt;PID FROM &lt;container uid&gt;&gt; bash
+iptables -nvL -t nat</pre></li><li class="listitem"><p class="simpara">
+Ensure that you can get the index.html from each host
+</p><pre class="screen">curl http://localhost:&lt;external port localhost&gt;
+curl http://localhost:&lt;external port remote host&gt;</pre></li><li class="listitem"><p class="simpara">
+On host 2, ensure that you can pull that web page as well and compare to the output that you got inside the container on host 1
+</p><pre class="screen">docker ps
+curl http://localhost:&lt;external port localhost&gt;</pre></li><li class="listitem"><p class="simpara">
+Clean up the environment
+</p><pre class="screen">gear list-units   # on host 1
+gear list-units   # on host 2
+gear delete web-server-1    # on host 1
+gear delete web-server-2    # on host 2</pre></li></ol></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_ssh_enablement_for_containers"/>7.6. SSH Enablement for Containers</h1></div></div></div><p><span class="strong"><strong>On host 1:</strong></span></p><p>TBD</p></div></div></body></html>

@@ -1,4 +1,4 @@
-=== Configure the Compose Server
+=== Configure the Compose Server - As of 6/5/2014, this chapter is not complete.  Skip.
 The Atomic compose server builds the trees of content that the Red Hat Enterprise Linux Atomic Hosts consume.
 
 === Deploy a Red Hat Enterprise Linux 7 Virtual Machine

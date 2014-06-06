@@ -355,7 +355,8 @@ nice		= 0
 log-error=/var/log/mysql/mysqld.log
 
 [server]
-user		= mysql
+# user		= mysql
+user		= root
 tmpdir		= /tmp
 skip-external-locking
 
@@ -471,7 +472,7 @@ ls -lZd /mariadb/db
 mkdir -vp /mariadb/logs
 chcon -Rvt svirt_sandbox_file_t /mariadb/logs/
 ----
-. Now launch the container again.  Whether or not the container is still running, you will have to be removed because of a naming conflict.
+. Whether or not the container is still running, you will have to be removed because of a naming conflict.
 +
 ----
 docker ps -a
@@ -510,7 +511,7 @@ This section shows how to launch the _Mediawiki_ container and link it back to t
 Review the scripts and other content that are required to build and launch the _Mediawiki_ container and link it to the _MariaDB_ container.  This lab does not require that you build the container as it has already been done in the prior lab.  Rather, it provides the information you need to understand what the requirements of building a container like this.  The files are pasted here, but they are also in _/root/Dockerfiles/atomic_host_1/mediawiki_
 
 
-. Review the Dockerfile. This is a systemctl based dockerfile.  This is work being done so that the _wants_ files don't have to be removed.  At some point there will be a minimal systemd environment for containers. 
+. Review the Dockerfile. This is a systemctl based dockerfile.  There is work being done so that the _wants_ files don't have to be removed.  At some point there will be a minimal systemd environment for containers. 
 +
 ----
 # cat Dockerfile 
@@ -615,7 +616,7 @@ exec /usr/sbin/init
 
 ==== Launch the Mediawiki Container
 
-This section show's how to use hostnames and link to an existing container.  Issue the _docker run_ command and link to the _mariadb_ container.
+This section shows how to use hostnames and link to an existing container.  Issue the _docker run_ command and link to the _mariadb_ container.
 
 Run the container.  The command below is taking the enviroment variable _HOST_IP_ and will inject that into the _run-mw.sh_ script when the container is launched. The _HOST_IP_ is the IP address of the virtual machine that is hosting the container.  Replace IP_OF_VIRTUAL_MACHINE with the IP address of the virtual machine running the container.
 
@@ -676,7 +677,7 @@ http://ip.address.here/wiki
 +
 ----
 Username: admin
-Passwrod: redhat
+Passwrod: password
 ----
 
 . Now, how did this work?  The way this works is that the Dockerfile _CMD_ command tells the container to launch with the _run-mw.sh_ script.  Here's the key thing about what that script is doing, let's review:

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 8. Upgrading and Rolling back a Project Atomic Host</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"/></head><body><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a id="Upgrade_Rollback"/>Chapter 8. Upgrading and Rolling back a Project Atomic Host</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_project_atomic_host_upgrade_and_rollback"/>8.1. Project Atomic Host Upgrade and Rollback</h1></div></div></div><p>This section needs to be filled out a bit more and explain what’s going on behind the scenes.</p><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Read the man page.
+</p><pre class="screen">man rpm-ostree</pre></li><li class="listitem"><p class="simpara">
+Check help
+</p><pre class="screen">rpm-ostree --help</pre></li><li class="listitem"><p class="simpara">
+Check out the entries in <span class="emphasis"><em>/boot</em></span>.  Notice that <span class="emphasis"><em>loader</em></span> is a symlink.  That’s how the atomic updates work, by swaping that symlink after an <span class="emphasis"><em>rpm-ostree upgrade</em></span>
+</p><pre class="screen">cd /boot
+ls -l
+cat loader/entries/ostree-rh-atomic-controller-0.conf
+cat loader/entries/ostree-rh-atomic-controller-1.conf</pre></li><li class="listitem"><p class="simpara">
+Notice one of the entries in the ostree-rh-atomic-controller-0.conf.  The UUID will be different on your host.  But you need to explore that directory structure as that is where you are booting into.
+</p><pre class="screen">ostree=/ostree/boot.1/rh-atomic-controller/426d63397efa20a7eb72ae55e2243d11b37dc4cfab40b44f381d8063ae0cd9f3/0</pre></li><li class="listitem"><p class="simpara">
+Explore the <span class="emphasis"><em>/ostree</em></span> directory.
+</p><pre class="screen">cd /ostree; ls
+cd /ostree/boot.1/rh-atomic-controller/ostree/boot.1/rh-atomic-controller/&lt;YOUR UUID&gt;/0</pre></li><li class="listitem"><p class="simpara">
+Rollback to the prior install on Atomic Controller 1 by using the <span class="emphasis"><em>rpm-ostree rollback</em></span> command.  First, grab a copy of the RPMs installed, then compare to after the rollback.
+</p><pre class="screen">rpm -qa | sort &gt; /root/before-rollback
+
+rpm-ostree rollback
+
+Moving 'aab68bc5a9c24b08ffa2eb10e9c7ca4c572258fa9a5ef1e34d3c12e60920f389.0' to be first deployment
+Transaction complete; bootconfig swap: yes deployment count change: 0)
+Changed:
+  cockpit-0.8-1.el7.x86_64
+&lt;snip&gt;
+  subscription-manager-1.10.14-7.el7.x86_64
+Removed:
+  c-ares-1.10.0-3.el7.x86_64
+  cups-libs-1:1.6.3-14.el7.x86_64
+  sssd-ldap-1.11.2-65.el7.x86_64
+&lt;snip&gt;
+  sssd-proxy-1.11.2-65.el7.x86_64
+  subscription-manager-plugin-ostree-1.11.7-1.git.95.3f56593.el7.x86_64
+  tar-2:1.26-29.el7.x86_64
+Sucessfully reset deployment order; run "systemctl reboot" to start a reboot</pre></li><li class="listitem"><p class="simpara">
+Reboot to go back to the original install
+</p><pre class="screen">reboot</pre></li><li class="listitem"><p class="simpara">
+Now compare the RPMs that are installed.
+</p><pre class="screen">rpm -qa | sort | diff /root/before-rollback -</pre></li></ol></div></div></div></body></html>

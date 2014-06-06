@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 5. Building Docker Images</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"/></head><body><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a id="Building_Images"/>Chapter 5. Building Docker Images</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_overview"/>5.1. Overview</h1></div></div></div><p>In this section we will build images that will be used through the remainder of the lab.  The Dockerfiles will be provided in the text below, just copy and paste them with the appropriate filenames. The Dockerfiles in this section are just examples.  Some are Fedora, some are RHEL.  Try them both out.</p><p>This section describes building the images, but doesn’t go into detail on the usage.  That will be in the following chapters.</p><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Download the Dockerfiles and Scripts to each Atomic host and extract them.
+</p><pre class="screen">curl -O https://raw.githubusercontent.com/scollier/project-atomic-lab-end-to-end/master/content/docker/dockerfiles.tar
+tar -xvf dockerfiles.tar</pre></li></ol></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="_apache_image_atomic_host_1"/>5.1.1. Apache Image Atomic Host 1</h2></div></div></div><p>Build this image on Atomic Host 1</p><pre class="screen">docker images
+cd ~/Dockerfiles/atomic_host/apache
+docker build -t demo/apache .</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="_apache_image_atomic_host_2"/>5.1.2. Apache Image Atomic Host 2</h2></div></div></div><p>Build this image on Atomic Host 2</p><pre class="screen">docker images
+cd ~/Dockerfiles/atomic_host/apache
+docker build -t demo/apache .</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="_mediawiki_image"/>5.1.3. Mediawiki Image</h2></div></div></div><p>Build this image on Atomic Host 1. Build the image</p><pre class="screen">docker images
+cd ~/Dockerfiles/atomic_host/mediawiki
+docker build -t demo/mediawiki .</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="_mariadb_image"/>5.1.4. MariaDB Image</h2></div></div></div><p>Build this image on Atomic Host 1. Build the image</p><pre class="screen">docker images
+cd ~/Dockerfiles/atomic_host/mariadb
+docker build -t demo/mariadb .</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="_nginx_image"/>5.1.5. nginx Image</h2></div></div></div><p>Build this image on Atomic Host 1
+. Build the image</p><pre class="screen">docker images
+cd ~/Dockerfiles/atomic_host/nginx
+docker build -t demo/nginx .</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="_mongodb_image"/>5.1.6. MongoDB Image</h2></div></div></div><p>Build this image on Atomic Host 1. Build the image</p><pre class="screen">docker images
+cd ~/Dockerfiles/atomic_host/mongodb
+docker build -t demo/mongodb .</pre></div><div class="section"><div class="titlepage"><div><div><h2 class="title"><a id="_links_2"/>5.1.7. Links</h2></div></div></div><p>More example Dockerfiles are on the Fedora Cloud SIG github page:</p><p><a class="ulink" href="https://github.com/fedora-cloud/Fedora-Dockerfiles">https://github.com/fedora-cloud/Fedora-Dockerfiles</a></p></div></div></div></body></html>

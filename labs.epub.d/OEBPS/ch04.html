@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><title>Chapter 4. Configure Project Atomic VMs</title><link rel="stylesheet" type="text/css" href="docbook-xsl.css"/><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"/></head><body><div class="chapter"><div class="titlepage"><div><div><h1 class="title"><a id="Configure_PA_VMs"/>Chapter 4. Configure Project Atomic VMs</h1></div></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_options_for_deployment"/>4.1. Options for Deployment</h1></div></div></div><p>There are a few different ways to obtain Atomic images:</p><div class="orderedlist"><ol class="orderedlist"><li class="listitem">
+In .qcow2 format
+</li><li class="listitem">
+Deploy from rpm
+</li></ol></div><p>For the purposes of this lab, we will be deploying Red Hat Enterprise Linux Atomic Controllers via the .qcow2 pre-built images.</p></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_obtaining_the_images"/>4.2. Obtaining the images</h1></div></div></div><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+On the host running the VM’s, create the directory structure.
+</p><pre class="screen">cd ~
+mkdir -p /var/lib/libvirt/images/atomic/{1,2}</pre></li><li class="listitem"><p class="simpara">
+Download and decompress the images to the appropriate directories.  You only need to do the following step if the images haven’t been downloaded for you already.  Perform this as a user with <span class="emphasis"><em>sudo</em></span> access.
+</p><pre class="screen">cd ~
+pushd /var/lib/libvirt/images/atomic/1/
+wget http://rcm-img06.build.bos.redhat.com/images/auto/rh-atomic-controller-el7-x86_64-buildmaster-controller-docker/latest-qcow2.xz
+xz -d latest-qcow2.xz
+cp latest-qcow2 ../2/
+popd</pre></li><li class="listitem"><p class="simpara">
+Install the image and create an additional drive
+</p><pre class="screen">cd ~
+for i in 1 2; do
+  sudo virt-install \
+  --memory 2048 \
+  --name Atomic_Host_$i \
+  --disk /var/lib/libvirt/images/atomic/$i/latest-qcow2 \
+  --import \
+  --noautoconsole \
+  --disk /var/lib/libvirt/images/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10;
+done</pre></li><li class="listitem"><p class="simpara">
+On each Atomic host, launch the console. Set a password for the <span class="emphasis"><em>root</em></span> user on each Atomic host. By default, the image does not have a password set for the root user.  So, log in without a password and set it.  In addition, these images do not have a serial console.  Use a graphical console, either through <span class="emphasis"><em>virt-manager</em></span> or <span class="emphasis"><em>virt-viewer</em></span>.
+</p><pre class="screen">virt-viewer Atomic_Host_1
+passwd</pre></li><li class="listitem">
+Get IP Address of both hosts and open up a terminal console to each machine.
+</li></ol></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_configure_disk_partitions"/>4.3. Configure Disk Partitions</h1></div></div></div><p>The Red Hat Enterprise Linux Atomic Controllers come with a fairly small disk image.  We need to confiure the second disk that was added with <span class="emphasis"><em>virt-install</em></span> and mount that under <span class="emphasis"><em>/var/lib/docker</em></span>.</p><div class="note" style="margin-left: 0; margin-right: 10%;"><h3 class="title">Note</h3><p><span class="yellow-background">Ensure you are on the correct host!  It would not be good if you are on the wrong host.  You should be on the Atomic VM’s when you perform the following operation.</span></p></div><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Create the Atomic_Host_sdb.layout file that will be used to partition <span class="emphasis"><em>sdb</em></span>.  You can just copy the following contents into your shell on the Atomic Host VM’s.
+</p><pre class="screen">cat &lt;&lt; EOF &gt; Atomic_Host_sdb.layout
+# partition table of /dev/sdb
+unit: sectors
+
+/dev/sdb1 : start=     2048, size= 20969472, Id=83
+/dev/sdb2 : start=        0, size=        0, Id= 0
+/dev/sdb3 : start=        0, size=        0, Id= 0
+/dev/sdb4 : start=        0, size=        0, Id= 0
+EOF
+
+sfdisk /dev/sdb &lt; Atomic_Host_sdb.layout</pre></li><li class="listitem"><p class="simpara">
+Format <span class="emphasis"><em>/dev/sdb1</em></span>
+</p><pre class="screen">mkfs.xfs /dev/sdb1</pre></li><li class="listitem"><p class="simpara">
+Ensure that only <span class="emphasis"><em>/dev/sdb1</em></span> is mounted to <span class="emphasis"><em>/var/lib/docker</em></span>
+</p><pre class="screen">systemctl stop docker
+mount
+df -hal
+umount /var/lib/docker
+mount /dev/sdb1 /var/lib/docker
+mount</pre></li><li class="listitem"><p class="simpara">
+Get the UUID from <span class="emphasis"><em>/dev/sdb1</em></span> and add it to the <span class="emphasis"><em>/etc/fstab</em></span>
+</p><pre class="screen">cp /etc/fstab{,.orig}
+cat /etc/fstab
+echo "$(blkid /dev/sdb1 | awk '{ print $2 }') /var/lib/docker xfs defaults 1 1" &gt;&gt; /etc/fstab
+cat /etc/fstab
+mount -a
+mount
+df -hal
+systemctl start docker
+ls /var/lib/docker</pre></li></ol></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_validate_hostname_and_networking"/>4.4. Validate Hostname and Networking</h1></div></div></div><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Set the hostname for each of your Red Hat Enterprise Linux Atomic Controller’s.
+</p><pre class="screen">hostnamectl set-hostname atomic1.local     # on host 1
+hostnamectl set-hostname atomic2.local     # on host 2</pre></li><li class="listitem"><p class="simpara">
+Ensure you can ping the other controller
+</p><pre class="screen">ping 10.0.0.1     # from host 1, replace IP address for host 2</pre></li><li class="listitem"><p class="simpara">
+Ensure each host can resolve DNS
+</p><pre class="screen">host redhat.com     # from each host</pre></li></ol></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_validate_selinux"/>4.5. Validate SELinux</h1></div></div></div><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Ensure that selinux is set to enforcing mode on each controller.
+</p><pre class="screen">getenforce</pre></li></ol></div></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_ensure_docker_and_geard_are_functional"/>4.6. Ensure Docker and geard are Functional</h1></div></div></div><pre class="screen">systemctl status docker
+systemctl status geard</pre></div><div class="section"><div class="titlepage"><div><div><h1 class="title"><a id="_upgrade_both_controllers"/>4.7. Upgrade both controllers.</h1></div></div></div><div class="orderedlist"><ol class="orderedlist"><li class="listitem"><p class="simpara">
+Disable GPG support
+</p><pre class="screen">echo "gpg-verify=false" &gt;&gt; /ostree/repo/config</pre></li><li class="listitem"><p class="simpara">
+Run the following on both of the Atomic controllers.
+</p><pre class="screen">rpm-ostree upgrade
+reboot</pre></li></ol></div></div></div></body></html>

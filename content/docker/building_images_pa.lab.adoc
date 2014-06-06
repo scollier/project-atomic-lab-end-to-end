@@ -13,7 +13,7 @@ tar -xvf dockerfiles.tar
 Build this image on Atomic Host 1
 ----
 docker images
-cd ~/Dockerfiles/atomic_host_1/apache
+cd ~/Dockerfiles/atomic_host/apache
 docker build -t demo/apache .
 ----
 
@@ -21,7 +21,7 @@ docker build -t demo/apache .
 Build this image on Atomic Host 2
 ----
 docker images
-cd ~/Dockerfiles/atomic_host_2/apache
+cd ~/Dockerfiles/atomic_host/apache
 docker build -t demo/apache .
 ----
 
@@ -29,7 +29,7 @@ docker build -t demo/apache .
 Build this image on Atomic Host 1. Build the image
 ----
 docker images
-cd ~/Dockerfiles/atomic_host_1/mediawiki
+cd ~/Dockerfiles/atomic_host/mediawiki
 docker build -t demo/mediawiki .
 ----
 
@@ -38,7 +38,7 @@ docker build -t demo/mediawiki .
 Build this image on Atomic Host 1. Build the image
 ----
 docker images
-cd ~/Dockerfiles/atomic_host_1/mariadb
+cd ~/Dockerfiles/atomic_host/mariadb
 docker build -t demo/mariadb .
 ----
 
@@ -48,7 +48,7 @@ Build this image on Atomic Host 1
 . Build the image
 ----
 docker images
-cd ~/Dockerfiles/atomic_host_1/nginx
+cd ~/Dockerfiles/atomic_host/nginx
 docker build -t demo/nginx .
 ----
 
@@ -56,7 +56,7 @@ docker build -t demo/nginx .
 Build this image on Atomic Host 1. Build the image
 ----
 docker images
-cd ~/Dockerfiles/atomic_host_1/mongodb
+cd ~/Dockerfiles/atomic_host/mongodb
 docker build -t demo/mongodb .
 ----
 

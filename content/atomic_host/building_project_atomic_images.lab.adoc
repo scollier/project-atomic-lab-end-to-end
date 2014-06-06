@@ -1,6 +1,6 @@
 === Options for Deployment
 
-There are a few different ways to obtain Atomic images.
+There are a few different ways to obtain Atomic images:
 
 . In .qcow2 format
 . Deploy from rpm
@@ -39,9 +39,10 @@ for i in 1 2; do
 	--disk /var/lib/libvirt/images/atomic/$i/storage_$i.qcow2,format=qcow2,sparse=true,size=10;
 done
 ----
-. On each Atomic host, launch the console. Set a password for the _root_ user on each Atomic host.
+. On each Atomic host, launch the console. Set a password for the _root_ user on each Atomic host. By default, the image does not have a password set for the root user.  So, log in without a password and set it.  In addition, these images do not have a serial console.  Use a graphical console, either through _virt-manager_ or _virt-viewer_.
 +
 ----
+virt-viewer Atomic_Host_1
 passwd
 ----
 . Get IP Address of both hosts and open up a terminal console to each machine.

@@ -3,7 +3,9 @@ DOCS=content/docker/docker_basics.lab.adoc \
 	content/atomic_host/upgrade_rollback_pa.lab.adoc \
 	content/docker/building_images_pa.lab.adoc \
 	content/atomic_host/configure_compose_server.lab.adoc \
-	content/atomic_host/building_project_atomic_images.lab.adoc
+	content/atomic_host/building_project_atomic_images.lab.adoc \
+	content/prerequisites/prerequisites.adoc
+	# content/prerequisites/laptop_hypervisor_setup.lab.adoc
 
 # SLIDES=agenda.slides.adoc \
     laptop_hypervisor_setup.slides.adoc \
@@ -18,7 +20,8 @@ DOCS=content/docker/docker_basics.lab.adoc \
 # all: $(DOCS) $(SLIDES) $(PREREQ) html pdf epub slides prereq
 
 # Changed by scollier on 5-26-2014, see above line to include slides and prereq
-all: $(DOCS)  html pdf epub 
+# all: $(DOCS)  html pdf epub 
+all: $(DOCS)  html pdf
 
 html: $(DOCS)
 	asciidoc -v labs.adoc
