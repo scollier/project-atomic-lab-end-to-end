@@ -1,9 +1,21 @@
-= Project Atomic Lab: End to End
-<scollier@redhat.com>
+Project Atomic Lab: End to End
+==============================
+:author: 	Scott Collier 
+:author initials: SC
+:email:		<scollier@redhat.com>
+{author} {email}
 Updated: 2014-05-19 10:57
+//// 
+thank goodness for: 
+	http://www.methods.co.nz/asciidoc/userguide.html#X60
+in solving some layout issues
+////
+
 :data-uri:
 :icons:
 :toc:
+:lang: en
+:encoding: iso-8859-1
 :homepage http://projectatomic.io/:
 
 == Introduction
