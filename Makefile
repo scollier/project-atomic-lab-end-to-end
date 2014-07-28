@@ -21,13 +21,23 @@ DOCS=content/docker/docker_basics.lab.adoc \
 
 # Changed by scollier on 5-26-2014, see above line to include slides and prereq
 # all: $(DOCS)  html pdf epub 
-all: $(DOCS)  html pdf
+all: $(DOCS)  html pdf 
 
 html: $(DOCS)
 	asciidoc -v labs.adoc
 
+#	http://xmlgraphics.apache.org/fop/1.1/
+#	FOP is a print formatter for XSL formatting objects.
+#		"US Letter"
+#
+#	a2x us-letter option found at:
+#		https://groups.google.com/forum/#!topic/asciidoc/CMLn89Qynqk
+#		3/14/13 by:  	r...@ebeep.org	
+#	--fop-opts="Letter"
 pdf: $(DOCS)
-	a2x -fpdf -dbook --fop --no-xmllint -v labs.adoc
+	a2x -fpdf --xsltproc-opts='--stringparam paper.type USletter ' \
+		-dbook --fop \
+		--no-xmllint -v labs.adoc
 
 epub: $(DOCS)
 	a2x -fepub -dbook --no-xmllint -v labs.adoc
@@ -39,5 +49,8 @@ epub: $(DOCS)
 # 	a2x -fpdf --fop --no-xmllint -v prerequisites.adoc
 
 clean:
-	rm -f *.html *.pdf *.epub
+	rm -f *.html *.pdf *.epub *.xml
+#
+############ eof 
+#
 
